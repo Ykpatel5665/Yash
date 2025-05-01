@@ -16,13 +16,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Truth or Dare',
       theme: ThemeData(
+        fontFamily: GoogleFonts.baloo2().fontFamily, // Set Baloo 2 as default
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepOrange,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
         appBarTheme: AppBarTheme(
-          titleTextStyle: GoogleFonts.pacifico(
+          titleTextStyle: GoogleFonts.baloo2( // Use Baloo 2 for AppBar
             fontSize: 30, // Slightly larger AppBar title
             color: Colors.white,
             shadows: [
@@ -74,7 +75,7 @@ class MyHomePage extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 255, 117, 82),
+              const Color.fromARGB(255, 252, 118, 84),
               const Color.fromARGB(255, 245, 64, 100),
             ],
             begin: Alignment.topCenter,
@@ -95,7 +96,7 @@ class MyHomePage extends StatelessWidget {
                 final double verticalSpacing = screenHeight * 0.05;
                 // Keep button padding fixed or make slightly relative if needed
                 final double buttonVerticalPadding = 30.0;
-                final double iconSize = 30.0; // Keep fixed for now
+                final double iconSize = 50.0; // Keep fixed for now
                 final double fontSize = 25.0; // Keep fixed for now
                 final double iconWidgetSize =
                     screenHeight * 0.08; // Relative to height
@@ -120,7 +121,7 @@ class MyHomePage extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: buttonVerticalPadding), // Use updated padding
-                    textStyle: GoogleFonts.lato(
+                    textStyle: GoogleFonts.baloo2( // Use Baloo 2 for buttons
                       fontSize: fontSize, // Use updated font size
                       fontWeight: FontWeight.bold,
                     ),
@@ -204,6 +205,24 @@ class MyHomePage extends StatelessWidget {
                       buildStyledButton('Add Dares', Icons.add, () {
                         print("Add Dares pressed");
                       }),
+                      const Spacer(), // Pushes the following Row to the bottom
+                      Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.03), // Add padding below the buttons
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            _buildBottomBarButton(Icons.star, () { // Changed from star_border to star
+                              print("Ratings pressed");
+                            }),
+                            _buildBottomBarButton(Icons.share, () {
+                              print("Share pressed");
+                            }),
+                            _buildBottomBarButton(Icons.settings, () {
+                              print("Settings pressed");
+                            }),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -213,5 +232,80 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Helper method for bottom bar buttons to keep build method cleaner
+  Widget _buildBottomBarButton(IconData icon, VoidCallback onPressed) {
+    // Apply styling exactly like the 'Start Game' button
+    final Color shadowColor =
+        Colors.black.withAlpha((0.3 * 255).round()); // Consistent shadow
+
+    return Container(
+      decoration: BoxDecoration(
+        // Keep the shadow separate as ElevatedButton shadow might clip
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white, // White background like Start Game
+          foregroundColor: Colors.black, // Black icon color like Start Game text
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8), // Rounded corners like Start Game
+          ),
+          padding: const EdgeInsets.all(15), // Adjust padding for icon size
+          elevation: 0, // Elevation handled by Container shadow
+          shadowColor: Colors.transparent, // Shadow handled by Container
+          minimumSize: const Size(60, 60), // Ensure a decent tap target size
+        ),
+        onPressed: onPressed,
+        child: Icon(
+          icon,
+          color: Colors.black, // Explicitly black icon
+          size: 30.0, // Adjust size as needed
+        ),
+      ),
+    );
+
+    /* Previous implementation:
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle, // Make it circular
+        color: Colors.white.withOpacity(0.15), // Subtle background like other buttons
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: 8.0,
+            spreadRadius: 1.0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent, // Use container color
+          foregroundColor: iconColor, // Color for splash/feedback
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(12), // Adjust padding for icon size
+          elevation: 0, // Elevation handled by Container shadow
+          shadowColor: Colors.transparent,
+        ),
+        onPressed: onPressed,
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: 30.0, // Adjust size as needed
+          // Shadows applied via Container
+        ),
+      ),
+    );
+    */
   }
 }

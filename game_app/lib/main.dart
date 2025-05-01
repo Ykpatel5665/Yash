@@ -22,17 +22,19 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
         appBarTheme: AppBarTheme(
-          titleTextStyle: GoogleFonts.pacifico(
-            fontSize: 24,
+            titleTextStyle: GoogleFonts.pacifico(
+            fontSize: 30, // Slightly larger AppBar title
             color: Colors.white,
             shadows: [
               Shadow(
-                blurRadius: 4.0,
-                color: Colors.black.withOpacity(0.5),
-                offset: const Offset(1.0, 1.0),
+              blurRadius: 4.0,
+              color: Colors.black.withAlpha((0.5 * 255).round()), // 0.5 opacity
+              offset: const Offset(1.0, 1.0),
               ),
             ],
-          ),
+            ),
+            toolbarHeight: 80, // Increase AppBar height to bring title lower
+            titleSpacing: 0,   // Optional: adjust horizontal position if needed
           backgroundColor: Colors.transparent,
           iconTheme: const IconThemeData(color: Colors.white),
         ),
@@ -50,7 +52,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color shadowColor = Colors.black.withOpacity(0.3);
+    final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round()); // 0.3 opacity
 
     return Scaffold(
       appBar: AppBar(
@@ -65,13 +67,21 @@ class MyHomePage extends StatelessWidget {
           final double screenWidth = constraints.maxWidth;
           final bool isWideLayout = screenWidth > wideLayoutThreshold;
 
-          final double horizontalPadding =
-              screenWidth * (isWideLayout ? 0.25 : 0.15);
-          final double buttonWidth = screenWidth * (isWideLayout ? 0.5 : 0.7);
-          final double verticalSpacing = isWideLayout ? 35.0 : 25.0;
-          final double buttonVerticalPadding = isWideLayout ? 22.0 : 20.0;
-          final double iconSize = isWideLayout ? 24.0 : 22.0;
-          final double fontSize = isWideLayout ? 20.0 : 18.0;
+          // Adjust sizes for more vertical spread and height
+            final double horizontalPadding =
+              screenWidth * (isWideLayout ? 0.25 : 0.12);
+            final double buttonWidth = screenWidth * (isWideLayout ? 0.5 : 0.75);
+            // Significantly increase vertical spacing
+            final double verticalSpacing = isWideLayout ? 80.0 : 60.0;
+            // Increase button vertical padding for more height
+            final double buttonVerticalPadding = isWideLayout ? 36.0 : 36.0;
+            final double iconSize = isWideLayout ? 28.0 : 28.0;
+            final double fontSize = isWideLayout ? 22.0 : 22.0;
+            final double iconWidgetSize = isWideLayout ? 70.0 : 65.0;
+            // Increase spacing after the top icon
+            final double spacingAfterIcon = isWideLayout ? 60.0 : 50.0;
+            // Define minimum button height
+            final double minButtonHeight = isWideLayout ? 80.0 : 80.0;
 
           Widget buildStyledButton(
               String text, IconData iconData, VoidCallback onPressed) {
@@ -84,9 +94,10 @@ class MyHomePage extends StatelessWidget {
               backgroundColor: bgColor, // Use explicit black/white
               foregroundColor: fgColor, // Use explicit black/white
               padding: EdgeInsets.symmetric(
-                  horizontal: 20, vertical: buttonVerticalPadding),
+                  horizontal: 20,
+                  vertical: buttonVerticalPadding), // Use updated padding
               textStyle: GoogleFonts.lato(
-                fontSize: fontSize,
+                fontSize: fontSize, // Use updated font size
                 fontWeight: FontWeight.bold,
               ),
               shape: RoundedRectangleBorder(
@@ -94,12 +105,12 @@ class MyHomePage extends StatelessWidget {
               ),
               elevation: 3,
               shadowColor: Colors.transparent,
-              minimumSize: Size(buttonWidth, 60),
+              minimumSize: Size(buttonWidth, minButtonHeight), // Use updated width and min height
               alignment: Alignment.center,
             );
 
             return Container(
-              width: buttonWidth,
+              width: buttonWidth, // Use updated width
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
@@ -121,7 +132,8 @@ class MyHomePage extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 15.0),
-                        child: Icon(iconData, size: iconSize),
+                        child: Icon(iconData,
+                            size: iconSize), // Use updated icon size
                       ),
                     ),
                     Align(
@@ -149,18 +161,35 @@ class MyHomePage extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding), // Use updated padding
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start, // Changed from center
                     children: <Widget>[
+                      SizedBox(height: 145.0), // Add space from top edge (behind AppBar)
+                      // Replace Text emoji with an Icon widget
+                      Icon(
+                        Icons.sentiment_satisfied_alt, // Happy face icon
+                        size: iconWidgetSize, // Use updated size
+                        color: Colors.white.withAlpha((0.9 * 255).round()), // 0.9 opacity
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()), // 0.4 opacity
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ], // Optional shadow for better visibility
+                      ),
+                      SizedBox(height: spacingAfterIcon), // Use updated spacing
+
                       buildStyledButton('Start Game', Icons.play_arrow, () {
                         print("Start Game pressed");
                       }),
-                      SizedBox(height: verticalSpacing),
+                      SizedBox(height: verticalSpacing), // Use updated spacing
                       buildStyledButton('Add Truths', Icons.add, () {
                         print("Add Truths pressed");
                       }),
-                      SizedBox(height: verticalSpacing),
+                      SizedBox(height: verticalSpacing), // Use updated spacing
                       buildStyledButton('Add Dares', Icons.add, () {
                         print("Add Dares pressed");
                       }),

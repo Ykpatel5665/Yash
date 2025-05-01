@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'main.dart'; // Import main.dart to access GameMode and AgeGroup enums
+import 'spin_the_bottle_screen.dart'; // Import Spin the Bottle screen
+import 'auto_next_turn_screen.dart'; // Import Auto Next Turn screen
+import 'random_turn_screen.dart'; // Import Random Turn screen
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -357,15 +360,35 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           // Remove alignment: Alignment.center, Stack handles alignment
                         ),
                         onPressed: () {
-                          // TODO: Implement navigation to the actual game screen
-                          print("Let's Begin pressed! Players: $_players");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  'Starting game with: ${_players.join(', ')}',
-                                  style: GoogleFonts.baloo2()),
-                              backgroundColor: Colors.green,
-                            ),
+                          // Navigate based on the selected game mode
+                          print(
+                              "Let's Begin pressed! Mode: ${widget.gameMode}, Age: ${widget.ageGroup}, Players: $_players");
+
+                          Widget nextScreen;
+                          switch (widget.gameMode) {
+                            case GameMode.spin:
+                              nextScreen = SpinTheBottleScreen(
+                                players: _players,
+                                ageGroup: widget.ageGroup,
+                              );
+                              break;
+                            case GameMode.auto:
+                              nextScreen = AutoNextTurnScreen(
+                                players: _players,
+                                ageGroup: widget.ageGroup,
+                              );
+                              break;
+                            case GameMode.random:
+                              nextScreen = RandomTurnScreen(
+                                players: _players,
+                                ageGroup: widget.ageGroup,
+                              );
+                              break;
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => nextScreen),
                           );
                         },
                         // Use Stack for custom layout

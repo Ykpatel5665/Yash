@@ -76,6 +76,77 @@ class AgeGroupScreen extends StatelessWidget {
     );
   }
 
+  // Function to show the confirmation dialog
+  Future<void> _showAdultConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button!
+      builder: (BuildContext dialogContext) {
+        // Use the app's theme for consistency
+        final theme = Theme.of(dialogContext);
+        final textTheme = theme.textTheme; // Use themed text styles
+
+        return AlertDialog(
+          backgroundColor: theme.dialogBackgroundColor, // Use theme background
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0)), // Rounded corners
+          title: Text(
+            'Confirm Age',
+            style: GoogleFonts.baloo2(
+              // Match app font if desired
+              fontWeight: FontWeight.bold,
+              color: theme.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black, // Adjust color based on theme
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'Adult mode is not suitable for anyone under 18.',
+                  style: textTheme.bodyMedium, // Use theme body style
+                ),
+                Text(
+                  'Are you sure you want to continue?',
+                  style: textTheme.bodyMedium, // Use theme body style
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.baloo2(
+                    color: theme.colorScheme
+                        .secondary), // Use theme accent/secondary color
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text(
+                'Continue',
+                style: GoogleFonts.baloo2(
+                    color:
+                        theme.colorScheme.primary), // Use theme primary color
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+                // Proceed with the original action
+                print(
+                    "Selected Age Group: ADULT, Game Mode: $selectedGameMode");
+                // TODO: Navigate to the actual game screen with mode and age group
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -132,9 +203,10 @@ class AgeGroupScreen extends StatelessWidget {
                 }),
                 SizedBox(height: verticalSpacing),
                 _buildStyledButton(context, 'ADULT', Icons.person, () {
-                  print(
-                      "Selected Age Group: ADULT, Game Mode: $selectedGameMode");
-                  // TODO: Navigate to the actual game screen with mode and age group
+                  // Remove the simplified test print
+                  // print("ADULT button pressed - simplified test.");
+                  _showAdultConfirmationDialog(
+                      context); // Restore dialog call if needed elsewhere, but likely not
                 }),
               ],
             ),

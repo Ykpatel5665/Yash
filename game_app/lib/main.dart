@@ -115,69 +115,247 @@ class _MyHomePageState extends State<MyHomePage> {
   AgeGroup? _selectedAgeGroupEnum; // Holds the selected age group enum
   bool _saveSelection = true; // Default to true here as well for consistency
   String? _savedGameModeString; // Still load/save as string for simplicity
+  String? _savedAgeGroupString; // Add state variable for saved age group string
 
-  // Define game modes using enum keys (for saving preference)
-  final String _spinModeKey = GameMode.spin.name; // e.g., 'spin'
-  final String _autoNextModeKey = GameMode.auto.name;
-  final String _randomModeKey = GameMode.random.name;
-  final String _prefsKey = 'gameMode';
+  // Define keys for saving preferences
+  final String _gameModePrefsKey = 'gameMode'; // Key for saving game mode
+  final String _ageGroupPrefsKey = 'ageGroup'; // Key for saving age group
 
   @override
   void initState() {
     super.initState();
-    _loadSavedMode();
+    _loadSavedPreferences(); // Rename load function
   }
 
-  // Load saved game mode and convert to enum
-  Future<void> _loadSavedMode() async {
+  // Load saved game mode and age group, then convert to enums
+  Future<void> _loadSavedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _savedGameModeString = prefs.getString(_prefsKey);
+      _savedGameModeString = prefs.getString(_gameModePrefsKey);
+      _savedAgeGroupString =
+          prefs.getString(_ageGroupPrefsKey); // Load age group string
+
       if (_savedGameModeString != null) {
-        // Convert saved string back to enum
         try {
           _selectedGameModeEnum =
               GameMode.values.firstWhere((e) => e.name == _savedGameModeString);
         } catch (e) {
-          print("Error converting saved mode: $e");
+          print("Error converting saved game mode: $e");
           _selectedGameModeEnum = GameMode.spin; // Default if conversion fails
         }
       } else {
         _selectedGameModeEnum = GameMode.spin; // Default if nothing saved
       }
-      // If a mode was saved, assume user wanted to save it last time
-      _saveSelection = _savedGameModeString != null;
-      // REMOVE default age group assignment here - let dialog handle default
-      // _selectedAgeGroupEnum = AgeGroup.teen;
+
+      if (_savedAgeGroupString != null) {
+        // Convert saved age group string
+        try {
+          _selectedAgeGroupEnum =
+              AgeGroup.values.firstWhere((e) => e.name == _savedAgeGroupString);
+        } catch (e) {
+          print("Error converting saved age group: $e");
+          // Keep _selectedAgeGroupEnum null if conversion fails, let dialog handle default
+        }
+      }
+      // else: _selectedAgeGroupEnum remains null if nothing saved
+
+      // If either preference was saved, assume user wanted to save last time
+      _saveSelection =
+          (_savedGameModeString != null || _savedAgeGroupString != null);
     });
     print(
         "Loaded saved mode string: $_savedGameModeString, Enum: $_selectedGameModeEnum");
+    print(
+        "Loaded saved age group string: $_savedAgeGroupString, Enum: $_selectedAgeGroupEnum");
   }
 
-  // Save game mode enum name to SharedPreferences
-  Future<void> _saveModePreference(GameMode? mode) async {
+  // Save game mode and age group enum names to SharedPreferences
+  Future<void> _savePreferences(GameMode? mode, AgeGroup? ageGroup) async {
     final prefs = await SharedPreferences.getInstance();
-    if (_saveSelection && mode != null) {
-      await prefs.setString(
-          _prefsKey, mode.name); // Save the enum name (e.g., 'spin')
-      print("Saved mode: ${mode.name}");
-      _savedGameModeString = mode.name;
+    if (_saveSelection) {
+      if (mode != null) {
+        await prefs.setString(
+            _gameModePrefsKey, mode.name); // Save game mode enum name
+        print("Saved game mode: ${mode.name}");
+        _savedGameModeString = mode.name;
+      } else {
+        await prefs.remove(
+            _gameModePrefsKey); // Remove if null (shouldn't happen if _saveSelection is true)
+        _savedGameModeString = null;
+      }
+      if (ageGroup != null) {
+        await prefs.setString(
+            _ageGroupPrefsKey, ageGroup.name); // Save age group enum name
+        print("Saved age group: ${ageGroup.name}");
+        _savedAgeGroupString = ageGroup.name;
+      } else {
+        await prefs.remove(_ageGroupPrefsKey); // Remove if null
+        _savedAgeGroupString = null;
+      }
     } else {
-      await prefs.remove(_prefsKey);
-      print("Removed saved mode preference.");
+      await prefs.remove(_gameModePrefsKey);
+      await prefs.remove(_ageGroupPrefsKey); // Remove both keys
+      print("Removed saved preferences.");
       _savedGameModeString = null;
+      _savedAgeGroupString = null;
     }
     // No need to setState here as it's called from the dialog confirmation
   }
+
+  // --- Function to show the ADULT confirmation dialog ---
+  Future<bool> _showAdultConfirmationDialog(BuildContext context) async {
+    // Use a different context name to avoid conflict with the outer dialog context
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false, // User must tap button!
+          barrierColor: Colors.black54, // Dim the background
+          builder: (BuildContext confirmDialogContext) {
+            final Size screenSize = MediaQuery.of(confirmDialogContext).size;
+            final double dialogPadding = screenSize.width * 0.05;
+
+            // Define styles consistent with the app's theme but with different colors
+            final BoxDecoration dialogDecoration = BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              gradient: const LinearGradient(
+                colors: [
+                  // Use a different gradient - e.g., Deep Purple to Pink
+                  Color.fromARGB(255, 103, 58, 183), // Deep Purple
+                  Color.fromARGB(255, 233, 30, 99), // Pink
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border.all(
+                color: Colors.white
+                    .withOpacity(0.8), // Slightly transparent white border
+                width: 3.0, // Thick border
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black
+                      .withAlpha(120), // Deeper shadow (increased alpha)
+                  blurRadius: 12.0, // Increased blur
+                  spreadRadius: 2.0, // Increased spread
+                  offset: const Offset(0, 6), // Increased offset for depth
+                ),
+              ],
+            );
+
+            final TextStyle titleStyle = GoogleFonts.baloo2(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              color: Colors.white, // White title
+              shadows: [
+                Shadow(
+                  blurRadius: 2.0,
+                  color: Colors.black.withAlpha(100),
+                  offset: const Offset(1.0, 1.0),
+                ),
+              ],
+            );
+
+            final TextStyle contentStyle = GoogleFonts.baloo2(
+              fontSize: 16,
+              color: Colors.white
+                  .withOpacity(0.9), // Slightly transparent white content
+            );
+
+            return AlertDialog(
+              backgroundColor:
+                  Colors.transparent, // Make AlertDialog background transparent
+              contentPadding: EdgeInsets.zero, // Remove default padding
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15.0)), // Match container shape
+              content: Container(
+                padding: EdgeInsets.all(
+                    dialogPadding), // Apply padding inside the container
+                decoration: dialogDecoration, // Apply the custom decoration
+                child: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Center(
+                        child: Text(
+                          'Confirm Age',
+                          style: titleStyle,
+                        ),
+                      ),
+                      const SizedBox(height: 15), // Spacing
+                      Text(
+                        'Adult mode is not suitable for anyone under 18.',
+                        style: contentStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 5), // Spacing
+                      Text(
+                        'Are you sure you want to continue?',
+                        style: contentStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 25), // Spacing before buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor:
+                                  Colors.white70, // Lighter color for cancel
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: GoogleFonts.baloo2(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            onPressed: () {
+                              Navigator.of(confirmDialogContext)
+                                  .pop(false); // Return false
+                            },
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.white, // White background for confirm
+                              foregroundColor: const Color.fromARGB(255, 103,
+                                  58, 183), // Use a gradient color for text
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                            ),
+                            child: Text(
+                              'Continue',
+                              style: GoogleFonts.baloo2(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () {
+                              Navigator.of(confirmDialogContext)
+                                  .pop(true); // Return true
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Remove original actions, they are now inside the Container
+              // actions: <Widget>[ ... ],
+            );
+          },
+        ) ??
+        false; // Return false if dialog is dismissed otherwise
+  }
+  // --- End ADULT confirmation dialog ---
 
   // Function to show the combined game mode and age group selection dialog
   Future<void> _showGameSelectionDialog(BuildContext context) async {
     // Initialize temporary state for the dialog
     GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
+    // Use loaded age group if available, otherwise default to kids
     AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
-    // Explicitly set default checkbox state to CHECKED (true) for the dialog
-    bool currentSaveSelection =
-        true; // Ensure dialog always starts with checkbox checked
+    // Use the loaded save preference state
+    bool currentSaveSelection = _saveSelection; // Use the actual loaded state
 
     return showGeneralDialog<void>(
       context: context,
@@ -185,7 +363,8 @@ class _MyHomePageState extends State<MyHomePage> {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (context, animation, secondaryAnimation) {
+      pageBuilder: (dialogPageContext, animation, secondaryAnimation) {
+        // Changed context name
         return StatefulBuilder(
           builder: (context, setDialogState) {
             // ... (keep theme, colorScheme, screenSize, spacing variables) ...
@@ -387,7 +566,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Text('Cancel',
                                   style: GoogleFonts.baloo2(fontSize: 16)),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(dialogPageContext)
+                                    .pop(); // Use dialogPageContext
                               },
                             ),
                             ElevatedButton(
@@ -410,38 +590,57 @@ class _MyHomePageState extends State<MyHomePage> {
                                   style: GoogleFonts.baloo2(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16)),
-                              onPressed: () {
-                                // Both selections are guaranteed non-null due to initialization
+                              onPressed: () async {
+                                // Make onPressed async
                                 final GameMode finalGameMode =
                                     currentModeSelection;
                                 final AgeGroup finalAgeGroup =
                                     currentAgeSelection;
                                 final bool finalSave = currentSaveSelection;
 
-                                // Update main screen state
-                                setState(() {
-                                  _selectedGameModeEnum = finalGameMode;
-                                  _selectedAgeGroupEnum = finalAgeGroup;
-                                  _saveSelection = finalSave;
-                                });
-                                // Save preference if needed
-                                _saveModePreference(finalGameMode);
+                                bool proceed = true; // Assume we can proceed
 
-                                print(
-                                    "Selected Mode: ${finalGameMode.name}, Age Group: ${finalAgeGroup.name}, Save: $finalSave. Starting game...");
+                                // Check if Adult is selected and show confirmation
+                                if (finalAgeGroup == AgeGroup.adult) {
+                                  // Use the dialogPageContext to show the confirmation dialog
+                                  proceed = await _showAdultConfirmationDialog(
+                                      dialogPageContext);
+                                }
 
-                                Navigator.of(context).pop(); // Close the dialog
+                                // Only proceed if not adult OR if adult and confirmed
+                                if (proceed) {
+                                  // Update main screen state
+                                  setState(() {
+                                    _selectedGameModeEnum = finalGameMode;
+                                    _selectedAgeGroupEnum = finalAgeGroup;
+                                    _saveSelection =
+                                        finalSave; // Update save state
+                                  });
+                                  // Save preferences if needed
+                                  await _savePreferences(
+                                      // Call updated save function
+                                      finalGameMode,
+                                      finalAgeGroup); // await the save
 
-                                // TODO: Navigate directly to the actual game screen
-                                // Example: Navigator.push(context, MaterialPageRoute(builder: (_) => GameScreen(mode: finalGameMode, ageGroup: finalAgeGroup)));
-                                ScaffoldMessenger.of(this.context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Starting Game (Mode: ${finalGameMode.displayText}, Age: ${finalAgeGroup.displayText})',
-                                        style: GoogleFonts.baloo2()),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
+                                  print(
+                                      "Selected Mode: ${finalGameMode.name}, Age Group: ${finalAgeGroup.name}, Save: $finalSave. Starting game...");
+
+                                  Navigator.of(dialogPageContext)
+                                      .pop(); // Close the main selection dialog
+
+                                  // TODO: Navigate directly to the actual game screen
+                                  ScaffoldMessenger.of(this.context)
+                                      .showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Starting Game (Mode: ${finalGameMode.displayText}, Age: ${finalAgeGroup.displayText})',
+                                          style: GoogleFonts.baloo2()),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                                // else: If proceed is false (user cancelled adult confirmation), do nothing,
+                                // the confirmation dialog is already closed, and the main dialog remains open.
                               },
                             ),
                           ],
@@ -528,9 +727,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 maxWidth: 800), // Keep max width constraint
             child: LayoutBuilder(
               builder: (context, constraints) {
-                // ... (keep existing layout variables) ...
-                final Color shadowColor =
-                    Colors.black.withAlpha((0.3 * 255).round()); // 0.3 opacity
                 // Get screen dimensions for relative sizing
                 final Size screenSize = MediaQuery.of(context).size;
                 final double screenWidth = screenSize.width;

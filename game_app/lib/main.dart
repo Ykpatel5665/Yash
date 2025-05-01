@@ -683,7 +683,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ... (keep existing transition) ...
         const begin = Offset(0.0, 0.3); // Start slightly lower
         const end = Offset.zero;
-        final curve = Curves.easeOutCubic;
+        const curve = Curves.easeOutCubic;
         final tween =
             Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         final offsetAnimation = animation.drive(tween);
@@ -715,8 +715,8 @@ class _MyHomePageState extends State<MyHomePage> {
       controlAffinity: ListTileControlAffinity.leading, // Checkbox on the left
       dense: true,
       // Style checkbox border when inactive
-      side: MaterialStateBorderSide.resolveWith(
-        (states) => BorderSide(width: 2.0, color: Colors.white70),
+      side: WidgetStateBorderSide.resolveWith(
+        (states) => const BorderSide(width: 2.0, color: Colors.white70),
       ),
     );
   }
@@ -836,9 +836,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final Size screenSize = MediaQuery.of(context).size; // Access context here
     final double screenWidth = screenSize.width;
     final double buttonWidth = screenWidth * 0.75;
-    final double buttonVerticalPadding = 30.0;
-    final double fontSize = 25.0;
-    final double iconSize = 50.0; // Reverted icon size
+    const double buttonVerticalPadding = 30.0;
+    const double fontSize = 25.0;
+    const double iconSize = 50.0; // Reverted icon size
     final double minButtonHeight = screenSize.height * 0.07;
 
     // Restore conditional styling based on button text
@@ -849,8 +849,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: bgColor, // Use conditional background color
       foregroundColor: fgColor, // Use conditional foreground color
-      padding:
-          EdgeInsets.symmetric(horizontal: 20, vertical: buttonVerticalPadding),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 20, vertical: buttonVerticalPadding),
       textStyle: GoogleFonts.baloo2(
         fontSize: fontSize,
         fontWeight: FontWeight.bold,

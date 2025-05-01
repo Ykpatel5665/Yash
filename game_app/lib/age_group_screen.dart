@@ -14,10 +14,10 @@ class AgeGroupScreen extends StatelessWidget {
     final double screenWidth = screenSize.width;
     final double buttonWidth =
         screenWidth * 0.75; // Match main screen button width
-    final double buttonVerticalPadding =
+    const double buttonVerticalPadding =
         30.0; // Match main screen button padding
-    final double fontSize = 25.0; // Match main screen font size
-    final double iconSize = 40.0; // Match main screen icon size
+    const double fontSize = 25.0; // Match main screen font size
+    const double iconSize = 40.0; // Match main screen icon size
     final double minButtonHeight =
         screenSize.height * 0.07; // Match main screen min height
 
@@ -25,8 +25,8 @@ class AgeGroupScreen extends StatelessWidget {
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
       backgroundColor: Colors.black, // Black background
       foregroundColor: Colors.white, // White text/icon
-      padding:
-          EdgeInsets.symmetric(horizontal: 20, vertical: buttonVerticalPadding),
+      padding: const EdgeInsets.symmetric(
+          horizontal: 20, vertical: buttonVerticalPadding),
       textStyle: GoogleFonts.baloo2(
         fontSize: fontSize,
         fontWeight: FontWeight.bold,

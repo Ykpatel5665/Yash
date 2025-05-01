@@ -99,7 +99,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     // Use the same AppBar style from MyApp theme, but allow customization if needed
     final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
     // Define neumorphic colors based on the gradient
-    final Color baseColor = const Color.fromARGB(255, 255, 255, 255);
+    const Color baseColor = Color.fromARGB(255, 255, 255, 255);
     final Color shadowDark = Colors.black.withOpacity(0.3);
     final Color shadowLight = Colors.white.withOpacity(0.4);
 
@@ -136,9 +136,9 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                   ),
                 ],
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: const Color.fromARGB(255, 0, 0, 0), // Icon color
+                color: Color.fromARGB(255, 0, 0, 0), // Icon color
                 size: 20, // Smaller icon size
               ),
             ),
@@ -292,7 +292,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               ),
                               trailing: IconButton(
                                 // Use close icon and match text color
-                                icon: Icon(Icons.close, color: Colors.white),
+                                icon: const Icon(Icons.close,
+                                    color: Colors.white),
                                 tooltip: 'Remove ${_players[index]}',
                                 onPressed: () => _removePlayer(index),
                                 splashRadius: 24,
@@ -373,10 +374,10 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               .center, // Center the Stack content by default
                           children: [
                             // Align Icon to the left
-                            Align(
+                            const Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                padding: const EdgeInsets.only(
+                                padding: EdgeInsets.only(
                                     left: 10.0), // Padding for the icon
                                 child: Icon(Icons.play_arrow_rounded,
                                     size: 30), // Keep the icon

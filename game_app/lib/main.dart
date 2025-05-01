@@ -161,8 +161,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // else: _selectedAgeGroupEnum remains null if nothing saved
 
       // If either preference was saved, assume user wanted to save last time
-      _saveSelection =
-          (_savedGameModeString != null || _savedAgeGroupString != null);
     });
     print(
         "Loaded saved mode string: $_savedGameModeString, Enum: $_selectedGameModeEnum");

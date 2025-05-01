@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // Removed import 'age_group_screen.dart'
+import 'add_players_screen.dart'; // Import the new screen
 
 // Define Enums for selections
 enum GameMode {
@@ -628,14 +629,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.of(dialogPageContext)
                                       .pop(); // Close the main selection dialog
 
-                                  // TODO: Navigate directly to the actual game screen
-                                  ScaffoldMessenger.of(this.context)
-                                      .showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Starting Game (Mode: ${finalGameMode.displayText}, Age: ${finalAgeGroup.displayText})',
-                                          style: GoogleFonts.baloo2()),
-                                      backgroundColor: Colors.green,
+                                  // Navigate to the Add Players screen
+                                  Navigator.push(
+                                    this.context, // Use the original context from MyHomePage
+                                    MaterialPageRoute(
+                                      builder: (context) => AddPlayersScreen(
+                                        gameMode: finalGameMode,
+                                        ageGroup: finalAgeGroup,
+                                      ),
                                     ),
                                   );
                                 }

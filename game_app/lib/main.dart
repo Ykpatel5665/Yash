@@ -534,7 +534,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                         // Checkbox (using the existing helper)
                         _buildCheckboxListTile(
-                          title: 'Save Game Mode', // Updated text
+                          title: 'Save Choice!', // Updated text
                           value: currentSaveSelection,
                           onChanged: (bool? value) {
                             setDialogState(() {

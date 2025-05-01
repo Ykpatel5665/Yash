@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
+import 'age_group_screen.dart'; // Import the new screen
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +26,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         appBarTheme: AppBarTheme(
           titleTextStyle: GoogleFonts.baloo2(
+            fontWeight: FontWeight.bold,
             // Use Baloo 2 for AppBar
-            fontSize: 30, // Slightly larger AppBar title
+            fontSize: 40, // Slightly larger AppBar title
             color: Colors.white,
             shadows: [
               Shadow(
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
               ),
             ],
           ),
-          toolbarHeight: 80, // Increase AppBar height to bring title lower
+          toolbarHeight: 100, // Increase AppBar height to bring title lower
           titleSpacing: 0, // Optional: adjust horizontal position if needed
           backgroundColor: Colors.transparent,
           iconTheme: const IconThemeData(color: Colors.white),
@@ -312,16 +314,34 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               onPressed: () {
                                 if (currentSelection != null) {
+                                  // Save state and preferences *before* navigating
+                                  final String finalSelection =
+                                      currentSelection!;
+                                  final bool finalSave = currentSaveSelection;
+
+                                  // Update state immediately
                                   setState(() {
-                                    _selectedGameMode = currentSelection;
-                                    _saveSelection = currentSaveSelection;
+                                    _selectedGameMode = finalSelection;
+                                    _saveSelection = finalSave;
                                   });
-                                  _saveModePreference(currentSelection);
+                                  // Save preference asynchronously (don't wait)
+                                  _saveModePreference(finalSelection);
+
                                   print(
-                                      "Selected mode: $currentSelection, Save: $currentSaveSelection");
-                                  Navigator.of(context)
-                                      .pop(); // Use the outer context for pop
-                                  // TODO: Navigate
+                                      "Selected mode: $finalSelection, Save: $finalSave. Navigating...");
+
+                                  // Pop the dialog *first*
+                                  Navigator.of(context).pop();
+
+                                  // Then navigate to the Age Group Screen
+                                  Navigator.push(
+                                    this.context, // Use the state's context
+                                    MaterialPageRoute(
+                                      builder: (context) => AgeGroupScreen(
+                                        selectedGameMode: finalSelection,
+                                      ),
+                                    ),
+                                  );
                                 } else {
                                   // Use ScaffoldMessenger of the main context
                                   ScaffoldMessenger.of(
@@ -444,11 +464,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // Use MediaQuery directly instead of LayoutBuilder for screen size
       body: Container(
         // Moved Container outside LayoutBuilder
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 252, 118, 84),
-              const Color.fromARGB(255, 245, 64, 100),
+               Color.fromARGB(255, 252, 118, 84),
+               Color.fromARGB(255, 245, 64, 100),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -476,76 +496,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     screenHeight * 0.06; // Relative to height
                 final double minButtonHeight =
                     screenHeight * 0.07; // Relative to height
-                // Adjust top spacing relative to screen height, considering AppBar
-                final double topSpacing = screenHeight * 0.18;
-
-                // Define buildStyledButton INSIDE the builder scope
-                Widget buildStyledButton(
-                    String text, IconData iconData, VoidCallback onPressed) {
-                  final bool isStartGame = (text == 'Start Game');
-                  final Color bgColor =
-                      isStartGame ? Colors.white : Colors.black;
-                  final Color fgColor =
-                      isStartGame ? Colors.black : Colors.white;
-
-                  final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-                    backgroundColor: bgColor,
-                    foregroundColor: fgColor,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: buttonVerticalPadding), // Use updated padding
-                    textStyle: GoogleFonts.baloo2(
-                      // Use Baloo 2 for buttons
-                      fontSize: fontSize, // Use updated font size
-                      fontWeight: FontWeight.bold,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 3,
-                    shadowColor: Colors.transparent,
-                    minimumSize: Size(buttonWidth,
-                        minButtonHeight), // Use updated width and min height
-                    alignment: Alignment.center,
-                  );
-
-                  return Container(
-                    width: buttonWidth, // Use updated width
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: shadowColor,
-                          blurRadius: 10.0,
-                          spreadRadius: 1.0,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      style: buttonStyle,
-                      onPressed: onPressed, // Use the passed onPressed directly
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Icon(iconData,
-                                  size: iconSize), // Use updated icon size
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(text),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-                // End of buildStyledButton definition
+                // Adjust top spacing relative to screen height, slightly less to move icon up
+                final double topSpacing =
+                    screenHeight * 0.15; // Reduced from 0.18
 
                 return Padding(
                   // Moved Padding inside LayoutBuilder
@@ -554,7 +507,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: topSpacing), // Use relative top spacing
+                      SizedBox(height: topSpacing), // Use adjusted top spacing
                       Icon(
                         Icons.sentiment_satisfied_alt,
                         size: iconWidgetSize, // Use updated size
@@ -570,17 +523,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       SizedBox(height: spacingAfterIcon), // Use updated spacing
 
                       // Update the onPressed for Start Game button
-                      buildStyledButton('Start Game', Icons.play_arrow, () {
+                      _buildStyledButton('Start Game', Icons.play_arrow, () {
                         print("Start Game pressed - showing dialog");
                         _showGameModeDialog(
                             context); // Call the dialog function
                       }),
                       SizedBox(height: verticalSpacing), // Use updated spacing
-                      buildStyledButton('Add Truths', Icons.add, () {
+                      _buildStyledButton('Add Truths', Icons.add, () {
                         print("Add Truths pressed");
                       }),
                       SizedBox(height: verticalSpacing), // Use updated spacing
-                      buildStyledButton('Add Dares', Icons.add, () {
+                      _buildStyledButton('Add Dares', Icons.add, () {
                         print("Add Dares pressed");
                       }),
                       const Spacer(), // Pushes the following Row to the bottom
@@ -610,6 +563,77 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  // Restore conditional styling for buttons
+  Widget _buildStyledButton(
+      String text, IconData iconData, VoidCallback onPressed) {
+    final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round());
+    final Size screenSize = MediaQuery.of(context).size; // Access context here
+    final double screenWidth = screenSize.width;
+    final double buttonWidth = screenWidth * 0.75;
+    final double buttonVerticalPadding = 30.0;
+    final double fontSize = 25.0;
+    final double iconSize = 50.0; // Reverted icon size
+    final double minButtonHeight = screenSize.height * 0.07;
+
+    // Restore conditional styling based on button text
+    final bool isStartGame = (text == 'Start Game');
+    final Color bgColor = isStartGame ? Colors.white : Colors.black;
+    final Color fgColor = isStartGame ? Colors.black : Colors.white;
+
+    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: bgColor, // Use conditional background color
+      foregroundColor: fgColor, // Use conditional foreground color
+      padding:
+          EdgeInsets.symmetric(horizontal: 20, vertical: buttonVerticalPadding),
+      textStyle: GoogleFonts.baloo2(
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 3,
+      shadowColor: Colors.transparent,
+      minimumSize: Size(buttonWidth, minButtonHeight),
+      alignment: Alignment.center,
+    );
+
+    return Container(
+      width: buttonWidth,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        style: buttonStyle,
+        onPressed: onPressed,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Icon(iconData, size: iconSize), // Use reverted icon size
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text(text),
+            ),
+          ],
         ),
       ),
     );

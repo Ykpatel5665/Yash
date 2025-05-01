@@ -1,8 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
-import 'age_group_screen.dart'; // Import the new screen
+import 'package:shared_preferences/shared_preferences.dart';
+// Removed import 'age_group_screen.dart'
+
+// Define Enums for selections
+enum GameMode {
+  spin, // Spin the bottle
+  auto, // Auto next turn
+  random // Random turn
+}
+
+enum AgeGroup {
+  kids, // Kids
+  teen, // Teen
+  adult // Adult
+}
+
+// Helper to get display text for enums
+extension GameModeExtension on GameMode {
+  String get displayText {
+    switch (this) {
+      case GameMode.spin:
+        return 'Spin the bottle';
+      case GameMode.auto:
+        return 'Auto next turn';
+      case GameMode.random:
+        return 'Random turn';
+    }
+  }
+}
+
+extension AgeGroupExtension on AgeGroup {
+  String get displayText {
+    switch (this) {
+      case AgeGroup.kids:
+        return 'KIDS';
+      case AgeGroup.teen:
+        return 'TEEN';
+      case AgeGroup.adult:
+        return 'ADULT';
+    }
+  }
+
+  IconData get displayIcon {
+    switch (this) {
+      case AgeGroup.kids:
+        return Icons.child_care;
+      case AgeGroup.teen:
+        return Icons.school;
+      case AgeGroup.adult:
+        return Icons.person;
+    }
+  }
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,95 +110,101 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Add state variables for dialog
-  String? _selectedGameMode; // To hold the selected mode in the dialog
-  bool _saveSelection = false; // To hold the checkbox state
-  String? _savedGameMode; // To hold the mode loaded from preferences
+  // Update state variables to use enums
+  GameMode? _selectedGameModeEnum; // Holds the selected enum
+  AgeGroup? _selectedAgeGroupEnum; // Holds the selected age group enum
+  bool _saveSelection = true; // Default to true here as well for consistency
+  String? _savedGameModeString; // Still load/save as string for simplicity
 
-  // Define game modes
-  final String _spinMode = 'Spin the bottle';
-  final String _autoNextMode = 'Auto next turn';
-  final String _randomMode = 'Random turn';
-  final String _prefsKey = 'gameMode'; // Key for SharedPreferences
+  // Define game modes using enum keys (for saving preference)
+  final String _spinModeKey = GameMode.spin.name; // e.g., 'spin'
+  final String _autoNextModeKey = GameMode.auto.name;
+  final String _randomModeKey = GameMode.random.name;
+  final String _prefsKey = 'gameMode';
 
   @override
   void initState() {
     super.initState();
-    _loadSavedMode(); // Load saved preference on init
+    _loadSavedMode();
   }
 
-  // Load saved game mode from SharedPreferences
+  // Load saved game mode and convert to enum
   Future<void> _loadSavedMode() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _savedGameMode = prefs.getString(_prefsKey);
-      // Pre-select the mode in the dialog if it was saved
-      _selectedGameMode = _savedGameMode;
+      _savedGameModeString = prefs.getString(_prefsKey);
+      if (_savedGameModeString != null) {
+        // Convert saved string back to enum
+        try {
+          _selectedGameModeEnum =
+              GameMode.values.firstWhere((e) => e.name == _savedGameModeString);
+        } catch (e) {
+          print("Error converting saved mode: $e");
+          _selectedGameModeEnum = GameMode.spin; // Default if conversion fails
+        }
+      } else {
+        _selectedGameModeEnum = GameMode.spin; // Default if nothing saved
+      }
       // If a mode was saved, assume user wanted to save it last time
-      _saveSelection = _savedGameMode != null;
+      _saveSelection = _savedGameModeString != null;
+      // REMOVE default age group assignment here - let dialog handle default
+      // _selectedAgeGroupEnum = AgeGroup.teen;
     });
-    // If a mode was saved, maybe directly proceed to game?
-    // Or show dialog with pre-selection. For now, just pre-select.
-    print("Loaded saved mode: $_savedGameMode");
+    print(
+        "Loaded saved mode string: $_savedGameModeString, Enum: $_selectedGameModeEnum");
   }
 
-  // Save game mode to SharedPreferences
-  Future<void> _saveModePreference(String? mode) async {
+  // Save game mode enum name to SharedPreferences
+  Future<void> _saveModePreference(GameMode? mode) async {
     final prefs = await SharedPreferences.getInstance();
     if (_saveSelection && mode != null) {
-      await prefs.setString(_prefsKey, mode);
-      print("Saved mode: $mode");
+      await prefs.setString(
+          _prefsKey, mode.name); // Save the enum name (e.g., 'spin')
+      print("Saved mode: ${mode.name}");
+      _savedGameModeString = mode.name;
     } else {
-      // If save selection is unchecked, remove the preference
       await prefs.remove(_prefsKey);
       print("Removed saved mode preference.");
+      _savedGameModeString = null;
     }
-    setState(() {
-      _savedGameMode = _saveSelection ? mode : null;
-    });
+    // No need to setState here as it's called from the dialog confirmation
   }
 
-  // Function to show the game mode selection dialog with slide animation
-  Future<void> _showGameModeDialog(BuildContext context) async {
-    // Use a temporary state for the dialog interaction
-    String? currentSelection = _selectedGameMode ?? _spinMode;
-    bool currentSaveSelection = _saveSelection;
+  // Function to show the combined game mode and age group selection dialog
+  Future<void> _showGameSelectionDialog(BuildContext context) async {
+    // Initialize temporary state for the dialog
+    GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
+    AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
+    // Explicitly set default checkbox state to CHECKED (true) for the dialog
+    bool currentSaveSelection =
+        true; // Ensure dialog always starts with checkbox checked
 
-    // Use showGeneralDialog for custom transitions
     return showGeneralDialog<void>(
       context: context,
-      barrierDismissible: true, // Allow dismissing by tapping outside
-      barrierLabel: MaterialLocalizations.of(context)
-          .modalBarrierDismissLabel, // Accessibility label
-      barrierColor: Colors.black54, // Dimmed background
-      transitionDuration:
-          const Duration(milliseconds: 350), // Adjusted duration for smoothness
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (context, animation, secondaryAnimation) {
-        // This builds the actual content of the dialog
-        // Use StatefulBuilder to manage dialog's internal state locally
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            // ... (keep theme, colorScheme, screenSize, spacing variables) ...
             final ThemeData theme = Theme.of(context);
             final ColorScheme colorScheme = theme.colorScheme;
-            // Get screen size for relative sizing
             final Size screenSize = MediaQuery.of(context).size;
-            final double dialogWidth = screenSize.width * 0.8;
-            final double dialogPadding =
-                screenSize.width * 0.05; // Relative padding
-            final double verticalSpacingSmall =
-                screenSize.height * 0.015; // Relative small spacing
-            final double verticalSpacingMedium =
-                screenSize.height * 0.025; // Relative medium spacing
-            final double verticalSpacingLarge =
-                screenSize.height * 0.03; // Relative large spacing
+            final double dialogWidth =
+                screenSize.width * 0.85; // Slightly wider
+            final double dialogPadding = screenSize.width * 0.05;
+            final double verticalSpacingSmall = screenSize.height * 0.01;
+            final double verticalSpacingMedium = screenSize.height * 0.02;
+            final double verticalSpacingLarge = screenSize.height * 0.03;
 
-            // Dialog content styling
             final TextStyle dialogTextStyle = GoogleFonts.baloo2(
-              fontSize: 18, // Keep font size fixed for now, or make relative?
+              fontSize: 16, // Slightly smaller for more content
               color: Colors.white,
             );
             final TextStyle titleTextStyle = GoogleFonts.baloo2(
-              fontSize: 24, // Keep font size fixed for now
+              fontSize: 22, // Adjust size
               fontWeight: FontWeight.bold,
               color: Colors.white,
               shadows: [
@@ -158,22 +215,72 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             );
+            final TextStyle labelTextStyle = dialogTextStyle.copyWith(
+                fontWeight: FontWeight.bold, fontSize: 18);
 
-            // Return the AlertDialog structure
+            // --- Custom Button Builder ---
+            Widget buildSelectionButton<T>({
+              required String text,
+              IconData? icon,
+              required T value,
+              required T groupValue,
+              required ValueChanged<T> onChanged,
+            }) {
+              bool isSelected = (value == groupValue);
+              final Color bgColor =
+                  isSelected ? Colors.white : Colors.white.withOpacity(0.15);
+              final Color fgColor = isSelected
+                  ? const Color.fromARGB(255, 84, 51, 255)
+                  : Colors.white; // Dialog accent or white
+              final double elevation = isSelected ? 4.0 : 1.0;
+              final BorderSide borderSide = isSelected
+                  ? BorderSide(color: Colors.white.withOpacity(0.5), width: 1.5)
+                  : BorderSide.none;
+
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0), // Spacing between buttons
+                  child: ElevatedButton.icon(
+                    icon: icon != null
+                        ? Icon(icon, size: 18, color: fgColor)
+                        : const SizedBox.shrink(),
+                    label: Text(text,
+                        style: GoogleFonts.baloo2(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: bgColor,
+                      foregroundColor: fgColor,
+                      elevation: elevation,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12), // Adjust padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: borderSide,
+                      ),
+                      // Animation for selection change (optional but nice)
+                      animationDuration: const Duration(milliseconds: 200),
+                    ),
+                    onPressed: () => onChanged(value),
+                  ),
+                ),
+              );
+            }
+            // --- End Custom Button Builder ---
+
             return AlertDialog(
               backgroundColor: Colors.transparent,
               contentPadding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              // Wrap the content in a Material widget to ensure theme application if needed
               content: Material(
                 type: MaterialType.transparency,
                 child: Container(
-                  width: dialogWidth, // Use calculated width
-                  padding:
-                      EdgeInsets.all(dialogPadding), // Use relative padding
+                  width: dialogWidth,
+                  padding: EdgeInsets.all(dialogPadding),
                   decoration: BoxDecoration(
+                    // ... (keep existing gradient, border, shadow) ...
                     borderRadius: BorderRadius.circular(15.0),
                     gradient: const LinearGradient(
                       colors: [
@@ -200,57 +307,56 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: ListBody(
                       children: <Widget>[
                         Center(
-                          child: Text(
-                            'Select Game Mode',
-                            style: titleTextStyle,
-                          ),
+                          child: Text('Game Setup', style: titleTextStyle),
                         ),
-                        SizedBox(
-                            height:
-                                verticalSpacingMedium), // Use relative spacing
-                        // Radio buttons
-                        _buildRadioListTile(
-                          title: _spinMode,
-                          value: _spinMode,
-                          groupValue: currentSelection,
-                          onChanged: (String? value) {
-                            setDialogState(() {
-                              currentSelection = value;
-                            });
-                          },
-                          textStyle: dialogTextStyle,
-                          activeColor: Colors.white,
+                        SizedBox(height: verticalSpacingMedium),
+
+                        // Game Mode Selection
+                        Text('Game Mode',
+                            style: labelTextStyle, textAlign: TextAlign.center),
+                        SizedBox(height: verticalSpacingSmall),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: GameMode.values
+                              .map((mode) => buildSelectionButton<GameMode>(
+                                    text: mode.displayText
+                                        .split(' ')
+                                        .first, // Short text
+                                    value: mode,
+                                    groupValue: currentModeSelection,
+                                    onChanged: (value) {
+                                      setDialogState(
+                                          () => currentModeSelection = value);
+                                    },
+                                  ))
+                              .toList(),
                         ),
-                        _buildRadioListTile(
-                          title: _autoNextMode,
-                          value: _autoNextMode,
-                          groupValue: currentSelection,
-                          onChanged: (String? value) {
-                            setDialogState(() {
-                              currentSelection = value;
-                            });
-                          },
-                          textStyle: dialogTextStyle,
-                          activeColor: Colors.white,
+                        SizedBox(height: verticalSpacingLarge),
+
+                        // Age Group Selection
+                        Text('Age Group',
+                            style: labelTextStyle, textAlign: TextAlign.center),
+                        SizedBox(height: verticalSpacingSmall),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: AgeGroup.values
+                              .map((age) => buildSelectionButton<AgeGroup>(
+                                    text: age.displayText,
+                                    icon: age.displayIcon,
+                                    value: age,
+                                    groupValue: currentAgeSelection,
+                                    onChanged: (value) {
+                                      setDialogState(
+                                          () => currentAgeSelection = value);
+                                    },
+                                  ))
+                              .toList(),
                         ),
-                        _buildRadioListTile(
-                          title: _randomMode,
-                          value: _randomMode,
-                          groupValue: currentSelection,
-                          onChanged: (String? value) {
-                            setDialogState(() {
-                              currentSelection = value;
-                            });
-                          },
-                          textStyle: dialogTextStyle,
-                          activeColor: Colors.white,
-                        ),
-                        SizedBox(
-                            height:
-                                verticalSpacingSmall), // Use relative spacing
-                        // Checkbox
+                        SizedBox(height: verticalSpacingMedium),
+
+                        // Checkbox (using the existing helper)
                         _buildCheckboxListTile(
-                          title: 'Save Selection',
+                          title: 'Save Game Mode', // Updated text
                           value: currentSaveSelection,
                           onChanged: (bool? value) {
                             setDialogState(() {
@@ -261,16 +367,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           activeColor: Colors.white,
                           checkColor: colorScheme.primary,
                         ),
-                        SizedBox(
-                            height:
-                                verticalSpacingLarge), // Use relative spacing
+                        SizedBox(height: verticalSpacingLarge),
 
-                        // Buttons
+                        // Buttons (using existing styling)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            // Cancel Button
                             TextButton(
+                              // ... (keep existing cancel button style) ...
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.white70,
                                 padding: EdgeInsets.symmetric(
@@ -280,18 +384,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                         dialogPadding * 0.4 // Relative padding
                                     ),
                               ),
-                              child: Text(
-                                'Cancel',
-                                style: GoogleFonts.baloo2(
-                                    fontSize: 16), // Keep fixed
-                              ),
+                              child: Text('Cancel',
+                                  style: GoogleFonts.baloo2(fontSize: 16)),
                               onPressed: () {
-                                Navigator.of(context)
-                                    .pop(); // Use the outer context for pop
+                                Navigator.of(context).pop();
                               },
                             ),
-                            // Start Button
                             ElevatedButton(
+                              // ... (keep existing start button style) ...
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor:
@@ -306,55 +406,42 @@ class _MyHomePageState extends State<MyHomePage> {
                                         dialogPadding * 0.5 // Relative padding
                                     ),
                               ),
-                              child: Text(
-                                'Start',
-                                style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16), // Keep fixed
-                              ),
+                              child: Text('Start',
+                                  style: GoogleFonts.baloo2(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
                               onPressed: () {
-                                if (currentSelection != null) {
-                                  // Save state and preferences *before* navigating
-                                  final String finalSelection =
-                                      currentSelection!;
-                                  final bool finalSave = currentSaveSelection;
+                                // Both selections are guaranteed non-null due to initialization
+                                final GameMode finalGameMode =
+                                    currentModeSelection;
+                                final AgeGroup finalAgeGroup =
+                                    currentAgeSelection;
+                                final bool finalSave = currentSaveSelection;
 
-                                  // Update state immediately
-                                  setState(() {
-                                    _selectedGameMode = finalSelection;
-                                    _saveSelection = finalSave;
-                                  });
-                                  // Save preference asynchronously (don't wait)
-                                  _saveModePreference(finalSelection);
+                                // Update main screen state
+                                setState(() {
+                                  _selectedGameModeEnum = finalGameMode;
+                                  _selectedAgeGroupEnum = finalAgeGroup;
+                                  _saveSelection = finalSave;
+                                });
+                                // Save preference if needed
+                                _saveModePreference(finalGameMode);
 
-                                  print(
-                                      "Selected mode: $finalSelection, Save: $finalSave. Navigating...");
+                                print(
+                                    "Selected Mode: ${finalGameMode.name}, Age Group: ${finalAgeGroup.name}, Save: $finalSave. Starting game...");
 
-                                  // Pop the dialog *first*
-                                  Navigator.of(context).pop();
+                                Navigator.of(context).pop(); // Close the dialog
 
-                                  // Then navigate to the Age Group Screen
-                                  Navigator.push(
-                                    this.context, // Use the state's context
-                                    MaterialPageRoute(
-                                      builder: (context) => AgeGroupScreen(
-                                        selectedGameMode: finalSelection,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  // Use ScaffoldMessenger of the main context
-                                  ScaffoldMessenger.of(
-                                          this.context) // Use this.context
-                                      .showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Please select a game mode!',
-                                          style: GoogleFonts.baloo2()),
-                                      backgroundColor: Colors.redAccent,
-                                    ),
-                                  );
-                                }
+                                // TODO: Navigate directly to the actual game screen
+                                // Example: Navigator.push(context, MaterialPageRoute(builder: (_) => GameScreen(mode: finalGameMode, ageGroup: finalAgeGroup)));
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Starting Game (Mode: ${finalGameMode.displayText}, Age: ${finalAgeGroup.displayText})',
+                                        style: GoogleFonts.baloo2()),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
                               },
                             ),
                           ],
@@ -369,54 +456,22 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
-        // Smooth slide animation (from bottom up)
+        // ... (keep existing transition) ...
         const begin = Offset(0.0, 0.3); // Start slightly lower
         const end = Offset.zero;
-        // Use a smooth curve like easeOutCubic
         final curve = Curves.easeOutCubic;
         final tween =
             Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         final offsetAnimation = animation.drive(tween);
-
-        // Apply only the slide transition for smoothness
         return SlideTransition(
           position: offsetAnimation,
-          child: child, // The child is the dialog built by pageBuilder
+          child: child,
         );
       },
     );
   }
 
-  // Helper for RadioListTile styling
-  Widget _buildRadioListTile({
-    required String title,
-    required String value,
-    required String? groupValue,
-    required ValueChanged<String?> onChanged,
-    required TextStyle textStyle,
-    required Color activeColor,
-  }) {
-    return RadioListTile<String>(
-      title: Text(title, style: textStyle),
-      value: value,
-      groupValue: groupValue,
-      onChanged: onChanged,
-      activeColor: activeColor,
-      contentPadding: EdgeInsets.zero,
-      // Make the tile dense
-      dense: true,
-      // Change radio button color when inactive
-      fillColor:
-          MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-        if (states.contains(MaterialState.selected)) {
-          return activeColor; // Color when selected
-        }
-        return Colors.white70; // Color when not selected
-      }),
-    );
-  }
-
-  // Helper for CheckboxListTile styling
+  // Helper for CheckboxListTile styling (keep as is)
   Widget _buildCheckboxListTile({
     required String title,
     required bool value,
@@ -425,6 +480,7 @@ class _MyHomePageState extends State<MyHomePage> {
     required Color activeColor,
     required Color checkColor,
   }) {
+    // ...existing code...
     return CheckboxListTile(
       title: Text(title, style: textStyle),
       value: value,
@@ -441,17 +497,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // static const double wideLayoutThreshold = 600.0; // Removed threshold
-
   @override
   Widget build(BuildContext context) {
-    // ... (keep existing variables like shadowColor, screenSize, etc.) ...
-    final Color shadowColor =
-        Colors.black.withAlpha((0.3 * 255).round()); // 0.3 opacity
-    // Get screen dimensions for relative sizing
-    final Size screenSize = MediaQuery.of(context).size;
-    final double screenWidth = screenSize.width;
-    final double screenHeight = screenSize.height;
+    // ... (keep existing build method structure) ...
 
     return Scaffold(
       appBar: AppBar(
@@ -461,14 +509,13 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
-      // Use MediaQuery directly instead of LayoutBuilder for screen size
       body: Container(
-        // Moved Container outside LayoutBuilder
+        // ... (keep existing background gradient) ...
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-               Color.fromARGB(255, 252, 118, 84),
-               Color.fromARGB(255, 245, 64, 100),
+              Color.fromARGB(255, 252, 118, 84),
+              Color.fromARGB(255, 245, 64, 100),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -476,41 +523,31 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: Center(
           child: ConstrainedBox(
+            // ... (keep existing constraints) ...
             constraints: const BoxConstraints(
                 maxWidth: 800), // Keep max width constraint
             child: LayoutBuilder(
-              // Keep LayoutBuilder if needed for constraints later, but sizing is now based on MediaQuery
               builder: (context, constraints) {
-                // Use screen dimensions for relative sizing
-                final double horizontalPadding = screenWidth * 0.12;
-                final double buttonWidth = screenWidth * 0.75;
-                // Use screen height for vertical spacing
-                final double verticalSpacing = screenHeight * 0.05;
-                // Keep button padding fixed or make slightly relative if needed
-                final double buttonVerticalPadding = 30.0;
-                final double iconSize = 50.0; // Keep fixed for now
-                final double fontSize = 25.0; // Keep fixed for now
-                final double iconWidgetSize =
-                    screenHeight * 0.08; // Relative to height
-                final double spacingAfterIcon =
-                    screenHeight * 0.06; // Relative to height
-                final double minButtonHeight =
-                    screenHeight * 0.07; // Relative to height
-                // Adjust top spacing relative to screen height, slightly less to move icon up
-                final double topSpacing =
-                    screenHeight * 0.15; // Reduced from 0.18
+                // ... (keep existing layout variables) ...
+                final Color shadowColor =
+                    Colors.black.withAlpha((0.3 * 255).round()); // 0.3 opacity
+                // Get screen dimensions for relative sizing
+                final Size screenSize = MediaQuery.of(context).size;
+                final double screenWidth = screenSize.width;
+                final double screenHeight = screenSize.height;
 
                 return Padding(
-                  // Moved Padding inside LayoutBuilder
+                  // ... (keep existing padding) ...
                   padding: EdgeInsets.symmetric(
-                      horizontal: horizontalPadding), // Use updated padding
+                      horizontal: screenWidth * 0.12), // Use updated padding
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(height: topSpacing), // Use adjusted top spacing
+                      // ... (keep existing icon and spacing) ...
+                      SizedBox(height: screenHeight * 0.15),
                       Icon(
                         Icons.sentiment_satisfied_alt,
-                        size: iconWidgetSize, // Use updated size
+                        size: screenHeight * 0.08,
                         color: Colors.white.withAlpha((0.9 * 255).round()),
                         shadows: [
                           Shadow(
@@ -520,23 +557,26 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: spacingAfterIcon), // Use updated spacing
+                      SizedBox(height: screenHeight * 0.06),
 
-                      // Update the onPressed for Start Game button
+                      // Update the onPressed for Start Game button to call the new dialog
                       _buildStyledButton('Start Game', Icons.play_arrow, () {
-                        print("Start Game pressed - showing dialog");
-                        _showGameModeDialog(
-                            context); // Call the dialog function
+                        print("Start Game pressed - showing combined dialog");
+                        _showGameSelectionDialog(
+                            context); // Call the new dialog function
                       }),
-                      SizedBox(height: verticalSpacing), // Use updated spacing
+                      SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton('Add Truths', Icons.add, () {
                         print("Add Truths pressed");
+                        // TODO: Navigate to Add Truths screen
                       }),
-                      SizedBox(height: verticalSpacing), // Use updated spacing
+                      SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton('Add Dares', Icons.add, () {
                         print("Add Dares pressed");
+                        // TODO: Navigate to Add Dares screen
                       }),
-                      const Spacer(), // Pushes the following Row to the bottom
+                      const Spacer(),
+                      // ... (keep existing bottom bar) ...
                       Padding(
                         padding: EdgeInsets.only(
                             bottom: screenHeight *
@@ -545,7 +585,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             _buildBottomBarButton(Icons.star, () {
-                              // Changed from star_border to star
                               print("Ratings pressed");
                             }),
                             _buildBottomBarButton(Icons.share, () {
@@ -568,9 +607,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Restore conditional styling for buttons
+  // Keep _buildStyledButton (for main screen buttons)
   Widget _buildStyledButton(
       String text, IconData iconData, VoidCallback onPressed) {
+    // ... (existing implementation remains unchanged) ...
     final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round());
     final Size screenSize = MediaQuery.of(context).size; // Access context here
     final double screenWidth = screenSize.width;
@@ -639,15 +679,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Helper method for bottom bar buttons to keep build method cleaner
+  // Keep _buildBottomBarButton
   Widget _buildBottomBarButton(IconData icon, VoidCallback onPressed) {
-    // Apply styling exactly like the 'Start Game' button
+    // ... (existing implementation remains unchanged) ...
     final Color shadowColor =
         Colors.black.withAlpha((0.3 * 255).round()); // Consistent shadow
 
     return Container(
       decoration: BoxDecoration(
-        // Keep the shadow separate as ElevatedButton shadow might clip
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -660,59 +699,23 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white, // White background like Start Game
-          foregroundColor:
-              Colors.black, // Black icon color like Start Game text
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(10), // Rounded corners like Start Game
+            borderRadius: BorderRadius.circular(10),
           ),
-          padding: const EdgeInsets.all(15), // Adjust padding for icon size
-          elevation: 0, // Elevation handled by Container shadow
-          shadowColor: Colors.transparent, // Shadow handled by Container
-          minimumSize: const Size(60, 60), // Ensure a decent tap target size
-        ),
-        onPressed: onPressed,
-        child: Icon(
-          icon,
-          color: Colors.black, // Explicitly black icon
-          size: 30.0, // Adjust size as needed
-        ),
-      ),
-    );
-
-    /* Previous implementation:
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle, // Make it circular
-        color: Colors.white.withOpacity(0.15), // Subtle background like other buttons
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            blurRadius: 8.0,
-            spreadRadius: 1.0,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent, // Use container color
-          foregroundColor: iconColor, // Color for splash/feedback
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(12), // Adjust padding for icon size
-          elevation: 0, // Elevation handled by Container shadow
+          padding: const EdgeInsets.all(15),
+          elevation: 0,
           shadowColor: Colors.transparent,
+          minimumSize: const Size(60, 60),
         ),
         onPressed: onPressed,
         child: Icon(
           icon,
-          color: iconColor,
-          size: 30.0, // Adjust size as needed
-          // Shadows applied via Container
+          color: Colors.black,
+          size: 30.0,
         ),
       ),
     );
-    */
   }
 }

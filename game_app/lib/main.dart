@@ -629,14 +629,40 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.of(dialogPageContext)
                                       .pop(); // Close the main selection dialog
 
-                                  // Navigate to the Add Players screen
+                                  // Navigate to the Add Players screen using a custom transition
                                   Navigator.push(
                                     this.context, // Use the original context from MyHomePage
-                                    MaterialPageRoute(
-                                      builder: (context) => AddPlayersScreen(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          AddPlayersScreen(
                                         gameMode: finalGameMode,
                                         ageGroup: finalAgeGroup,
                                       ),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        // Define the slide animation from right to left
+                                        const begin = Offset(
+                                            1.0, 0.0); // Start from the right
+                                        const end =
+                                            Offset.zero; // End at the center
+                                        const curve =
+                                            Curves.ease; // Animation curve
+
+                                        final tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+                                        final offsetAnimation =
+                                            animation.drive(tween);
+
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: const Duration(
+                                          milliseconds:
+                                              300), // Optional: Adjust duration
                                     ),
                                   );
                                 }

@@ -317,7 +317,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                 if (_players.length >= 2) // Only show if 2 or more players
                   Padding(
                     // Increased bottom padding
-                    padding: const EdgeInsets.only(bottom: 30.0),
+                    padding: const EdgeInsets.only(bottom: 69.0),
                     // Wrap ElevatedButton in Container for shadow, similar to _buildStyledButton
                     child: Container(
                       width: MediaQuery.of(context).size.width *
@@ -398,7 +398,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                 else // Optional: Show a disabled hint or just space if less than 2 players
                   Padding(
                     padding: const EdgeInsets.only(
-                        bottom: 30.0), // Match bottom padding
+                        bottom: 69.0), // Match bottom padding
                     child: Text(
                       'Add at least 2 players',
                       style: GoogleFonts.baloo2(

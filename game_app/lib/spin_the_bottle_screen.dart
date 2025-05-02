@@ -4,6 +4,7 @@ import 'package:flutter/physics.dart'; // Import for physics simulation
 
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
+import 'truth_dare_select_screen.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -113,6 +114,18 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
     // Optional: Add haptic feedback or sound effect here
     print("Spin complete. Final Angle: $normalizedAngle, Selected Player Index: $selectedIndex");
+
+    // Navigate to Truth or Dare selection screen
+    if (selectedIndex >= 0 && selectedIndex < widget.players.length) {
+      final playerName = widget.players[selectedIndex];
+      Future.delayed(const Duration(milliseconds: 700), () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => TruthDareSelectScreen(playerName: playerName),
+          ),
+        );
+      });
+    }
   }
 
   // --- Calculate Selected Player ---

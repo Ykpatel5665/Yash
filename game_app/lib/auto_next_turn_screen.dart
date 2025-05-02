@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
+import 'package:google_fonts/google_fonts.dart';
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the new painter widget
 
@@ -80,38 +80,44 @@ class AutoNextTurnScreen extends StatelessWidget {
         titleSpacing: appBarTheme.titleSpacing,
       ),
       extendBodyBehindAppBar: true, // Extend body behind AppBar
-      body: Container( // Wrap body content in Container for gradient
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: backgroundGradient,
-        ),
-        child: SafeArea( // Use SafeArea
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Display the Player Circle
-                PlayerCircle(
-                  players: players,
-                  size: MediaQuery.of(context).size.width * 0.8, // Adjust size as needed
-                ),
-                const SizedBox(height: 40), // Add spacing
+      body: Column(
+        children: [
+          Expanded(
+            child: Container( // Wrap body content in Container for gradient
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: backgroundGradient,
+              ),
+              child: SafeArea( // Use SafeArea
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Display the Player Circle
+                      PlayerCircle(
+                        players: players,
+                        size: MediaQuery.of(context).size.width * 0.8, // Adjust size as needed
+                      ),
+                      const SizedBox(height: 40), // Add spacing
 
-                // Placeholder for current player display or game action button
-                Text(
-                  'Next turn: [Player Name]', // Placeholder text
-                  style: GoogleFonts.baloo2(fontSize: 20, color: Colors.white),
+                      // Placeholder for current player display or game action button
+                      Text(
+                        'Next turn: [Player Name]', // Placeholder text
+                        style: GoogleFonts.baloo2(fontSize: 20, color: Colors.white),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Age Group: ${ageGroup.displayText}',
+                        style: GoogleFonts.baloo2(fontSize: 16, color: Colors.white70),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'Age Group: ${ageGroup.displayText}',
-                  style: GoogleFonts.baloo2(fontSize: 16, color: Colors.white70),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

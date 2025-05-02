@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the new painter widget
 
@@ -78,29 +77,35 @@ class RandomTurnScreen extends StatelessWidget {
         titleSpacing: appBarTheme.titleSpacing,
       ),
       extendBodyBehindAppBar: true, // Extend body behind AppBar
-      body: Container(
-        // Wrap body content in Container for gradient
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: backgroundGradient,
-        ),
-        child: SafeArea(
-          // Use SafeArea
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Display the Player Circle
-                PlayerCircle(
-                  players: players,
-                  size: MediaQuery.of(context).size.width *
-                      0.8, // Adjust size as needed
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              // Wrap body content in Container for gradient
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: backgroundGradient,
+              ),
+              child: SafeArea(
+                // Use SafeArea
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Display the Player Circle
+                      PlayerCircle(
+                        players: players,
+                        size: MediaQuery.of(context).size.width *
+                            0.8, // Adjust size as needed
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

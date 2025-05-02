@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// Removed import 'age_group_screen.dart'
 import 'add_players_screen.dart'; // Import the new screen
 
 // Define Enums for selections
@@ -56,7 +55,7 @@ extension AgeGroupExtension on AgeGroup {
   }
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
@@ -723,6 +722,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     // ... (keep existing build method structure) ...
 
     return Scaffold(
@@ -733,7 +733,7 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
-      body: Container(
+body: Container(
         // ... (keep existing background gradient) ...
         decoration: const BoxDecoration(
           gradient: LinearGradient(

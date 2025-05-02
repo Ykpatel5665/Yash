@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math; // Import math for rotation
 import 'package:flutter/physics.dart'; // Import for physics simulation
-
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
 import 'truth_dare_select_screen.dart';
@@ -246,10 +245,13 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   // Helper function to build styled icon buttons (similar to home screen)
   Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double minBtn = 44, maxBtn = 70;
+    final double btnSize = (screenSize.width * 0.13).clamp(minBtn, maxBtn);
+    final double iconSize = (screenSize.width * 0.07).clamp(22, 36);
     const Color baseColor = Color.fromARGB(255, 255, 255, 255);
     final Color shadowDark = Colors.black.withOpacity(0.3);
     final Color shadowLight = Colors.white.withOpacity(0.4);
-
     return Container(
       decoration: BoxDecoration(
         color: baseColor.withOpacity(0.8),
@@ -261,20 +263,20 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent, // Make button transparent
-          foregroundColor: const Color.fromARGB(255, 0, 0, 0), // Icon color
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color.fromARGB(255, 0, 0, 0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          padding: const EdgeInsets.all(15),
+          padding: EdgeInsets.all(btnSize * 0.25),
           elevation: 0,
           shadowColor: Colors.transparent,
-          minimumSize: const Size(60, 60), // Square button
+          minimumSize: Size(btnSize, btnSize),
         ),
         onPressed: onPressed,
         child: Icon(
           icon,
-          size: 30.0,
+          size: iconSize,
         ),
       ),
     );
@@ -322,7 +324,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                   BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
                 ],
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 20),
+              // Changed icon to home
+              child: const Icon(Icons.home_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 24),
             ),
           ),
         ),
@@ -335,173 +338,159 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         titleSpacing: appBarTheme.titleSpacing,
       ),
       extendBodyBehindAppBar: true,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(gradient: backgroundGradient),
-        child: SafeArea(
-          child: LayoutBuilder( // Use LayoutBuilder for responsive sizing
-            builder: (context, constraints) {
-              // Calculate responsive sizes based on available height/width
-              final double availableHeight = constraints.maxHeight;
-              final double availableWidth = constraints.maxWidth;
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(gradient: backgroundGradient),
+              child: SafeArea(
+                child: LayoutBuilder( // Use LayoutBuilder for responsive sizing
+                  builder: (context, constraints) {
+                    // Calculate responsive sizes based on available height/width
+                    final double availableHeight = constraints.maxHeight;
+                    final double availableWidth = constraints.maxWidth;
 
-              // Define spacing percentages (adjust these as needed)
-              final double topSpacingPercent = 0.08; // Space between AppBar and Wheel
-              final double bottomSpacingPercent = 0.06; // Space between Wheel and Buttons
-              final double buttonBottomPaddingPercent = 0.05; // Padding below buttons
+                    // Define spacing percentages (adjust these as needed)
+                    final double topSpacingPercent = 0.08; // Space between AppBar and Wheel
+                    final double bottomSpacingPercent = 0.06; // Space between Wheel and Buttons
+                    final double buttonBottomPaddingPercent = 0.05; // Padding below buttons
 
-              // Calculate available height for the wheel itself
-              final double wheelMaxHeight = availableHeight * (1.0 -
-                  topSpacingPercent -
-                  bottomSpacingPercent -
-                  buttonBottomPaddingPercent -
-                  0.1); // Subtract space for buttons row height (approx 0.1)
+                    // Calculate available height for the wheel itself
+                    final double wheelMaxHeight = availableHeight * (1.0 -
+                        topSpacingPercent -
+                        bottomSpacingPercent -
+                        buttonBottomPaddingPercent -
+                        0.1); // Subtract space for buttons row height (approx 0.1)
 
-              // Adjust circle size based on available space
-              final double circleDiameter = math.min(availableWidth * 0.8, wheelMaxHeight);
-              final double bottleHeight = circleDiameter * 0.7; // Increased multiplier from 0.6
+                    // Adjust circle size based on available space
+                    final double circleDiameter = math.min(availableWidth * 0.8, wheelMaxHeight);
+                    final double bottleHeight = circleDiameter * 0.7; // Increased multiplier from 0.6
 
-              // Calculate spacing in pixels
-              final double topSpacing = availableHeight * topSpacingPercent;
-              final double bottomSpacing = availableHeight * bottomSpacingPercent;
-              final double buttonBottomPadding = availableHeight * buttonBottomPaddingPercent;
-              final double buttonRowHorizontalPadding = availableWidth * 0.05;
+                    // Calculate spacing in pixels
+                    final double topSpacing = availableHeight * topSpacingPercent;
+                    final double bottomSpacing = availableHeight * bottomSpacingPercent;
+                    final double buttonBottomPadding = availableHeight * buttonBottomPaddingPercent;
+                    final double buttonRowHorizontalPadding = availableWidth * 0.05;
 
-              // Determine selected player name for display
-              String selectedPlayerName = "";
-              if (_gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null && _selectedPlayerIndex! < widget.players.length) {
-                selectedPlayerName = widget.players[_selectedPlayerIndex!];
-              }
+                    // Determine selected player name for display
+                    String selectedPlayerName = "";
+                    if (_gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null && _selectedPlayerIndex! < widget.players.length) {
+                      selectedPlayerName = widget.players[_selectedPlayerIndex!];
+                    }
 
-              // Use Column for vertical spacing control
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Push elements apart
-                children: [
-                  SizedBox(height: topSpacing), // Space below AppBar
+                    // Use Column for vertical spacing control
+                    return SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(height: topSpacing), // Space below AppBar
 
-                  // Wheel Stack (not centered anymore, positioned by Column)
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Player Circle with responsive size and highlight
-                      PlayerCircle(
-                        players: widget.players,
-                        size: circleDiameter,
-                        // Highlight the selected player
-                        highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
-                      ),
+                              // Wheel Stack (not centered anymore, positioned by Column)
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Player Circle with responsive size and highlight
+                                  PlayerCircle(
+                                    players: widget.players,
+                                    size: circleDiameter,
+                                    // Highlight the selected player
+                                    highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
+                                  ),
 
-                      // Spinning Bottle with responsive size
-                      Positioned(
-                        child: GestureDetector(
-                          onPanStart: _onPanStart,
-                          onPanUpdate: _onPanUpdate,
-                          onPanEnd: _onPanEnd,
-                          // Disable gestures while spinning or choosing T/D
-                          behavior: (_gamePhase == GamePhase.readyToSpin)
-                              ? HitTestBehavior.deferToChild // Allow gestures only when ready
-                              : HitTestBehavior.opaque, // Block gestures otherwise
-                          child: Transform.rotate(
-                            angle: _currentAngle,
-                            child: Image.asset(
-                              'assets/bottle.png',
-                              height: bottleHeight,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  height: bottleHeight,
-                                  color: Colors.red.withOpacity(0.5),
-                                  child: const Center(child: Text('Add bottle.png to assets!', style: TextStyle(color: Colors.white)))
-                                );
-                              },
-                            ),
+                                  // Spinning Bottle with responsive size
+                                  Positioned(
+                                    child: GestureDetector(
+                                      onTap: (_gamePhase == GamePhase.readyToSpin)
+                                          ? () {
+                                              final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
+                                              _startSpin(randomVelocity);
+                                            }
+                                          : null,
+                                      onPanStart: _onPanStart,
+                                      onPanUpdate: _onPanUpdate,
+                                      onPanEnd: _onPanEnd,
+                                      // Disable gestures while spinning or choosing T/D
+                                      behavior: (_gamePhase == GamePhase.readyToSpin)
+                                          ? HitTestBehavior.deferToChild // Allow gestures only when ready
+                                          : HitTestBehavior.opaque, // Block gestures otherwise
+                                      child: Transform.rotate(
+                                        angle: _currentAngle,
+                                        child: Image.asset(
+                                          'assets/bottle.png',
+                                          height: bottleHeight,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              height: bottleHeight,
+                                              color: Colors.red.withOpacity(0.5),
+                                              child: const Center(child: Text('Add bottle.png to assets!', style: TextStyle(color: Colors.white)))
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: bottomSpacing), // Space above buttons
+
+                              // Bottom Action Buttons
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: buttonBottomPadding,
+                                  left: buttonRowHorizontalPadding,
+                                  right: buttonRowHorizontalPadding,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    _buildIconButton(
+                                      _isMuted ? Icons.volume_off : Icons.volume_up,
+                                      () {
+                                        setState(() {
+                                          _isMuted = !_isMuted;
+                                        });
+                                        print("Volume Toggled: ${_isMuted ? 'Muted' : 'Unmuted'}");
+                                        // TODO: Implement actual volume control logic
+                                      },
+                                    ),
+                                    _buildIconButton(
+                                      Icons.emoji_events_outlined, // Use trophy icon
+                                      () {
+                                        print("Scoreboard pressed");
+                                        // TODO: Navigate to Scoreboard screen or show dialog
+                                      },
+                                    ),
+                                    _buildIconButton(
+                                      Icons.play_circle_outline,
+                                      () {
+                                        print("Watch Ad / Premium pressed");
+                                        // TODO: Implement ad watching or premium feature logic
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
-
-                  // --- Conditional Button Area ---
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: availableHeight * 0.03),
-                    child: _buildInteractionArea(selectedPlayerName), // Use helper for buttons
-                  ),
-                  // --- End Conditional Button Area ---
-
-                  SizedBox(height: bottomSpacing), // Space above buttons
-
-                  // Bottom Action Buttons
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: buttonBottomPadding,
-                      left: buttonRowHorizontalPadding,
-                      right: buttonRowHorizontalPadding,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        _buildIconButton(
-                          _isMuted ? Icons.volume_off : Icons.volume_up,
-                          () {
-                            setState(() {
-                              _isMuted = !_isMuted;
-                            });
-                            print("Volume Toggled: ${_isMuted ? 'Muted' : 'Unmuted'}");
-                            // TODO: Implement actual volume control logic
-                          },
-                        ),
-                        _buildIconButton(
-                          Icons.emoji_events_outlined, // Use trophy icon
-                          () {
-                            print("Scoreboard pressed");
-                            // TODO: Navigate to Scoreboard screen or show dialog
-                          },
-                        ),
-                        _buildIconButton(
-                          Icons.play_circle_outline,
-                          () {
-                            print("Watch Ad / Premium pressed");
-                            // TODO: Implement ad watching or premium feature logic
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  // Helper widget to build the Spin or Truth/Dare buttons
-  Widget _buildInteractionArea(String selectedPlayerName) {
-    // Only show the Spin button (no Truth/Dare buttons here)
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
-        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 5,
-        shadowColor: Colors.black.withOpacity(0.4),
-      ),
-      onPressed: (_gamePhase == GamePhase.readyToSpin)
-          ? () {
-              final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
-              _startSpin(randomVelocity);
-            }
-          : null,
-      child: (_gamePhase == GamePhase.spinning)
-          ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 3, color: Colors.black54),
-            )
-          : const Text('SPIN'),
     );
   }
 }

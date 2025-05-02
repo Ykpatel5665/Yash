@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 class PlayerCirclePainter extends CustomPainter {
   final List<String> players;
   final double radius;
+  final int? highlightedIndex; // Add this parameter
   // Define a new list of distinct, contrasting colors
   final List<Color> _distinctColors = [
     Colors.red,
@@ -22,7 +23,7 @@ class PlayerCirclePainter extends CustomPainter {
     // Add more distinct colors if needed
   ];
 
-  PlayerCirclePainter({required this.players, required this.radius});
+  PlayerCirclePainter({required this.players, required this.radius, this.highlightedIndex}); // Initialize here
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -133,7 +134,7 @@ class PlayerCirclePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant PlayerCirclePainter oldDelegate) {
     // Repaint if players list changes
-    return oldDelegate.players != players;
+    return oldDelegate.players != players || oldDelegate.highlightedIndex != highlightedIndex; // Add highlightedIndex check
   }
 }
 
@@ -141,11 +142,13 @@ class PlayerCirclePainter extends CustomPainter {
 class PlayerCircle extends StatelessWidget {
   final List<String> players;
   final double size; // Diameter of the circle
+  final int? highlightedIndex; // Add this parameter
 
   const PlayerCircle({
     super.key,
     required this.players,
     this.size = 300.0, // Default size
+    this.highlightedIndex, // Initialize here
   });
 
   @override
@@ -188,6 +191,7 @@ class PlayerCircle extends StatelessWidget {
           players: players,
           // Adjust radius slightly based on responsive border width
           radius: (size / 2) - (responsivePainterBorderWidth / 2),
+          highlightedIndex: highlightedIndex, // Pass to painter
         ),
       ),
     );

@@ -5,6 +5,9 @@ import 'package:flutter/physics.dart'; // Import for physics simulation
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
 
+// Define Game States
+enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
+
 // Convert to StatefulWidget
 class SpinTheBottleScreen extends StatefulWidget {
   final List<String> players;
@@ -28,6 +31,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   Animation<double>? _animation; // Animation object
   bool _isMuted = false; // State for volume button
 
+  // Game State Management
+  GamePhase _gamePhase = GamePhase.readyToSpin;
+  int? _selectedPlayerIndex; // Index of the player the bottle points to
+
   // Variables for gesture handling
   Offset? _startDragPos;
   double _startAngle = 0.0;
@@ -42,10 +49,20 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       lowerBound: -double.infinity, // Allow indefinite spinning
       upperBound: double.infinity,
     )..addListener(() {
-        setState(() {
-          _currentAngle = _animation?.value ?? _currentAngle;
-        });
-      });
+        // Only update angle if spinning or during manual drag
+        if (_gamePhase == GamePhase.spinning || _startDragPos != null) {
+          setState(() {
+            _currentAngle = _animation?.value ?? _currentAngle;
+          });
+        }
+      })..addStatusListener((status) {
+         // Handle animation completion
+         if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
+           if (_gamePhase == GamePhase.spinning) {
+             _onSpinComplete();
+           }
+         }
+       });
   }
 
   @override
@@ -56,6 +73,13 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   // --- Spin Logic ---
   void _startSpin(double velocity) {
+    if (_gamePhase != GamePhase.readyToSpin) return; // Prevent spinning if not ready
+
+    setState(() {
+      _gamePhase = GamePhase.spinning;
+      _selectedPlayerIndex = null; // Clear previous selection
+    });
+
     _controller.stop();
 
     // Adjust friction and velocity scaling for smoother spin
@@ -67,13 +91,60 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
     _animation = _controller.drive(Tween<double>(begin: _currentAngle, end: simulation.finalX));
 
-    _controller.animateWith(simulation).whenCompleteOrCancel(() {
-      // Optional: Snap to a final position or determine winner here
+    // Use animateWith for physics-based animation
+    _controller.animateWith(simulation);
+    // Completion is now handled by the status listener
+  }
+
+  // --- Called when spin animation finishes ---
+  void _onSpinComplete() {
+    // Normalize angle to be within 0 to 2*PI
+    final double finalAngle = _currentAngle % (2 * math.pi);
+    final normalizedAngle = finalAngle < 0 ? finalAngle + 2 * math.pi : finalAngle;
+
+    // Calculate selected player
+    final selectedIndex = _getSelectedPlayerIndex(normalizedAngle);
+
+    setState(() {
+      _currentAngle = normalizedAngle; // Snap to the final normalized angle
+      _gamePhase = GamePhase.awaitingTruthDare;
+      _selectedPlayerIndex = selectedIndex;
     });
+
+    // Optional: Add haptic feedback or sound effect here
+    print("Spin complete. Final Angle: $normalizedAngle, Selected Player Index: $selectedIndex");
+  }
+
+  // --- Calculate Selected Player ---
+  int _getSelectedPlayerIndex(double finalAngle) {
+    final int playerCount = widget.players.length;
+    if (playerCount == 0) return -1;
+
+    final double anglePerPlayer = (2 * math.pi) / playerCount;
+
+    // Normalize the final angle (bottle tip) to be within [0, 2*pi)
+    // *** CRITICAL ASSUMPTION: angle = 0 means the bottle tip points UP ***
+    final normalizedTipAngle = finalAngle % (2 * math.pi);
+    final positiveNormalizedTipAngle = normalizedTipAngle < 0 ? normalizedTipAngle + (2 * math.pi) : normalizedTipAngle;
+
+    // --- Select player based on the TIP's angle --- 
+    // Since the painter starts Player 0 at UP (0 in this relative frame),
+    // we can directly use the tip's angle.
+    int selectedIndex = (positiveNormalizedTipAngle / anglePerPlayer).floor();
+
+    // Ensure index is within bounds
+    selectedIndex = selectedIndex % playerCount;
+
+    print(
+        "Final Angle (Tip rel UP): $positiveNormalizedTipAngle, Selected Index (by Tip): $selectedIndex");
+
+    return selectedIndex;
   }
 
   // --- Gesture Handling ---
   void _onPanStart(DragStartDetails details) {
+    // Allow dragging only when ready to spin
+    if (_gamePhase != GamePhase.readyToSpin) return;
     _controller.stop();
     _startDragPos = details.localPosition;
     _startAngle = _currentAngle;
@@ -81,7 +152,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    if (_startDragPos == null) return;
+    if (_startDragPos == null || _gamePhase != GamePhase.readyToSpin) return;
 
     // Calculate center relative to the Stack
     final RenderBox box = context.findRenderObject() as RenderBox;
@@ -99,15 +170,42 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   }
 
   void _onPanEnd(DragEndDetails details) {
-    if (_startDragPos == null) return;
+    if (_startDragPos == null || _gamePhase != GamePhase.readyToSpin) return;
 
     // Use the primary velocity from the gesture detector
     // This is often more reliable, especially for flicks
     final double flickVelocity = details.primaryVelocity ?? 0.0;
 
     // Start the spin animation with the final velocity
-    _startSpin(flickVelocity);
+    // Only start if there was some velocity, otherwise just stop dragging
+    if (flickVelocity.abs() > 50) { // Threshold to prevent accidental spins
+       _startSpin(flickVelocity);
+    } else {
+       // If no significant flick, remain in readyToSpin state
+       // Optionally, add a slight animation back to a resting position if needed
+    }
     _startDragPos = null; // Reset drag start position
+  }
+
+  // --- Truth/Dare Action Handlers ---
+  void _onTruthSelected() {
+    if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
+    print("Player ${widget.players[_selectedPlayerIndex!]} chose TRUTH!");
+    // TODO: Implement actual Truth logic (e.g., show question)
+    setState(() {
+      _gamePhase = GamePhase.readyToSpin; // Reset for next turn
+      _selectedPlayerIndex = null;
+    });
+  }
+
+  void _onDareSelected() {
+    if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
+    print("Player ${widget.players[_selectedPlayerIndex!]} chose DARE!");
+    // TODO: Implement actual Dare logic (e.g., show challenge)
+    setState(() {
+      _gamePhase = GamePhase.readyToSpin; // Reset for next turn
+      _selectedPlayerIndex = null;
+    });
   }
 
   // Helper function to build styled icon buttons (similar to home screen)
@@ -226,13 +324,19 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
               // Adjust circle size based on available space
               final double circleDiameter = math.min(availableWidth * 0.8, wheelMaxHeight);
-              final double bottleHeight = circleDiameter * 0.6;
+              final double bottleHeight = circleDiameter * 0.7; // Increased multiplier from 0.6
 
               // Calculate spacing in pixels
               final double topSpacing = availableHeight * topSpacingPercent;
               final double bottomSpacing = availableHeight * bottomSpacingPercent;
               final double buttonBottomPadding = availableHeight * buttonBottomPaddingPercent;
               final double buttonRowHorizontalPadding = availableWidth * 0.05;
+
+              // Determine selected player name for display
+              String selectedPlayerName = "";
+              if (_gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null && _selectedPlayerIndex! < widget.players.length) {
+                selectedPlayerName = widget.players[_selectedPlayerIndex!];
+              }
 
               // Use Column for vertical spacing control
               return Column(
@@ -244,10 +348,12 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                   Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Player Circle with responsive size
+                      // Player Circle with responsive size and highlight
                       PlayerCircle(
                         players: widget.players,
                         size: circleDiameter,
+                        // Highlight the selected player
+                        highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
                       ),
 
                       // Spinning Bottle with responsive size
@@ -256,6 +362,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           onPanStart: _onPanStart,
                           onPanUpdate: _onPanUpdate,
                           onPanEnd: _onPanEnd,
+                          // Disable gestures while spinning or choosing T/D
+                          behavior: (_gamePhase == GamePhase.readyToSpin)
+                              ? HitTestBehavior.deferToChild // Allow gestures only when ready
+                              : HitTestBehavior.opaque, // Block gestures otherwise
                           child: Transform.rotate(
                             angle: _currentAngle,
                             child: Image.asset(
@@ -275,29 +385,12 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                     ],
                   ),
 
-                  // Spin Button
+                  // --- Conditional Button Area ---
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: availableHeight * 0.03), // Add some vertical padding
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Match bottom bar button background
-                        foregroundColor: Colors.black, // Match bottom bar button foreground
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
-                        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 5,
-                        shadowColor: Colors.black.withOpacity(0.4),
-                      ),
-                      onPressed: () {
-                        // Add some randomness to the spin velocity
-                        final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
-                        _startSpin(randomVelocity);
-                      },
-                      child: const Text('SPIN'),
-                    ),
+                    padding: EdgeInsets.symmetric(vertical: availableHeight * 0.03),
+                    child: _buildInteractionArea(selectedPlayerName), // Use helper for buttons
                   ),
+                  // --- End Conditional Button Area ---
 
                   SizedBox(height: bottomSpacing), // Space above buttons
 
@@ -346,4 +439,81 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       ),
     );
   }
+
+  // Helper widget to build the Spin or Truth/Dare buttons
+  Widget _buildInteractionArea(String selectedPlayerName) {
+    if (_gamePhase == GamePhase.awaitingTruthDare) {
+      // Show Truth/Dare buttons
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "$selectedPlayerName's Turn!",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightGreen,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 5,
+                ),
+                onPressed: _onTruthSelected,
+                child: const Text('TRUTH'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orangeAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 5,
+                ),
+                onPressed: _onDareSelected,
+                child: const Text('DARE'),
+              ),
+            ],
+          ),
+        ],
+      );
+    } else {
+      // Show Spin button (only enable when ready)
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
+          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 5,
+          shadowColor: Colors.black.withOpacity(0.4),
+        ),
+        // Disable button if not ready to spin
+        onPressed: (_gamePhase == GamePhase.readyToSpin)
+            ? () {
+                // Add some randomness to the spin velocity
+                final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
+                _startSpin(randomVelocity);
+              }
+            : null, // Disable onPressed if not ready
+        child: (_gamePhase == GamePhase.spinning)
+            ? const SizedBox( // Show spinner while spinning
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 3, color: Colors.black54),
+              )
+            : const Text('SPIN'),
+      );
+    }
+  }
 }
+
+// Ensure PlayerCircle accepts highlightedIndex
+// (Need to check/update player_circle_painter.dart if necessary)

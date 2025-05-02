@@ -115,15 +115,38 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     // Optional: Add haptic feedback or sound effect here
     print("Spin complete. Final Angle: $normalizedAngle, Selected Player Index: $selectedIndex");
 
-    // Navigate to Truth or Dare selection screen
+    // Show Truth or Dare selection as a popup dialog
     if (selectedIndex >= 0 && selectedIndex < widget.players.length) {
       final playerName = widget.players[selectedIndex];
-      Future.delayed(const Duration(milliseconds: 700), () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => TruthDareSelectScreen(playerName: playerName),
-          ),
+      Future.delayed(const Duration(milliseconds: 700), () async {
+        final result = await showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black54,
+          transitionDuration: const Duration(milliseconds: 350),
+          pageBuilder: (dialogContext, animation, secondaryAnimation) {
+            return Center(
+              child: _TruthDareDialog(playerName: playerName),
+            );
+          },
+          transitionBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 0.3);
+            const end = Offset.zero;
+            const curve = Curves.easeOutCubic;
+            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            final offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
         );
+        if (result == 'truth') {
+          _onTruthSelected();
+        } else if (result == 'dare') {
+          _onDareSelected();
+        }
       });
     }
   }
@@ -455,78 +478,157 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   // Helper widget to build the Spin or Truth/Dare buttons
   Widget _buildInteractionArea(String selectedPlayerName) {
-    if (_gamePhase == GamePhase.awaitingTruthDare) {
-      // Show Truth/Dare buttons
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "$selectedPlayerName's Turn!",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightGreen,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  elevation: 5,
-                ),
-                onPressed: _onTruthSelected,
-                child: const Text('TRUTH'),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orangeAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  elevation: 5,
-                ),
-                onPressed: _onDareSelected,
-                child: const Text('DARE'),
-              ),
-            ],
-          ),
-        ],
-      );
-    } else {
-      // Show Spin button (only enable when ready)
-      return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 5,
-          shadowColor: Colors.black.withOpacity(0.4),
-        ),
-        // Disable button if not ready to spin
-        onPressed: (_gamePhase == GamePhase.readyToSpin)
-            ? () {
-                // Add some randomness to the spin velocity
-                final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
-                _startSpin(randomVelocity);
-              }
-            : null, // Disable onPressed if not ready
-        child: (_gamePhase == GamePhase.spinning)
-            ? const SizedBox( // Show spinner while spinning
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 3, color: Colors.black54),
-              )
-            : const Text('SPIN'),
-      );
-    }
+    // Only show the Spin button (no Truth/Dare buttons here)
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 18),
+        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: 5,
+        shadowColor: Colors.black.withOpacity(0.4),
+      ),
+      onPressed: (_gamePhase == GamePhase.readyToSpin)
+          ? () {
+              final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
+              _startSpin(randomVelocity);
+            }
+          : null,
+      child: (_gamePhase == GamePhase.spinning)
+          ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 3, color: Colors.black54),
+            )
+          : const Text('SPIN'),
+    );
   }
 }
 
 // Ensure PlayerCircle accepts highlightedIndex
 // (Need to check/update player_circle_painter.dart if necessary)
+
+// Popup dialog widget for Truth/Dare selection
+class _TruthDareDialog extends StatelessWidget {
+  final String playerName;
+  const _TruthDareDialog({required this.playerName});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double dialogPadding = size.width * 0.05;
+    return Material(
+      type: MaterialType.transparency,
+      child: Container(
+        width: size.width * 0.85,
+        padding: EdgeInsets.all(dialogPadding),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          gradient: const LinearGradient(
+            colors: [
+              Color.fromARGB(255, 84, 51, 255),
+              Color.fromARGB(255, 153, 50, 204),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(
+            color: Colors.white,
+            width: 3.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(80),
+              blurRadius: 10.0,
+              spreadRadius: 1.0,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Whoopsie!',
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    blurRadius: 2.0,
+                    color: Colors.black,
+                    offset: Offset(1.0, 1.0),
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: size.height * 0.03),
+            Icon(
+              Icons.sentiment_very_satisfied_rounded,
+              color: Colors.white70,
+              size: size.width * 0.14,
+              shadows: [
+                Shadow(
+                  blurRadius: 4.0,
+                  color: Colors.black.withAlpha((0.4 * 255).round()),
+                  offset: const Offset(1.0, 1.0),
+                ),
+              ],
+            ),
+            SizedBox(height: size.height * 0.04),
+            Text(
+              "It's $playerName's turn",
+              style: const TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: size.height * 0.04),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    elevation: 3,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop('truth');
+                  },
+                  child: const Text('TRUTH'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    elevation: 3,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop('dare');
+                  },
+                  child: const Text('DARE'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

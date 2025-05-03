@@ -86,7 +86,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final simulation = FrictionSimulation(
       0.3, // Lower friction for longer spin (previously 0.6)
       _currentAngle,
-      velocity / 700, // Adjust velocity scaling (previously / 1000)
+      velocity / 1000, // Adjust velocity scaling (previously / 1000)
     );
 
     _animation = _controller.drive(Tween<double>(begin: _currentAngle, end: simulation.finalX));
@@ -596,7 +596,7 @@ class _TruthDareDialog extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop('truth');
                   },
-                  child: const Text('TRUTH'),
+                  child: const Text('Truth!'),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -611,7 +611,7 @@ class _TruthDareDialog extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop('dare');
                   },
-                  child: const Text('DARE'),
+                  child: const Text('Dare!'),
                 ),
               ],
             ),

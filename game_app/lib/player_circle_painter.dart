@@ -82,6 +82,23 @@ class PlayerCirclePainter extends CustomPainter {
         sectionPaint,
       );
 
+      // --- Highlight the selected player segment ---
+      if (highlightedIndex != null && i == highlightedIndex) {
+        final Paint highlightPaint = Paint()
+          ..color = Colors.white.withOpacity(0.7)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = responsiveBorderWidth * 2.2 // Thicker border for highlight
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          true,
+          highlightPaint,
+        );
+      }
+      // --- End highlight ---
+
       // --- Draw Player Name ---
       final double textAngle = startAngle + sweepAngle / 2;
       // Adjust radius to place text slightly more towards the center

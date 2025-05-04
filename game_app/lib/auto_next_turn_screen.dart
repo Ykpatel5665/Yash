@@ -19,103 +19,12 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     setState(() {
       _showTruthDare = false;
       if (_currentIndex == widget.players.length - 1) {
-        // All players have played, show dialog
-        Future.delayed(Duration.zero, _showRestartDialog);
+        // All players have played, stay on last player and show restart button
+        // Do not advance index
       } else {
         _currentIndex = (_currentIndex + 1) % widget.players.length;
       }
     });
-  }
-
-  void _showRestartDialog() async {
-    final result = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            gradient: const LinearGradient(
-              colors: [
-                Color.fromARGB(255, 27, 123, 212),
-                Color.fromARGB(255, 50, 196, 255),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(80),
-                blurRadius: 10.0,
-                spreadRadius: 1.0,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'All players had their turn!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 18),
-              const Text(
-                'Do you want to start another round?',
-                style: TextStyle(fontSize: 18, color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 28),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('No'),
-                  ),
-                  const SizedBox(width: 24),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      elevation: 3,
-                    ),
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Yes'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (result == true) {
-      setState(() {
-        _currentIndex = 0;
-        _showTruthDare = false;
-      });
-    } else {
-      if (mounted) Navigator.of(context).pop();
-    }
   }
 
   void _showTruthOrDare() {
@@ -124,8 +33,99 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     });
   }
 
+  Future<bool> _showQuitConfirmation() async {
+    final size = MediaQuery.of(context).size;
+    final double dialogPadding = size.width * 0.06;
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(dialogPadding),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            gradient: const LinearGradient(
+              colors: [
+                Color.fromARGB(255, 84, 51, 255),
+                Color.fromARGB(255, 153, 50, 204),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: Colors.white, width: 3.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(80),
+                blurRadius: 10.0,
+                spreadRadius: 1.0,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Quit Game?',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1))],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: size.height * 0.025),
+              const Text(
+                'Are you sure you want to quit the game?',
+                style: TextStyle(fontSize: 18, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: size.height * 0.04),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 3,
+                      shadowColor: Colors.transparent,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Yes'),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 3,
+                      shadowColor: Colors.transparent,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ) ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Use the same AppBar style from MyApp theme, but allow customization if needed
+    final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
+
     final playerName = widget.players[_currentIndex];
     final playerColor = widget.playerColors[_currentIndex];
     final size = MediaQuery.of(context).size;
@@ -149,117 +149,155 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Whoopsie!', style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Padding(
-          padding: EdgeInsets.only(left: screenWidth * 0.01, top: screenHeight * 0.015, bottom: screenHeight * 0.015),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-            child: Builder(
-              builder: (context) {
-                const Color baseColor = Color.fromARGB(255, 255, 255, 255);
-                final Color shadowDark = Colors.black.withOpacity(0.3);
-                final Color shadowLight = Colors.white.withOpacity(0.4);
-                return Container(
-                  width: screenWidth * 0.11,
-                  height: screenWidth * 0.11,
-                  decoration: BoxDecoration(
-                    color: baseColor.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
-                      BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
-                    ],
-                  ),
-                  child: Icon(Icons.home_rounded, color: Colors.black, size: screenWidth * 0.065),
-                );
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldQuit = await _showQuitConfirmation();
+        return shouldQuit;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Whoopsie!', style: appBarTheme.titleTextStyle),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Padding(
+            padding: EdgeInsets.only(left: screenWidth * 0.01, top: screenHeight * 0.015, bottom: screenHeight * 0.015),
+            child: GestureDetector(
+              onTap: () async {
+                final shouldQuit = await _showQuitConfirmation();
+                if (shouldQuit) {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
               },
+              child: Builder(
+                builder: (context) {
+                  const Color baseColor = Color.fromARGB(255, 255, 255, 255);
+                  final Color shadowDark = Colors.black.withOpacity(0.3);
+                  final Color shadowLight = Colors.white.withOpacity(0.4);
+                  return Container(
+                    width: screenWidth * 0.11,
+                    height: screenWidth * 0.11,
+                    decoration: BoxDecoration(
+                      color: baseColor.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
+                        BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
+                      ],
+                    ),
+                    child: Icon(Icons.home_rounded, color: Colors.black, size: screenWidth * 0.065),
+                  );
+                },
+              ),
             ),
           ),
         ),
-      ),
-      extendBodyBehindAppBar: true,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(gradient: backgroundGradient),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: spacingLarge),
-                      // Restore CircleAvatar with player's initial
-                      Container(
-                        width: circleSize,
-                        height: circleSize,
-                        decoration: BoxDecoration(
-                          color: playerColor,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.18),
-                              blurRadius: 8,
-                              offset: const Offset(2, 4),
+        extendBodyBehindAppBar: true,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 252, 118, 84),
+                Color.fromARGB(255, 245, 64, 100),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: spacingLarge),
+                        // Card design instead of colored circle
+                        Container(
+                          width: screenWidth * 0.8,
+                          height: screenHeight * 0.23,
+                          margin: EdgeInsets.only(bottom: spacingLarge),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            gradient: LinearGradient(
+                              colors: [
+                                playerColor,
+                                playerColor.withOpacity(0.7),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            playerName.substring(0, 1).toUpperCase(),
-                            style: TextStyle(
-                              fontSize: emojiSize,
-                              fontWeight: FontWeight.bold,
-                              color: playerColor.computeLuminance() > 0.6 ? Colors.black : Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(80),
+                                blurRadius: 10.0,
+                                spreadRadius: 1.0,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  playerName,
+                                  style: TextStyle(
+                                    fontSize: titleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  "It's your turn!",
+                                  style: TextStyle(fontSize: turnFontSize, color: Colors.white70),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: spacingMed),
-                      Text(
-                        "It's $playerName's turn!",
-                        style: TextStyle(
-                          fontSize: turnFontSize,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(blurRadius: 2, color: Colors.black.withAlpha(100), offset: Offset(1, 1)),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: spacingLarge),
-                      if (!_showTruthDare) ...[
-                        ElevatedButton(
-                          onPressed: _showTruthOrDare,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: buttonPaddingH,
-                              vertical: buttonPaddingV,
+                        if (_currentIndex == widget.players.length - 1) ...[
+                          // Only show restart and message, hide Truth/Dare and other controls
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _currentIndex = 0;
+                                _showTruthDare = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: buttonPaddingH,
+                                vertical: buttonPaddingV,
+                              ),
+                              textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 3,
                             ),
-                            textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            elevation: 3,
+                            child: const Text('Restart'),
                           ),
-                          child: const Text('Truth or Dare?'),
-                        ),
-                      ] else ...[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+                          SizedBox(height: spacingLarge * 0.7),
+                          Text(
+                            'All players had their turn!',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
+                        ] else ...[
+                          if (!_showTruthDare) ...[
                             ElevatedButton(
-                              onPressed: _nextTurn,
+                              onPressed: _showTruthOrDare,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: Colors.black,
@@ -271,38 +309,59 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 elevation: 3,
                               ),
-                              child: const Text('Truth'),
+                              child: const Text('Truth or Dare?'),
                             ),
-                            SizedBox(width: screenWidth * 0.06),
-                            ElevatedButton(
-                              onPressed: _nextTurn,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: buttonPaddingH,
-                                  vertical: buttonPaddingV,
+                          ] else ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _nextTurn,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: buttonPaddingH,
+                                      vertical: buttonPaddingV,
+                                    ),
+                                    textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    elevation: 3,
+                                  ),
+                                  child: const Text('Truth'),
                                 ),
-                                textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                elevation: 3,
-                              ),
-                              child: const Text('Dare'),
+                                SizedBox(width: screenWidth * 0.06),
+                                ElevatedButton(
+                                  onPressed: _nextTurn,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: buttonPaddingH,
+                                      vertical: buttonPaddingV,
+                                    ),
+                                    textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    elevation: 3,
+                                  ),
+                                  child: const Text('Dare'),
+                                ),
+                              ],
                             ),
                           ],
+                        ],
+                        SizedBox(height: spacingLarge),
+                        Text(
+                          'Player ${_currentIndex + 1} of ${widget.players.length}',
+                          style: TextStyle(fontSize: buttonFontSize, color: Colors.white),
                         ),
+                        SizedBox(height: spacingLarge),
                       ],
-                      SizedBox(height: spacingLarge),
-                      Text(
-                        'Player ${_currentIndex + 1} of ${widget.players.length}',
-                        style: TextStyle(fontSize: buttonFontSize, color: Colors.white),
-                      ),
-                      SizedBox(height: spacingLarge),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

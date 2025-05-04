@@ -57,9 +57,13 @@ class PlayerCirclePainter extends CustomPainter {
       final double textX = center.dx + textRadius * math.cos(textAngle);
       final double textY = center.dy + textRadius * math.sin(textAngle);
       final double responsiveFontSize = radius * 0.12;
+      // --- Dynamic text color based on background ---
+      // Compute luminance to decide text color
+      final double luminance = color.computeLuminance();
+      final Color textColor = luminance > 0.6 ? Colors.black : Colors.white;
       final TextSpan span = TextSpan(
         style: GoogleFonts.baloo2(
-          color: Colors.white,
+          color: textColor,
           fontSize: responsiveFontSize,
           fontWeight: FontWeight.bold,
           shadows: [

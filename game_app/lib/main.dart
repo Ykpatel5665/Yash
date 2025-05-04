@@ -831,7 +831,7 @@ body: Container(
   // Keep _buildStyledButton (for main screen buttons)
   Widget _buildStyledButton(
       String text, IconData iconData, VoidCallback onPressed) {
-    // ... (existing implementation remains unchanged) ...
+    // ...existing code...
     final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round());
     final Size screenSize = MediaQuery.of(context).size; // Access context here
     final double screenWidth = screenSize.width;
@@ -880,19 +880,23 @@ body: Container(
       child: ElevatedButton(
         style: buttonStyle,
         onPressed: onPressed,
-        child: Stack(
-          alignment: Alignment.center,
+        child: Row(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Icon(iconData, size: iconSize), // Use reverted icon size
+            Icon(iconData, size: iconSize),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(text),
+            Opacity(
+              opacity: 0,
+              child: Icon(iconData, size: iconSize),
             ),
           ],
         ),

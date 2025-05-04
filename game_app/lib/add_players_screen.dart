@@ -5,6 +5,22 @@ import 'main.dart'; // Import main.dart to access GameMode and AgeGroup enums
 import 'spin_the_bottle_screen.dart'; // Import Spin the Bottle screen
 import 'auto_next_turn_screen.dart'; // Import Auto Next Turn screen
 import 'random_turn_screen.dart'; // Import Random Turn screen
+import 'package:flutter_colorpicker/flutter_colorpicker.dart'; // Add this import for color picker
+import 'dart:convert';
+
+// Define a Player model
+class Player {
+  String name;
+  Color color;
+  Player({required this.name, required this.color});
+
+  // For saving/loading from SharedPreferences
+  Map<String, dynamic> toJson() => {'name': name, 'color': color.value};
+  static Player fromJson(Map<String, dynamic> json) => Player(
+        name: json['name'],
+        color: Color(json['color']),
+      );
+}
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -22,33 +38,34 @@ class AddPlayersScreen extends StatefulWidget {
 
 class _AddPlayersScreenState extends State<AddPlayersScreen> {
   final TextEditingController _playerNameController = TextEditingController();
-  List<String> _players = []; // Initialize as empty, will be loaded
-  final FocusNode _textFieldFocusNode = FocusNode(); // To manage focus
-
-  // Key for saving/loading players
+  List<Player> _players = [];
+  final FocusNode _textFieldFocusNode = FocusNode();
   static const String _playersPrefsKey = 'playerList';
+  final List<Color> _defaultColors = [
+    Colors.red, Colors.blue, Colors.green, Colors.yellow, Colors.purple, Colors.orange, Colors.cyan, Colors.pink, Colors.teal, Colors.lime, Colors.indigo, Colors.brown
+  ];
 
   @override
   void initState() {
     super.initState();
-    _loadPlayers(); // Load players when the screen initializes
+    _loadPlayers();
   }
 
-  // Load players from SharedPreferences
   Future<void> _loadPlayers() async {
     final prefs = await SharedPreferences.getInstance();
+    final List<String> playerJsons = prefs.getStringList(_playersPrefsKey) ?? [];
     setState(() {
-      // Load the list, default to empty list if not found
-      _players = prefs.getStringList(_playersPrefsKey) ?? [];
+      _players = playerJsons.map((e) {
+        final map = Map<String, dynamic>.from(jsonDecode(e));
+        return Player.fromJson(map);
+      }).toList();
     });
-    print("Loaded players: $_players");
   }
 
-  // Save players to SharedPreferences
   Future<void> _savePlayers() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_playersPrefsKey, _players);
-    print("Saved players: $_players");
+    final List<String> playerJsons = _players.map((p) => jsonEncode(p.toJson()) as String).toList();
+    await prefs.setStringList(_playersPrefsKey, playerJsons);
   }
 
   @override
@@ -60,19 +77,18 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
 
   void _addPlayer() {
     final String name = _playerNameController.text.trim();
-    if (name.isNotEmpty && !_players.contains(name)) {
+    if (name.isNotEmpty && !_players.any((p) => p.name == name)) {
       setState(() {
-        _players.add(name);
-        _savePlayers(); // Save after adding
+        final color = _defaultColors[_players.length % _defaultColors.length];
+        _players.add(Player(name: name, color: color));
+        _savePlayers();
       });
       _playerNameController.clear();
-      _textFieldFocusNode.requestFocus(); // Keep focus on text field
-    } else if (name.isNotEmpty && _players.contains(name)) {
-      // Optional: Show a message if player already exists
+      _textFieldFocusNode.requestFocus();
+    } else if (name.isNotEmpty && _players.any((p) => p.name == name)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$name is already added!',
-              style: GoogleFonts.baloo2(color: Colors.white)),
+          content: Text('$name is already added!', style: GoogleFonts.baloo2(color: Colors.white)),
           backgroundColor: Colors.orangeAccent,
         ),
       );
@@ -82,8 +98,43 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
   void _removePlayer(int index) {
     setState(() {
       _players.removeAt(index);
-      _savePlayers(); // Save after removing
+      _savePlayers();
     });
+  }
+
+  void _pickColor(int index) async {
+    Color selectedColor = _players[index].color;
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Pick a color'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: selectedColor,
+              onColorChanged: (color) {
+                selectedColor = color;
+              },
+              enableAlpha: false,
+              showLabel: false,
+              pickerAreaHeightPercent: 0.7,
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Select'),
+              onPressed: () {
+                setState(() {
+                  _players[index].color = selectedColor;
+                  _savePlayers();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -279,17 +330,16 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                                 itemBuilder: (context, index) {
                                   // Use ListTile directly without background container
                                   return ListTile(
-                                    // Keep the leading number style (optional, can simplify)
-                                    leading: Text(
-                                      '${index + 1}.',
-                                      style: GoogleFonts.baloo2(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: 16,
+                                    leading: GestureDetector(
+                                      onTap: () => _pickColor(index),
+                                      child: CircleAvatar(
+                                        backgroundColor: _players[index].color,
+                                        radius: 16,
+                                        child: const Icon(Icons.color_lens, color: Colors.white, size: 16),
                                       ),
                                     ),
                                     title: Text(
-                                      _players[index],
+                                      _players[index].name,
                                       style: GoogleFonts.baloo2(
                                           color: Colors.white,
                                           fontSize: 18,
@@ -300,7 +350,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                                       // Use close icon and match text color
                                       icon: const Icon(Icons.close,
                                           color: Colors.white),
-                                      tooltip: 'Remove ${_players[index]}',
+                                      tooltip: 'Remove ${_players[index].name}',
                                       onPressed: () => _removePlayer(index),
                                       splashRadius: 24,
                                     ),
@@ -371,19 +421,22 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                                 switch (widget.gameMode) {
                                   case GameMode.spin:
                                     nextScreen = SpinTheBottleScreen(
-                                      players: _players,
+                                      players: _players.map((p) => p.name).toList(),
+                                      playerColors: _players.map((p) => p.color).toList(),
                                       ageGroup: widget.ageGroup,
                                     );
                                     break;
                                   case GameMode.auto:
                                     nextScreen = AutoNextTurnScreen(
-                                      players: _players,
+                                      players: _players.map((p) => p.name).toList(),
+                                      playerColors: _players.map((p) => p.color).toList(),
                                       ageGroup: widget.ageGroup,
                                     );
                                     break;
                                   case GameMode.random:
                                     nextScreen = RandomTurnScreen(
-                                      players: _players,
+                                      players: _players.map((p) => p.name).toList(),
+                                      playerColors: _players.map((p) => p.color).toList(),
                                       ageGroup: widget.ageGroup,
                                     );
                                     break;

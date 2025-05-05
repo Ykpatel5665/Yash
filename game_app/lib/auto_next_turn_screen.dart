@@ -130,6 +130,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
     final playerName = widget.players[_currentIndex];
     final playerColor = widget.playerColors[_currentIndex];
+    final Color textColor = playerColor.computeLuminance() > 0.6 ? Colors.black : Colors.white;
     final size = MediaQuery.of(context).size;
     final double screenWidth = size.width;
     final double screenHeight = size.height;
@@ -252,7 +253,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   style: TextStyle(
                                     fontSize: titleFontSize,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: textColor,
                                     shadows: [
                                       Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
                                     ],
@@ -262,7 +263,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                 SizedBox(height: 12),
                                 Text(
                                   "It's your turn!",
-                                  style: TextStyle(fontSize: turnFontSize, color: Colors.white70),
+                                  style: TextStyle(fontSize: turnFontSize, color: textColor.withOpacity(0.7)),
                                   textAlign: TextAlign.center,
                                 ),
                               ],

@@ -182,6 +182,14 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     final Color shadowDark = Colors.black.withOpacity(0.3);
     final Color shadowLight = Colors.white.withOpacity(0.4);
 
+    // --- Fix: Compute cardColor and textColor before widget tree ---
+    Color? cardColor;
+    Color? textColor;
+    if (_currentIndex != null) {
+      cardColor = widget.playerColors[_currentIndex!];
+      textColor = cardColor.computeLuminance() > 0.6 ? Colors.black : Colors.white;
+    }
+
     return WillPopScope(
       onWillPop: () async {
         final shouldQuit = await _showQuitConfirmation();
@@ -244,8 +252,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         borderRadius: BorderRadius.circular(18),
                         gradient: LinearGradient(
                           colors: [
-                            widget.playerColors[_currentIndex!],
-                            widget.playerColors[_currentIndex!].withOpacity(0.7),
+                            cardColor!,
+                            cardColor!.withOpacity(0.7),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -270,7 +278,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               style: GoogleFonts.baloo2(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: textColor,
                                 shadows: [
                                   Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
                                 ],
@@ -280,7 +288,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             const SizedBox(height: 16),
                             Text(
                               "It's your turn!",
-                              style: GoogleFonts.baloo2(fontSize: 20, color: Colors.white70),
+                              style: GoogleFonts.baloo2(fontSize: 20, color: textColor!.withOpacity(0.7)),
                               textAlign: TextAlign.center,
                             ),
                           ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_players_screen.dart'; // Import the new screen
+import 'dart:ui';
 
 // Define Enums for selections
 enum GameMode {
@@ -231,10 +232,10 @@ class _MyHomePageState extends State<MyHomePage> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black
-                      .withAlpha(120), // Deeper shadow (increased alpha)
-                  blurRadius: 12.0, // Increased blur
-                  spreadRadius: 2.0, // Increased spread
-                  offset: const Offset(0, 6), // Increased offset for depth
+                      .withAlpha(80), // Lowered alpha
+                  blurRadius: 6.0, // Reduced blur
+                  spreadRadius: 1.0, // Reduced spread
+                  offset: const Offset(0, 4), // Reduced offset
                 ),
               ],
             );
@@ -246,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
               shadows: [
                 Shadow(
                   blurRadius: 2.0,
-                  color: Colors.black.withAlpha(100),
+                  color: Colors.black.withAlpha(60), // Lowered alpha
                   offset: const Offset(1.0, 1.0),
                 ),
               ],
@@ -346,326 +347,364 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   // --- End ADULT confirmation dialog ---
 
-  // Function to show the combined game mode and age group selection dialog
-  Future<void> _showGameSelectionDialog(BuildContext context) async {
-    // Initialize temporary state for the dialog
-    GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
-    // Use loaded age group if available, otherwise default to kids
-    AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
-    // Use the loaded save preference state
-    bool currentSaveSelection = _saveSelection; // Use the actual loaded state
+  // --- Modern Game Setup Dialog (Glassmorphism, Animated, Responsive) ---
+Future<void> _showModernGameSetupDialog(BuildContext context) async {
+  GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
+  AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
+  bool currentSaveSelection = _saveSelection;
 
-    return showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (dialogPageContext, animation, secondaryAnimation) {
-        // Changed context name
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            // ... (keep theme, colorScheme, screenSize, spacing variables) ...
-            final ThemeData theme = Theme.of(context);
-            final ColorScheme colorScheme = theme.colorScheme;
-            final Size screenSize = MediaQuery.of(context).size;
-            final double dialogWidth =
-                screenSize.width * 0.85; // Slightly wider
-            final double dialogPadding = screenSize.width * 0.05;
-            final double verticalSpacingSmall = screenSize.height * 0.01;
-            final double verticalSpacingMedium = screenSize.height * 0.02;
-            final double verticalSpacingLarge = screenSize.height * 0.03;
+  await showGeneralDialog<void>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 350),
+    pageBuilder: (dialogPageContext, animation, secondaryAnimation) {
+      return StatefulBuilder(
+        builder: (context, setDialogState) {
+          final Size screenSize = MediaQuery.of(context).size;
+          final double cardWidth = screenSize.width * 0.92;
+          final double maxCardWidth = 420;
+          final double cardPadding = 24.0;
 
-            final TextStyle dialogTextStyle = GoogleFonts.baloo2(
-              fontSize: 16, // Slightly smaller for more content
-              color: Colors.white,
-            );
-            final TextStyle titleTextStyle = GoogleFonts.baloo2(
-              fontSize: 22, // Adjust size
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  blurRadius: 2.0,
-                  color: Colors.black.withAlpha(100),
-                  offset: const Offset(1.0, 1.0),
+          Widget buildToggleButton({
+            required String label,
+            required bool selected,
+            required VoidCallback onTap,
+            required IconData? icon,
+            Color? selectedColor,
+            Color? unselectedColor,
+            double? iconSize,
+            double? fontSize,
+          }) {
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: selected
+                    ? (selectedColor ?? Colors.white.withOpacity(0.15))
+                    : (unselectedColor ?? Colors.white.withOpacity(0.05)),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: selected ? Colors.white : Colors.white24,
+                  width: selected ? 2.5 : 1.0,
                 ),
-              ],
-            );
-            final TextStyle labelTextStyle = dialogTextStyle.copyWith(
-                fontWeight: FontWeight.bold, fontSize: 18);
-
-            // --- Custom Button Builder ---
-            Widget buildSelectionButton<T>({
-              required String text,
-              IconData? icon,
-              required T value,
-              required T groupValue,
-              required ValueChanged<T> onChanged,
-            }) {
-              bool isSelected = (value == groupValue);
-              final Color bgColor =
-                  isSelected ? Colors.white : Colors.white.withOpacity(0.15);
-              final Color fgColor = isSelected
-                  ? const Color.fromARGB(255, 84, 51, 255)
-                  : Colors.white; // Dialog accent or white
-              final double elevation = isSelected ? 4.0 : 1.0;
-              final BorderSide borderSide = isSelected
-                  ? BorderSide(color: Colors.white.withOpacity(0.5), width: 1.5)
-                  : BorderSide.none;
-
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 4.0), // Spacing between buttons
-                  child: ElevatedButton.icon(
-                    icon: icon != null
-                        ? Icon(icon, size: 18, color: fgColor)
-                        : const SizedBox.shrink(),
-                    label: Text(text,
-                        style: GoogleFonts.baloo2(
-                            fontWeight: FontWeight.w600, fontSize: 13)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: bgColor,
-                      foregroundColor: fgColor,
-                      elevation: elevation,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12), // Adjust padding
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: borderSide,
-                      ),
-                      // Animation for selection change (optional but nice)
-                      animationDuration: const Duration(milliseconds: 200),
-                    ),
-                    onPressed: () => onChanged(value),
-                  ),
-                ),
-              );
-            }
-            // --- End Custom Button Builder ---
-
-            return AlertDialog(
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: selected
+                    ? [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.15), // Lowered opacity
+                          blurRadius: 6, // Reduced blur
+                          spreadRadius: 1,
+                        )
+                      ]
+                    : [],
               ),
-              content: Material(
-                type: MaterialType.transparency,
-                child: Container(
-                  width: dialogWidth,
-                  padding: EdgeInsets.all(dialogPadding),
-                  decoration: BoxDecoration(
-                    // ... (keep existing gradient, border, shadow) ...
-                    borderRadius: BorderRadius.circular(15.0),
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 84, 51, 255),
-                        Color.fromARGB(255, 153, 50, 204),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 3.0,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(80),
-                        blurRadius: 10.0,
-                        spreadRadius: 1.0,
-                        offset: const Offset(0, 4),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: onTap,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (icon != null)
+                        Icon(icon, color: Colors.white, size: iconSize ?? 28),
+                      if (icon != null) const SizedBox(height: 6),
+                      Text(
+                        label,
+                        style: GoogleFonts.baloo2(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSize ?? 15,
+                          height: 1.1,
+                          shadows: selected
+                              ? [
+                                  Shadow(
+                                    blurRadius: 2,
+                                    color: Colors.white.withOpacity(0.3), // Lowered opacity
+                                  )
+                                ]
+                              : [],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
-                  child: SingleChildScrollView(
-                    child: ListBody(
-                      children: <Widget>[
-                        Center(
-                          child: Text('Game Setup', style: titleTextStyle),
-                        ),
-                        SizedBox(height: verticalSpacingMedium),
+                ),
+              ),
+            );
+          }
 
-                        // Game Mode Selection
-                        Text('Game Mode',
-                            style: labelTextStyle, textAlign: TextAlign.center),
-                        SizedBox(height: verticalSpacingSmall),
+          final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
+          final double fontSize = (screenSize.width * 0.035).clamp(13, 18);
+
+          return Center(
+            child: Material(
+              type: MaterialType.transparency,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32), // Increased blur
+                  child: Container(
+                    width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                    padding: EdgeInsets.all(cardPadding),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.32), // Increased darkness for better text contrast
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.25),
+                        width: 2.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.10), // Lowered opacity
+                          blurRadius: 12, // Reduced blur
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Game Setup",
+                          style: GoogleFonts.baloo2(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4,
+                                color: Colors.white.withOpacity(0.3), // Lowered opacity
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Game Mode",
+                            style: GoogleFonts.baloo2(
+                              color: Colors.white.withOpacity(0.92),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 24, // Increased font size
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: GameMode.values
-                              .map((mode) => buildSelectionButton<GameMode>(
-                                    text: mode.displayText
-                                        .split(' ')
-                                        .first, // Short text
-                                    value: mode,
-                                    groupValue: currentModeSelection,
-                                    onChanged: (value) {
-                                      setDialogState(
-                                          () => currentModeSelection = value);
-                                    },
-                                  ))
-                              .toList(),
+                          children: [
+                            Expanded(child: buildToggleButton(
+                              label: "Spin",
+                              selected: currentModeSelection == GameMode.spin,
+                              onTap: () => setDialogState(() => currentModeSelection = GameMode.spin),
+                              icon: Icons.casino,
+                              selectedColor: const Color(0xFF5B86E5).withOpacity(0.25),
+                              iconSize: iconSize + 2,
+                              fontSize: fontSize + 4, // Increased font size for button text
+                            )),
+                            Expanded(child: buildToggleButton(
+                              label: "Auto",
+                              selected: currentModeSelection == GameMode.auto,
+                              onTap: () => setDialogState(() => currentModeSelection = GameMode.auto),
+                              icon: Icons.autorenew,
+                              selectedColor: const Color(0xFF8F6ED5).withOpacity(0.25),
+                              iconSize: iconSize + 2,
+                              fontSize: fontSize + 4, // Increased font size for button text
+                            )),
+                            Expanded(child: buildToggleButton(
+                              label: "Random",
+                              selected: currentModeSelection == GameMode.random,
+                              onTap: () => setDialogState(() => currentModeSelection = GameMode.random),
+                              icon: Icons.shuffle,
+                              selectedColor: const Color(0xFFB388FF).withOpacity(0.25),
+                              iconSize: iconSize + 2,
+                              fontSize: fontSize + 4, // Increased font size for button text
+                            )),
+                          ],
                         ),
-                        SizedBox(height: verticalSpacingLarge),
-
-                        // Age Group Selection
-                        Text('Age Group',
-                            style: labelTextStyle, textAlign: TextAlign.center),
-                        SizedBox(height: verticalSpacingSmall),
+                        const SizedBox(height: 28),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Age Group",
+                            style: GoogleFonts.baloo2(
+                              color: Colors.white.withOpacity(0.92),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 24, // Increased font size
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: AgeGroup.values
-                              .map((age) => buildSelectionButton<AgeGroup>(
-                                    text: age.displayText,
-                                    icon: age.displayIcon,
-                                    value: age,
-                                    groupValue: currentAgeSelection,
-                                    onChanged: (value) {
-                                      setDialogState(
-                                          () => currentAgeSelection = value);
-                                    },
-                                  ))
-                              .toList(),
+                          children: [
+                            Expanded(child: buildToggleButton(
+                              label: "Kids",
+                              selected: currentAgeSelection == AgeGroup.kids,
+                              onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
+                              icon: Icons.child_care,
+                              selectedColor: const Color(0xFF4DD0E1).withOpacity(0.25),
+                              iconSize: iconSize + 2,
+                              fontSize: fontSize + 4, // Increased font size for button text
+                            )),
+                            Expanded(child: buildToggleButton(
+                              label: "Teen",
+                              selected: currentAgeSelection == AgeGroup.teen,
+                              onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
+                              icon: Icons.school,
+                              selectedColor: const Color(0xFF9575CD).withOpacity(0.25),
+                              iconSize: iconSize + 2,
+                              fontSize: fontSize + 4, // Increased font size for button text
+                            )),
+                            Expanded(child: buildToggleButton(
+                              label: "Adult",
+                              selected: currentAgeSelection == AgeGroup.adult,
+                              onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
+                              icon: Icons.person,
+                              selectedColor: const Color(0xFFBA68C8).withOpacity(0.25),
+                              iconSize: iconSize + 2,
+                              fontSize: fontSize + 4, // Increased font size for button text
+                            )),
+                          ],
                         ),
-                        SizedBox(height: verticalSpacingMedium),
-
-                        // Checkbox (using the existing helper)
-                        _buildCheckboxListTile(
-                          title: 'Save Choice!', // Updated text
-                          value: currentSaveSelection,
-                          onChanged: (bool? value) {
-                            setDialogState(() {
-                              currentSaveSelection = value ?? false;
-                            });
-                          },
-                          textStyle: dialogTextStyle,
-                          activeColor: Colors.white,
-                          checkColor: colorScheme.primary,
-                        ),
-                        SizedBox(height: verticalSpacingLarge),
-
-                        // Buttons (using existing styling)
+                        const SizedBox(height: 28),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            TextButton(
-                              // ... (keep existing cancel button style) ...
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        dialogPadding * 0.8, // Relative padding
-                                    vertical:
-                                        dialogPadding * 0.4 // Relative padding
-                                    ),
+                          children: [
+                            Text(
+                              "Save Choice",
+                              style: GoogleFonts.baloo2(
+                                color: Colors.white.withOpacity(0.92),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
                               ),
-                              child: Text('Cancel',
-                                  style: GoogleFonts.baloo2(fontSize: 16)),
-                              onPressed: () {
-                                Navigator.of(dialogPageContext)
-                                    .pop(); // Use dialogPageContext
-                              },
                             ),
-                            ElevatedButton(
-                              // ... (keep existing start button style) ...
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor:
-                                    const Color.fromARGB(255, 84, 51, 255),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                            Switch(
+                              value: currentSaveSelection,
+                              onChanged: (val) => setDialogState(() => currentSaveSelection = val),
+                              activeColor: Colors.white,
+                              activeTrackColor: Colors.blueAccent.withOpacity(0.5),
+                              inactiveThumbColor: Colors.white54,
+                              inactiveTrackColor: Colors.white24,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(dialogPageContext).pop();
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white70,
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  textStyle: GoogleFonts.baloo2(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 17,
+                                  ),
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        dialogPadding * 1.2, // Relative padding
-                                    vertical:
-                                        dialogPadding * 0.5 // Relative padding
-                                    ),
+                                child: const Text("Cancel"),
                               ),
-                              child: Text('Start',
-                                  style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              onPressed: () async {
-                                // Make onPressed async
-                                final GameMode finalGameMode =
-                                    currentModeSelection;
-                                final AgeGroup finalAgeGroup =
-                                    currentAgeSelection;
-                                final bool finalSave = currentSaveSelection;
-
-                                bool proceed = true; // Assume we can proceed
-
-                                // Check if Adult is selected and show confirmation
-                                if (finalAgeGroup == AgeGroup.adult) {
-                                  // Use the dialogPageContext to show the confirmation dialog
-                                  proceed = await _showAdultConfirmationDialog(
-                                      dialogPageContext);
-                                }
-
-                                // Only proceed if not adult OR if adult and confirmed
-                                if (proceed) {
-                                  // Update main screen state
-                                  setState(() {
-                                    _selectedGameModeEnum = finalGameMode;
-                                    _selectedAgeGroupEnum = finalAgeGroup;
-                                    _saveSelection =
-                                        finalSave; // Update save state
-                                  });
-                                  // Save preferences if needed
-                                  await _savePreferences(
-                                      // Call updated save function
-                                      finalGameMode,
-                                      finalAgeGroup); // await the save
-
-                                  print(
-                                      "Selected Mode: ${finalGameMode.name}, Age Group: ${finalAgeGroup.name}, Save: $finalSave. Starting game...");
-
-                                  Navigator.of(dialogPageContext)
-                                      .pop(); // Close the main selection dialog
-
-                                  // Navigate to the Add Players screen using a custom transition
-                                  Navigator.push(
-                                    this.context, // Use the original context from MyHomePage
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation,
-                                              secondaryAnimation) =>
-                                          AddPlayersScreen(
-                                        gameMode: finalGameMode,
-                                        ageGroup: finalAgeGroup,
-                                      ),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        // Define the slide animation from right to left
-                                        const begin = Offset(
-                                            1.0, 0.0); // Start from the right
-                                        const end =
-                                            Offset.zero; // End at the center
-                                        const curve =
-                                            Curves.ease; // Animation curve
-
-                                        final tween = Tween(
-                                                begin: begin, end: end)
-                                            .chain(CurveTween(curve: curve));
-                                        final offsetAnimation =
-                                            animation.drive(tween);
-
-                                        return SlideTransition(
-                                          position: offsetAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration: const Duration(
-                                          milliseconds:
-                                              300), // Optional: Adjust duration
+                            ),
+                            const SizedBox(width: 18),
+                            Expanded(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF5B86E5),
+                                      Color(0xFF8F6ED5),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.white.withOpacity(0.18),
+                                      blurRadius: 16,
+                                      spreadRadius: 1,
                                     ),
-                                  );
-                                }
-                                // else: If proceed is false (user cancelled adult confirmation), do nothing,
-                                // the confirmation dialog is already closed, and the main dialog remains open.
-                              },
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    final GameMode finalGameMode = currentModeSelection;
+                                    final AgeGroup finalAgeGroup = currentAgeSelection;
+                                    final bool finalSave = currentSaveSelection;
+                                    bool proceed = true;
+                                    if (finalAgeGroup == AgeGroup.adult) {
+                                      proceed = await _showAdultConfirmationDialog(dialogPageContext);
+                                    }
+                                    if (proceed) {
+                                      setState(() {
+                                        _selectedGameModeEnum = finalGameMode;
+                                        _selectedAgeGroupEnum = finalAgeGroup;
+                                        _saveSelection = finalSave;
+                                      });
+                                      await _savePreferences(finalGameMode, finalAgeGroup);
+                                      Navigator.of(dialogPageContext).pop();
+                                      Navigator.push(
+                                        this.context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
+                                            gameMode: finalGameMode,
+                                            ageGroup: finalAgeGroup,
+                                          ),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            const begin = Offset(1.0, 0.0);
+                                            const end = Offset.zero;
+                                            const curve = Curves.ease;
+                                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                            final offsetAnimation = animation.drive(tween);
+                                            return SlideTransition(
+                                              position: offsetAnimation,
+                                              child: child,
+                                            );
+                                          },
+                                          transitionDuration: const Duration(milliseconds: 300),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    textStyle: GoogleFonts.baloo2(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Start",
+                                      style: GoogleFonts.baloo2(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(
+                                            blurRadius: 8,
+                                            color: Colors.black.withOpacity(0.25),
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -674,57 +713,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-            );
-          },
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        // ... (keep existing transition) ...
-        const begin = Offset(0.0, 0.3); // Start slightly lower
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  // Helper for CheckboxListTile styling (keep as is)
-  Widget _buildCheckboxListTile({
-    required String title,
-    required bool value,
-    required ValueChanged<bool?> onChanged,
-    required TextStyle textStyle,
-    required Color activeColor,
-    required Color checkColor,
-  }) {
-    // ...existing code...
-    return CheckboxListTile(
-      title: Text(title, style: textStyle),
-      value: value,
-      onChanged: onChanged,
-      activeColor: activeColor, // Background color of checkbox when checked
-      checkColor: checkColor, // Color of the check mark
-      contentPadding: EdgeInsets.zero,
-      controlAffinity: ListTileControlAffinity.leading, // Checkbox on the left
-      dense: true,
-      // Style checkbox border when inactive
-      side: WidgetStateBorderSide.resolveWith(
-        (states) => const BorderSide(width: 2.0, color: Colors.white70),
-      ),
-    );
-  }
-
+            ),
+          );
+        },
+      );
+    },
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 0.3);
+      const end = Offset.zero;
+      const curve = Curves.easeOutCubic;
+      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      final offsetAnimation = animation.drive(tween);
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
+}
+// ...existing code...
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    // ... (keep existing build method structure) ...
-
+    // ...existing code...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Truth or Dare'),
@@ -782,9 +793,7 @@ body: Container(
 
                       // Update the onPressed for Start Game button to call the new dialog
                       _buildStyledButton('Start Game', Icons.play_arrow, () {
-                        print("Start Game pressed - showing combined dialog");
-                        _showGameSelectionDialog(
-                            context); // Call the new dialog function
+                        _showModernGameSetupDialog(context);
                       }),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton('Add Truths', Icons.add, () {

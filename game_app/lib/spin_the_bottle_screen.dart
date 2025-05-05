@@ -4,6 +4,8 @@ import 'package:flutter/physics.dart'; // Import for physics simulation
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
 import 'truth_dare_select_screen.dart';
+import 'dart:ui';
+import 'package:google_fonts/google_fonts.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -607,117 +609,187 @@ class _TruthDareDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final double dialogPadding = size.width * 0.05;
-    return Material(
-      type: MaterialType.transparency,
-      child: Container(
-        width: size.width * 0.85,
-        padding: EdgeInsets.all(dialogPadding),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.0),
-          gradient: const LinearGradient(
-            colors: [
-              Color.fromARGB(255, 84, 51, 255),
-              Color.fromARGB(255, 153, 50, 204),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          border: Border.all(
-            color: Colors.white,
-            width: 3.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(80),
-              blurRadius: 10.0,
-              spreadRadius: 1.0,
-              offset: const Offset(0, 4),
-            ),
-          ],
+    final Size screenSize = MediaQuery.of(context).size;
+    final double cardWidth = screenSize.width * 0.92;
+    final double maxCardWidth = 420;
+    final double cardPadding = 24.0;
+    final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
+    final double fontSize = (screenSize.width * 0.035).clamp(13, 18);
+
+    // Truth: Blue/Cyan, Dare: Pink/Red
+    BoxDecoration truthButtonDecoration = BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [
+          Color(0xFF4DD0E1), // Cyan
+          Color(0xFF1976D2), // Blue
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white.withOpacity(0.18),
+          blurRadius: 16,
+          spreadRadius: 1,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'Whoopsie!',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    blurRadius: 2.0,
-                    color: Colors.black,
-                    offset: Offset(1.0, 1.0),
+      ],
+    );
+    BoxDecoration dareButtonDecoration = BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [
+          Color(0xFFFF5F6D), // Pink
+          Color(0xFFFFC371), // Orange/Yellow
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white.withOpacity(0.18),
+          blurRadius: 16,
+          spreadRadius: 1,
+        ),
+      ],
+    );
+
+    ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      textStyle: GoogleFonts.baloo2(
+        fontWeight: FontWeight.bold,
+        fontSize: 22,
+      ),
+    );
+
+    TextStyle buttonTextStyle = GoogleFonts.baloo2(
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+      color: Colors.white,
+      shadows: [
+        Shadow(
+          blurRadius: 8,
+          color: Colors.black.withOpacity(0.25),
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+
+    return Center(
+      child: Material(
+        type: MaterialType.transparency,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+            child: Container(
+              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+              padding: EdgeInsets.all(cardPadding),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.32),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.25),
+                  width: 2.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 12,
+                    spreadRadius: 1,
                   ),
                 ],
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: size.height * 0.03),
-            Icon(
-              Icons.sentiment_very_satisfied_rounded,
-              color: Colors.white70,
-              size: size.width * 0.14,
-              shadows: [
-                Shadow(
-                  blurRadius: 4.0,
-                  color: Colors.black.withAlpha((0.4 * 255).round()),
-                  offset: const Offset(1.0, 1.0),
-                ),
-              ],
-            ),
-            SizedBox(height: size.height * 0.04),
-            Text(
-              "It's $playerName's turn",
-              style: const TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Whoopsie!',
+                    style: GoogleFonts.baloo2(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 28),
+                  Icon(
+                    Icons.sentiment_very_satisfied_rounded,
+                    color: Colors.white70,
+                    size: screenSize.width * 0.14,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 4.0,
+                        color: Colors.black.withAlpha((0.4 * 255).round()),
+                        offset: const Offset(1.0, 1.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 28),
+                  Text(
+                    "It's $playerName's turn",
+                    style: GoogleFonts.baloo2(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DecoratedBox(
+                          decoration: truthButtonDecoration,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop('truth');
+                            },
+                            style: buttonStyle,
+                            child: Center(
+                              child: Text(
+                                "Truth!",
+                                style: buttonTextStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 18),
+                      Expanded(
+                        child: DecoratedBox(
+                          decoration: dareButtonDecoration,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop('dare');
+                            },
+                            style: buttonStyle,
+                            child: Center(
+                              child: Text(
+                                "Dare!",
+                                style: buttonTextStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
-            SizedBox(height: size.height * 0.04),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    elevation: 3,
-                    shadowColor: Colors.transparent,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop('truth');
-                  },
-                  child: const Text('Truth!'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    elevation: 3,
-                    shadowColor: Colors.transparent,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop('dare');
-                  },
-                  child: const Text('Dare!'),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -14,14 +14,16 @@ class AutoNextTurnScreen extends StatefulWidget {
 class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   int _currentIndex = 0;
   bool _showTruthDare = false;
+  bool _lastPlayerFinished = false; // Track if last player finished
 
   void _nextTurn() {
     setState(() {
-      _showTruthDare = false;
       if (_currentIndex == widget.players.length - 1) {
-        // All players have played, stay on last player and show restart button
-        // Do not advance index
+        // Last player just finished their turn
+        _showTruthDare = false;
+        _lastPlayerFinished = true;
       } else {
+        _showTruthDare = false;
         _currentIndex = (_currentIndex + 1) % widget.players.length;
       }
     });
@@ -267,13 +269,14 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                             ),
                           ),
                         ),
-                        if (_currentIndex == widget.players.length - 1) ...[
-                          // Only show restart and message, hide Truth/Dare and other controls
+                        // Only show restart and message after last player has finished their turn
+                        if (_lastPlayerFinished) ...[
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
                                 _currentIndex = 0;
                                 _showTruthDare = false;
+                                _lastPlayerFinished = false;
                               });
                             },
                             style: ElevatedButton.styleFrom(

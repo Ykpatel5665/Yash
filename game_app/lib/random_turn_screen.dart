@@ -20,6 +20,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   bool _showTruthDarePrompt = false;
   bool _showTruthDareButtons = false;
   String? _lastChoice;
+  bool _lastPlayerFinished = false; // Track if last player finished
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     setState(() {
       _remainingIndices = List.generate(widget.players.length, (i) => i);
       _currentIndex = null;
+      _lastPlayerFinished = false; // Reset last player finished
       // Immediately pick the first player after reset
       Future.delayed(Duration.zero, _pickRandomPlayer);
     });
@@ -62,6 +64,12 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     setState(() {
       _showTruthDareButtons = false;
       _lastChoice = choice;
+      // If this was the last player, mark finished
+      if (_remainingIndices.isEmpty) {
+        _lastPlayerFinished = true;
+      } else {
+        _pickRandomPlayer(); // Immediately pick next player, matching auto next turn logic
+      }
     });
   }
 
@@ -328,49 +336,36 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         ],
                       ),
                       const SizedBox(height: 18),
-                    ] else if (_lastChoice != null && (_remainingIndices.isNotEmpty || _remainingIndices.isEmpty)) ...[
-                      Text(
-                        'You chose: $_lastChoice!',
-                        style: GoogleFonts.baloo2(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 18),
-                      if (_remainingIndices.isNotEmpty)
-                        ElevatedButton(
-                          onPressed: _pickRandomPlayer,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                            textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            elevation: 3,
-                            shadowColor: Colors.transparent,
+                    ]
+                    // Only show the restart button/message after last player finished
+                    else if (_lastPlayerFinished) ...[
+                      Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _resetTurns();
+                                _lastPlayerFinished = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 3,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: const Text('Restart'),
                           ),
-                          child: const Text('Next Random Turn'),
-                        ),
-                      if (_remainingIndices.isEmpty)
-                        Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: _resetTurns,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                                textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                elevation: 3,
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: const Text('Restart'),
-                            ),
-                            const SizedBox(height: 18),
-                            Text(
-                              'All players had their turn!',
-                              style: GoogleFonts.baloo2(fontSize: 18, color: Colors.white),
-                            ),
-                          ],
-                        ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'All players had their turn!',
+                            style: GoogleFonts.baloo2(fontSize: 18, color: Colors.white),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 10),
                     ],
                   ],

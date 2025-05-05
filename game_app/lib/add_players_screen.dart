@@ -42,7 +42,26 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
   final FocusNode _textFieldFocusNode = FocusNode();
   static const String _playersPrefsKey = 'playerList';
   final List<Color> _defaultColors = [
-    Colors.red, Colors.blue, Colors.green, Colors.yellow, Colors.purple, Colors.orange, Colors.cyan, Colors.pink, Colors.teal, Colors.lime, Colors.indigo, Colors.brown
+    Color(0xFFEF476F), // Vibrant Pink
+    Color(0xFF3A86FF), // Electric Blue
+    Color(0xFF06D6A0), // Aqua Green
+    Color(0xFFFFD166), // Gold Yellow
+    Color(0xFF8338EC), // Royal Purple
+    Color(0xFFFF6F00), // Deep Orange
+    Color(0xFF00B8D9), // Rich Cyan
+    Color(0xFFFF61A6), // Punchy Pink
+    Color(0xFF43AA8B), // Emerald Green
+    Color(0xFFFB5607), // Vivid Orange
+    Color(0xFF7209B7), // Deep Violet
+    Color(0xFF00C853), // Premium Green
+    Color(0xFFB388FF), // Soft Lavender
+    Color(0xFFFF1744), // Red Accent
+    Color(0xFF00E5FF), // Neon Cyan
+    Color(0xFFFFC400), // Amber Gold
+    Color(0xFF8D6E63), // Elegant Brown
+    Color(0xFF1DE9B6), // Mint Green
+    Color(0xFF536DFE), // Indigo Blue
+    Color(0xFFFF4081), // Pink Accent
   ];
 
   @override
@@ -328,14 +347,26 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                                 padding: const EdgeInsets.only(
                                     top: 5), // Add padding above the list
                                 itemBuilder: (context, index) {
-                                  // Use ListTile directly without background container
+                                  // Use a gradient background for the avatar
+                                  final Color baseColor = _players[index].color;
+                                  // Create a lighter shade for the gradient
+                                  Color lighterColor = Color.lerp(baseColor, Colors.white, 0.5)!;
                                   return ListTile(
                                     leading: GestureDetector(
                                       onTap: () => _pickColor(index),
-                                      child: CircleAvatar(
-                                        backgroundColor: _players[index].color,
-                                        radius: 16,
-                                        child: const Icon(Icons.color_lens, color: Colors.white, size: 16),
+                                      child: Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          borderRadius: BorderRadius.circular(10),
+                                            color: baseColor,
+                                          border: Border.all(
+                                          color: Colors.white,
+                                          width: 4, // Thick white border
+                                          ),
+                                        ),
+                                        // child: const Icon(Icons.color_lens, color: Colors.white, size: 16),
                                       ),
                                     ),
                                     title: Text(

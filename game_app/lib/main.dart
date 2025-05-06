@@ -576,7 +576,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Save Choice",
+                              "Remember Choice",
                               style: GoogleFonts.baloo2(
                                 color: Colors.white.withOpacity(0.92),
                                 fontWeight: FontWeight.w600,
@@ -688,7 +688,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Start",
+                                      "Save",
                                       style: GoogleFonts.baloo2(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 22,
@@ -744,7 +744,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
-body: Container(
+      body: Container(
         // ... (keep existing background gradient) ...
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -791,9 +791,43 @@ body: Container(
                       ),
                       SizedBox(height: screenHeight * 0.06),
 
-                      // Update the onPressed for Start Game button to call the new dialog
-                      _buildStyledButton('Start Game', Icons.play_arrow, () {
-                        _showModernGameSetupDialog(context);
+                      // Start Game button logic updated
+                      _buildStyledButton('Start Game', Icons.play_arrow, () async {
+                        if (_saveSelection &&
+                            _selectedGameModeEnum != null &&
+                            _selectedAgeGroupEnum != null) {
+                          // If save is enabled and preferences exist, start game directly
+                          bool proceed = true;
+                          if (_selectedAgeGroupEnum == AgeGroup.adult) {
+                            proceed = await _showAdultConfirmationDialog(context);
+                          }
+                          if (proceed) {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
+                                  gameMode: _selectedGameModeEnum!,
+                                  ageGroup: _selectedAgeGroupEnum!,
+                                ),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.ease;
+                                  final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                                transitionDuration: const Duration(milliseconds: 300),
+                              ),
+                            );
+                          }
+                        } else {
+                          // Otherwise, show the setup dialog
+                          _showModernGameSetupDialog(context);
+                        }
                       }),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton('Add Truths', Icons.add, () {
@@ -821,7 +855,8 @@ body: Container(
                               print("Share pressed");
                             }),
                             _buildBottomBarButton(Icons.settings, () {
-                              print("Settings pressed");
+                              // Open Game Setup dialog from settings
+                              _showModernGameSetupDialog(context);
                             }),
                           ],
                         ),

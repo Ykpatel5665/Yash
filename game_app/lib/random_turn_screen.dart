@@ -258,7 +258,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     // --- Theme and sizing ---
     final Size size = MediaQuery.of(context).size;
     final double cardWidth = size.width * 0.8;
-    final double cardHeight = size.height * 0.32;
+    final double cardHeight = size.height * 0.23; // Match auto_next_turn_screen.dart
     final double avatarSize = size.width * 0.22;
     final double buttonFontSize = (size.width * 0.045).clamp(15, 22);
     const LinearGradient backgroundGradient = LinearGradient(

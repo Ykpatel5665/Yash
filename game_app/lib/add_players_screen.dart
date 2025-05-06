@@ -25,11 +25,13 @@ class Player {
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
   final AgeGroup ageGroup;
+  final List<String>? selectedCategoryIds;
 
   const AddPlayersScreen({
     super.key,
     required this.gameMode,
     required this.ageGroup,
+    this.selectedCategoryIds,
   });
 
   @override

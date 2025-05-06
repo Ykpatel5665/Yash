@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_players_screen.dart'; // Import the new screen
 import 'dart:ui';
+import 'category_selection_screen.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -793,40 +794,37 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
 
                       // Start Game button logic updated
                       _buildStyledButton('Start Game', Icons.play_arrow, () async {
-                        if (_saveSelection &&
-                            _selectedGameModeEnum != null &&
-                            _selectedAgeGroupEnum != null) {
-                          // If save is enabled and preferences exist, start game directly
-                          bool proceed = true;
-                          if (_selectedAgeGroupEnum == AgeGroup.adult) {
-                            proceed = await _showAdultConfirmationDialog(context);
-                          }
-                          if (proceed) {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
-                                  gameMode: _selectedGameModeEnum!,
-                                  ageGroup: _selectedAgeGroupEnum!,
-                                ),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  const begin = Offset(1.0, 0.0);
-                                  const end = Offset.zero;
-                                  const curve = Curves.ease;
-                                  final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                  final offsetAnimation = animation.drive(tween);
-                                  return SlideTransition(
-                                    position: offsetAnimation,
-                                    child: child,
-                                  );
-                                },
-                                transitionDuration: const Duration(milliseconds: 300),
+                        // Always show category selection after mode/age selection
+                        bool proceed = true;
+                        if (_selectedAgeGroupEnum == AgeGroup.adult) {
+                          proceed = await _showAdultConfirmationDialog(context);
+                        }
+                        if (_selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
+                          // Show setup dialog if not set
+                          await _showModernGameSetupDialog(context);
+                        }
+                        if (proceed && _selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
+                                gameMode: _selectedGameModeEnum!,
+                                ageGroup: _selectedAgeGroupEnum!,
                               ),
-                            );
-                          }
-                        } else {
-                          // Otherwise, show the setup dialog
-                          _showModernGameSetupDialog(context);
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                const begin = Offset(1.0, 0.0);
+                                const end = Offset.zero;
+                                const curve = Curves.ease;
+                                final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                final offsetAnimation = animation.drive(tween);
+                                return SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                );
+                              },
+                              transitionDuration: const Duration(milliseconds: 300),
+                            ),
+                          );
                         }
                       }),
                       SizedBox(height: screenHeight * 0.05),

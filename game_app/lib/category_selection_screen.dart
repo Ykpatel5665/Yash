@@ -321,13 +321,17 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       ),
       body: Stack(
         children: [
-          // Background gradient (keep for color vibrancy)
+          // Premium Background gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color.fromARGB(255, 50, 196, 255), Color.fromARGB(255, 27, 123, 212)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF1B1F3B), // Deep navy
+                  Color(0xFF3A2C60), // Rich purple
+                  Color(0xFFB9935A), // Gold accent
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
           ),
@@ -340,17 +344,17 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.32),
+                  color: Colors.black.withOpacity(0.38),
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.18),
+                    color: Color(0xFFB9935A).withOpacity(0.22), // Gold border
                     width: 2.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.10),
-                      blurRadius: 12,
-                      spreadRadius: 1,
+                      color: Color(0xFFB9935A).withOpacity(0.10),
+                      blurRadius: 18,
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
@@ -404,12 +408,24 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                 await _saveLastPlayedCategories();
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddPlayersScreen(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
                                       gameMode: widget.gameMode,
                                       ageGroup: widget.ageGroup,
                                       selectedCategoryIds: _selectedCategoryIds.toList(),
                                     ),
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      const begin = Offset(1.0, 0.0);
+                                      const end = Offset.zero;
+                                      const curve = Curves.easeOutCubic;
+                                      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                      final offsetAnimation = animation.drive(tween);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration: const Duration(milliseconds: 400),
                                   ),
                                 );
                               },

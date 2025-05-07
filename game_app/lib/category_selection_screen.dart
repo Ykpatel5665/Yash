@@ -262,7 +262,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     const double maxSpacing = 12;
     final double baseSpacing = (size.height * 0.012).clamp(4, 16); // slightly more flexible
     final double buttonFontSize = (size.width * 0.045).clamp(14, 20);
-    final double cardFont = (size.width * 0.06).clamp(18, 28); // increased font size
+    final double cardFont = (size.width * 0.06).clamp(16, 26); // increased font size
     final double iconSize = (size.width * 0.08).clamp(26, 36); // increased icon size
     final double cardRadius = 18;
     final double horizontalChipPadding = (size.width * 0.07).clamp(18, 36); // responsive horizontal padding

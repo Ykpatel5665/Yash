@@ -251,17 +251,45 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double spacing = (size.height * 0.025).clamp(10, 28);
-    final double buttonFontSize = (size.width * 0.05).clamp(18, 26);
-    final bool isLarge = size.width > 800;
-    final int gridCount = size.width > 900 ? 3 : 2;
-    final double gridPadding = isLarge ? 32 : 14;
-    final double cardHeight = (size.width < 500) ? 70 : 90;
-    final double cardFont = (size.width < 500) ? 15 : 18;
-    final double iconSize = (size.width < 500) ? 28 : 34;
-    final double checkSize = (size.width < 500) ? 22 : 28;
-    final double cardRadius = 22;
-    final Color primaryBlue = const Color(0xFF5E81F4);
+    final double appBarHeight = 100;
+    final double continueBtnHeight = 62;
+    final double safePadding = MediaQuery.of(context).padding.top;
+    final int categoryCount = _categories.length;
+    // Responsive min/max
+    const double minCardHeight = 38;
+    const double maxCardHeight = 90;
+    const double minSpacing = 6;
+    const double maxSpacing = 18;
+    final double baseSpacing = (size.height * 0.018).clamp(minSpacing, maxSpacing);
+    final double buttonFontSize = (size.width * 0.05).clamp(16, 26);
+    final double cardFont = (size.width < 500) ? 15 : 20;
+    final double iconSize = (size.width < 500) ? 28 : 36;
+    final double cardRadius = 24;
+    final Color glowBlue = const Color(0xFF3B82F6);
+    final Color dark1 = const Color(0xFF1E1E1E);
+    final Color dark2 = const Color(0xFF2A2A2A);
+    final Color frostedOverlay = Colors.white.withOpacity(0.08);
+
+    // Calculate available height for all category buttons (excluding appbar, spacing, continue button)
+    final double availableHeight = size.height - safePadding - appBarHeight - continueBtnHeight - baseSpacing * 2 - 32;
+    // Start with max card height and spacing
+    double cardHeight = maxCardHeight;
+    double spacing = maxSpacing;
+    // Calculate total required height
+    double totalRequired = categoryCount * cardHeight + (categoryCount - 1) * spacing;
+    // If overflow, shrink spacing and card height proportionally
+    if (totalRequired > availableHeight) {
+      // Try reducing spacing to min
+      spacing = minSpacing;
+      cardHeight = ((availableHeight - (categoryCount - 1) * spacing) / categoryCount).clamp(minCardHeight, maxCardHeight);
+      totalRequired = categoryCount * cardHeight + (categoryCount - 1) * spacing;
+      // If still overflow, reduce cardHeight to min
+      if (totalRequired > availableHeight) {
+        cardHeight = minCardHeight;
+        spacing = ((availableHeight - categoryCount * cardHeight) / (categoryCount - 1)).clamp(minSpacing, maxSpacing);
+        if (spacing.isNaN || spacing < minSpacing) spacing = minSpacing;
+      }
+    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -316,19 +344,19 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 100,
+        toolbarHeight: appBarHeight,
         titleSpacing: 0,
       ),
       body: Stack(
         children: [
-          // Premium Background gradient
+          // Lighter Premium Background gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF1B1F3B), // Deep navy
-                  Color(0xFF3A2C60), // Rich purple
-                  Color(0xFFB9935A), // Gold accent
+                  Color(0xFF23243A), // Lighter navy
+                  Color(0xFF4B3C6A), // Lighter purple
+                  Color(0xFFD1BFA3), // Lighter gold accent
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -344,119 +372,221 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.38),
+                  color: Colors.black.withOpacity(0.28), // slightly lighter overlay
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(
-                    color: Color(0xFFB9935A).withOpacity(0.22), // Gold border
+                    color: Color(0xFFD1BFA3).withOpacity(0.18), // lighter gold border
                     width: 2.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFB9935A).withOpacity(0.10),
+                      color: Color(0xFFD1BFA3).withOpacity(0.08),
                       blurRadius: 18,
                       spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(height: spacing),
-                    // Responsive Category Grid
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: gridPadding),
-                        child: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: gridCount,
-                            mainAxisSpacing: 22,
-                            crossAxisSpacing: 22,
-                            childAspectRatio: 2.7,
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      SizedBox(height: baseSpacing),
+                      // One category button per row, all fit in screen, no scroll
+                      ..._categories.asMap().entries.map((entry) {
+                        final idx = entry.key;
+                        final cat = entry.value;
+                        final bool selected = _selectedCategoryIds.contains(cat.id);
+                        final iconData = getCategoryIcon(cat.id);
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: 18,
+                            right: 18,
+                            bottom: idx == _categories.length - 1 ? 0 : spacing,
                           ),
-                          itemCount: _categories.length,
-                          itemBuilder: (context, idx) {
-                            final cat = _categories[idx];
-                            final bool selected = _selectedCategoryIds.contains(cat.id);
-                            final iconData = getCategoryIcon(cat.id);
-                            return buildCategoryToggleButton(
-                              label: cat.name,
-                              selected: selected,
-                              onTap: () {
-                                setState(() {
-                                  if (selected) {
-                                    _selectedCategoryIds.remove(cat.id);
-                                  } else {
-                                    _selectedCategoryIds.add(cat.id);
-                                  }
-                                });
-                              },
-                              icon: iconData,
-                              selectedColor: const Color(0xFF5B86E5).withOpacity(0.25),
-                              iconSize: iconSize,
-                              fontSize: cardFont,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(18, spacing, 18, spacing + 8),
-                      child: _AnimatedButton(
-                        enabled: _selectedCategoryIds.isNotEmpty,
-                        onTap: _selectedCategoryIds.isEmpty
-                            ? null
-                            : () async {
-                                await _saveLastPlayedCategories();
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
-                                      gameMode: widget.gameMode,
-                                      ageGroup: widget.ageGroup,
-                                      selectedCategoryIds: _selectedCategoryIds.toList(),
+                          child: SizedBox(
+                            height: cardHeight,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeOutCubic,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF2C2D3F).withOpacity(0.72), // lighter, more transparent
+                                    Color(0xFF3E4060).withOpacity(0.68)
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(cardRadius),
+                                boxShadow: [
+                                  if (selected)
+                                    BoxShadow(
+                                      color: glowBlue.withOpacity(0.38),
+                                      blurRadius: 18,
+                                      spreadRadius: 1.5,
+                                      offset: const Offset(0, 2),
                                     ),
-                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                      const begin = Offset(1.0, 0.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.easeOutCubic;
-                                      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                      final offsetAnimation = animation.drive(tween);
-                                      return SlideTransition(
-                                        position: offsetAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration: const Duration(milliseconds: 400),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.13),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
-                                );
-                              },
-                        child: Container(
-                          width: double.infinity,
-                          height: 62,
-                          decoration: BoxDecoration(
-                            color: _selectedCategoryIds.isEmpty ? Colors.grey[400] : primaryBlue,
-                            borderRadius: BorderRadius.circular(18),
-                            boxShadow: [
-                              BoxShadow(
-                                color: primaryBlue.withOpacity(0.18),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+                                ],
+                                border: Border.all(
+                                  color: selected ? glowBlue.withOpacity(0.55) : Colors.transparent,
+                                  width: selected ? 2.2 : 1.1,
+                                ),
                               ),
-                            ],
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(cardRadius),
+                                  onTap: () {
+                                    setState(() {
+                                      if (selected) {
+                                        _selectedCategoryIds.remove(cat.id);
+                                      } else {
+                                        _selectedCategoryIds.add(cat.id);
+                                      }
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      if (selected)
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(cardRadius),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                                            child: Container(
+                                              color: frostedOverlay,
+                                            ),
+                                          ),
+                                        ),
+                                      // Fix: Use Align to center Row vertically in the button
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 35, right: 15), // Add left space from border, right space before text
+                                              child: Icon(
+                                                iconData,
+                                                color: selected ? Colors.white : Colors.white.withOpacity(0.78),
+                                                size: iconSize,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                cat.name,
+                                                style: GoogleFonts.baloo2(
+                                                  fontSize: cardFont,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: selected ? Colors.white : Colors.white.withOpacity(0.82),
+                                                  letterSpacing: 0.5,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                            AnimatedSwitcher(
+                                              duration: const Duration(milliseconds: 180),
+                                              child: selected
+                                                  ? Padding(
+                                                      padding: const EdgeInsets.only(left: 15, right: 30), // Add right space from border
+                                                      child: Icon(Icons.check_circle, color: Colors.white, size: 28, key: ValueKey('check')),
+                                                    )
+                                                  : const SizedBox(width: 28, key: ValueKey('empty')),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (selected)
+                                        Positioned.fill(
+                                          child: IgnorePointer(
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(cardRadius),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: glowBlue.withOpacity(0.18),
+                                                    blurRadius: 18,
+                                                    spreadRadius: -8,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Continue",
-                            style: GoogleFonts.poppins(
-                              fontSize: buttonFontSize + 2,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 1.1,
+                        );
+                      }),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(18, baseSpacing, 18, baseSpacing + 8),
+                        child: _AnimatedButton(
+                          enabled: _selectedCategoryIds.isNotEmpty,
+                          onTap: _selectedCategoryIds.isEmpty
+                              ? null
+                              : () async {
+                                  await _saveLastPlayedCategories();
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
+                                        gameMode: widget.gameMode,
+                                        ageGroup: widget.ageGroup,
+                                        selectedCategoryIds: _selectedCategoryIds.toList(),
+                                      ),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeOutCubic;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        final offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: const Duration(milliseconds: 400),
+                                    ),
+                                  );
+                                },
+                          child: Container(
+                            width: double.infinity,
+                            height: continueBtnHeight,
+                            decoration: BoxDecoration(
+                              color: _selectedCategoryIds.isEmpty ? Colors.grey[400] : const Color(0xFF5E81F4),
+                              borderRadius: BorderRadius.circular(18),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF5E81F4).withOpacity(0.18),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Continue",
+                              style: GoogleFonts.poppins(
+                                fontSize: buttonFontSize + 2,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1.1,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

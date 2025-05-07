@@ -349,21 +349,20 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       ),
       body: Stack(
         children: [
-          // Lighter Premium Background gradient
+          // Bold, high-energy sunset background gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF23243A), // Lighter navy
-                  Color(0xFF4B3C6A), // Lighter purple
-                  Color(0xFFD1BFA3), // Lighter gold accent
+                  Color.fromARGB(255, 252, 118, 84), // Sunset Coral
+                  Color.fromARGB(255, 245, 64, 100), // Reddish Pink
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
-          // Glassmorphism overlay for the whole screen
+          // Glassmorphism overlay (keep, but lighter if needed)
           ClipRRect(
             borderRadius: BorderRadius.circular(0),
             child: BackdropFilter(
@@ -372,19 +371,13 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.28), // slightly lighter overlay
+                  color: Colors.white.withOpacity(0.04),
                   borderRadius: BorderRadius.circular(0),
                   border: Border.all(
-                    color: Color(0xFFD1BFA3).withOpacity(0.18), // lighter gold border
-                    width: 2.5,
+                    color: Colors.transparent,
+                    width: 0,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFFD1BFA3).withOpacity(0.08),
-                      blurRadius: 18,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  boxShadow: [],
                 ),
                 child: SafeArea(
                   child: Column(
@@ -408,31 +401,35 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                               duration: const Duration(milliseconds: 220),
                               curve: Curves.easeOutCubic,
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFF2C2D3F).withOpacity(0.72), // lighter, more transparent
-                                    Color(0xFF3E4060).withOpacity(0.68)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
+                                gradient: selected
+                                    ? const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(255, 255, 104, 123), // Vibrant pink
+                                          Color.fromARGB(255, 255, 153, 128), // Orange-peach
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      )
+                                    : null,
+                                color: selected ? null : Color.fromARGB(255, 255, 228, 232),
                                 borderRadius: BorderRadius.circular(cardRadius),
                                 boxShadow: [
                                   if (selected)
-                                    BoxShadow(
-                                      color: glowBlue.withOpacity(0.38),
+                                    const BoxShadow(
+                                      color: Color.fromARGB(60, 255, 104, 123),
                                       blurRadius: 18,
                                       spreadRadius: 1.5,
-                                      offset: const Offset(0, 2),
+                                      offset: Offset(0, 2),
                                     ),
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.13),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
+                                  if (!selected)
+                                    const BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 8,
+                                      offset: Offset(0, 2),
+                                    ),
                                 ],
                                 border: Border.all(
-                                  color: selected ? glowBlue.withOpacity(0.55) : Colors.transparent,
+                                  color: selected ? Colors.transparent : Color.fromARGB(255, 250, 180, 190),
                                   width: selected ? 2.2 : 1.1,
                                 ),
                               ),
@@ -457,11 +454,10 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                           child: BackdropFilter(
                                             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                             child: Container(
-                                              color: frostedOverlay,
+                                              color: Colors.white.withOpacity(0.08),
                                             ),
                                           ),
                                         ),
-                                      // Fix: Use Align to center Row vertically in the button
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: Row(
@@ -469,10 +465,10 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 35, right: 15), // Add left space from border, right space before text
+                                              padding: const EdgeInsets.only(left: 35, right: 15),
                                               child: Icon(
                                                 iconData,
-                                                color: selected ? Colors.white : Colors.white.withOpacity(0.78),
+                                                color: selected ? Color.fromARGB(255, 255, 255, 255) : Color.fromARGB(255, 180, 70, 90),
                                                 size: iconSize,
                                               ),
                                             ),
@@ -482,7 +478,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                 style: GoogleFonts.baloo2(
                                                   fontSize: cardFont,
                                                   fontWeight: FontWeight.bold,
-                                                  color: selected ? Colors.white : Colors.white.withOpacity(0.82),
+                                                  color: selected ? Color.fromARGB(255, 255, 255, 255) : Color.fromARGB(255, 100, 20, 40),
                                                   letterSpacing: 0.5,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
@@ -493,8 +489,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               duration: const Duration(milliseconds: 180),
                                               child: selected
                                                   ? Padding(
-                                                      padding: const EdgeInsets.only(left: 15, right: 30), // Add right space from border
-                                                      child: Icon(Icons.check_circle, color: Colors.white, size: 28, key: ValueKey('check')),
+                                                      padding: const EdgeInsets.only(left: 15, right: 30),
+                                                      child: Icon(Icons.check_circle, color: Color.fromARGB(255, 255, 255, 255), size: 28, key: ValueKey('check')),
                                                     )
                                                   : const SizedBox(width: 28, key: ValueKey('empty')),
                                             ),
@@ -508,11 +504,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(cardRadius),
                                                 boxShadow: [
-                                                  BoxShadow(
-                                                    color: glowBlue.withOpacity(0.18),
+                                                  const BoxShadow(
+                                                    color: Color.fromARGB(60, 255, 104, 123),
                                                     blurRadius: 18,
                                                     spreadRadius: -8,
-                                                    offset: const Offset(0, 2),
+                                                    offset: Offset(0, 2),
                                                   ),
                                                 ],
                                               ),
@@ -562,11 +558,18 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                             width: double.infinity,
                             height: continueBtnHeight,
                             decoration: BoxDecoration(
-                              color: _selectedCategoryIds.isEmpty ? Colors.grey[400] : const Color(0xFF5E81F4),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color.fromARGB(255, 245, 64, 100), // Reddish Pink
+                                  Color.fromARGB(255, 252, 118, 84), // Sunset Coral
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
                               borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF5E81F4).withOpacity(0.18),
+                                  color: const Color.fromARGB(60, 245, 64, 100),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -578,7 +581,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                               style: GoogleFonts.poppins(
                                 fontSize: buttonFontSize + 2,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Color.fromARGB(255, 255, 255, 255),
                                 letterSpacing: 1.1,
                               ),
                             ),

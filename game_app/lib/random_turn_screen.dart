@@ -117,46 +117,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         final double cardPadding = 24.0;
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
-        // Gradient for the Close button (similar to Truth/Dare dialog)
-        BoxDecoration closeButtonDecoration = BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF4DD0E1), // Cyan
-              Color(0xFF1976D2), // Blue
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withOpacity(0.18),
-              blurRadius: 16,
-              spreadRadius: 1,
-            ),
-          ],
-        );
-        TextStyle titleStyle = GoogleFonts.baloo2(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          shadows: [
-            Shadow(
-              blurRadius: 4,
-              color: Colors.white.withOpacity(0.3),
-            ),
-          ],
-        );
-        TextStyle playerStyle = GoogleFonts.baloo2(
-          fontSize: fontSize,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        );
-        TextStyle scoreStyle = GoogleFonts.baloo2(
-          fontSize: fontSize,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        );
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Center(
@@ -187,13 +147,23 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     children: [
                       Text(
                         'Scoreboard',
-                        style: titleStyle,
+                        style: GoogleFonts.baloo2(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ],
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 28),
                       Icon(
                         Icons.emoji_events_rounded,
-                        color: Color(0xFFFFD700), // Golden color
+                        color: Color(0xFFFFD700), // Gold
                         size: screenSize.width * 0.14,
                         shadows: [
                           Shadow(
@@ -209,7 +179,14 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(player, style: playerStyle),
+                                Text(
+                                  player,
+                                  style: GoogleFonts.baloo2(
+                                    fontSize: fontSize,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                                   decoration: BoxDecoration(
@@ -218,7 +195,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                   ),
                                   child: Text(
                                     _playerScores[player]?.toString() ?? '0',
-                                    style: scoreStyle,
+                                    style: GoogleFonts.baloo2(
+                                      fontSize: fontSize,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -226,7 +207,24 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           )),
                       SizedBox(height: 32),
                       DecoratedBox(
-                        decoration: closeButtonDecoration,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF5B86E5),
+                              Color(0xFF8F6ED5),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.18),
+                              blurRadius: 16,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
                         child: ElevatedButton(
                           onPressed: () => Navigator.of(context).pop(),
                           style: ElevatedButton.styleFrom(
@@ -236,11 +234,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            textStyle: GoogleFonts.baloo2(
-                              fontWeight: FontWeight.bold,
-                              fontSize: buttonFontSize,
-                            ),
+                            padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
+                            textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
                           ),
                           child: Center(
                             child: Text(

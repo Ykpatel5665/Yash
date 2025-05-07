@@ -20,6 +20,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   bool _showTruthDare = false;
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
+  bool _isMuted = false; // State for volume button
   // For demo, use all categories (or pass selectedCategoryIds if you want to filter)
   List<String> get _allCategoryIds => [
     'KIDS_FUNNY','KIDS_FAMILY','KIDS_SCHOOL','KIDS_CARTOONS','KIDS_GAMES','KIDS_ANIMALS','KIDS_FOOD','KIDS_IMAGINATION','KIDS_CHALLENGES','KIDS_HOBBIES',
@@ -97,84 +98,149 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         final double maxCardWidth = 420;
         final double cardPadding = 24.0;
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
+        final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Center(
-            child: Container(
-              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-              padding: EdgeInsets.all(cardPadding),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.32),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.25),
-                  width: 2.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Scoreboard',
-                    style: GoogleFonts.baloo2(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 18),
-                  ...widget.players.map((player) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              player,
-                              style: GoogleFonts.baloo2(
-                                fontSize: fontSize,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.13),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                _playerScores[player]?.toString() ?? '0',
-                                style: GoogleFonts.baloo2(
-                                  fontSize: fontSize,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Scoreboard',
+                        style: GoogleFonts.baloo2(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
                             ),
                           ],
                         ),
-                      )),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
-                      textStyle: GoogleFonts.baloo2(fontSize: fontSize, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      elevation: 2,
-                    ),
-                    child: const Text('Close'),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      Icon(
+                        Icons.emoji_events_rounded,
+                        color: Color(0xFFFFD700), // Gold
+                        size: screenSize.width * 0.14,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()),
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 28),
+                      ...widget.players.map((player) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  player,
+                                  style: GoogleFonts.baloo2(
+                                    fontSize: fontSize,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.13),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    _playerScores[player]?.toString() ?? '0',
+                                    style: GoogleFonts.baloo2(
+                                      fontSize: fontSize,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                      SizedBox(height: 32),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF5B86E5),
+                              Color(0xFF8F6ED5),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.18),
+                              blurRadius: 16,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
+                            textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Close',
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.bold,
+                                fontSize: buttonFontSize,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 8,
+                                    color: Colors.black.withOpacity(0.25),
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -362,6 +428,44 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     ) ?? false;
   }
 
+  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double minBtn = 44, maxBtn = 70;
+    final double btnSize = (screenSize.width * 0.13).clamp(minBtn, maxBtn);
+    final double iconSize = (screenSize.width * 0.07).clamp(22, 36);
+    const Color baseColor = Color.fromARGB(255, 255, 255, 255);
+    final Color shadowDark = Colors.black.withOpacity(0.3);
+    final Color shadowLight = Colors.white.withOpacity(0.4);
+    return Container(
+      decoration: BoxDecoration(
+        color: baseColor.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
+          BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: EdgeInsets.all(btnSize * 0.25),
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          minimumSize: Size(btnSize, btnSize),
+        ),
+        onPressed: onPressed,
+        child: Icon(
+          icon,
+          size: iconSize,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Use the same AppBar style from MyApp theme, but allow customization if needed
@@ -449,117 +553,100 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
             ),
           ),
           child: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(height: spacingLarge),
-                        // Card design instead of colored circle
-                        Container(
-                          width: screenWidth * 0.8,
-                          height: screenHeight * 0.23,
-                          margin: EdgeInsets.only(bottom: spacingLarge),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            gradient: LinearGradient(
-                              colors: [
-                                playerColor,
-                                playerColor.withOpacity(0.7),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withAlpha(80),
-                                blurRadius: 10.0,
-                                spreadRadius: 1.0,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  playerName,
-                                  style: TextStyle(
-                                    fontSize: titleFontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
-                                    shadows: [
-                                      Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
-                                    ],
+            child: Stack(
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Center(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: spacingLarge),
+                            // Card design instead of colored circle
+                            Container(
+                              width: screenWidth * 0.8,
+                              height: screenHeight * 0.23,
+                              margin: EdgeInsets.only(bottom: spacingLarge),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    playerColor,
+                                    playerColor.withOpacity(0.7),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(80),
+                                    blurRadius: 10.0,
+                                    spreadRadius: 1.0,
+                                    offset: const Offset(0, 4),
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  "It's your turn!",
-                                  style: TextStyle(fontSize: turnFontSize, color: textColor.withOpacity(0.7)),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Only show restart and message after last player has finished their turn
-                        if (_lastPlayerFinished) ...[
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _currentIndex = 0;
-                                _showTruthDare = false;
-                                _lastPlayerFinished = false;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: buttonPaddingH,
-                                vertical: buttonPaddingV,
+                                ],
                               ),
-                              textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              elevation: 3,
-                            ),
-                            child: const Text('Restart'),
-                          ),
-                          SizedBox(height: spacingLarge * 0.7),
-                          Text(
-                            'All players had their turn!',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
-                        ] else ...[
-                          if (!_showTruthDare) ...[
-                            ElevatedButton(
-                              onPressed: _showTruthOrDare,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: buttonPaddingH,
-                                  vertical: buttonPaddingV,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      playerName,
+                                      style: TextStyle(
+                                        fontSize: titleFontSize,
+                                        fontWeight: FontWeight.bold,
+                                        color: textColor,
+                                        shadows: [
+                                          Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: 12),
+                                    Text(
+                                      "It's your turn!",
+                                      style: TextStyle(fontSize: turnFontSize, color: textColor.withOpacity(0.7)),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
-                                textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                elevation: 3,
                               ),
-                              child: const Text('Truth or Dare?'),
                             ),
-                          ] else ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                            // Only show restart and message after last player has finished their turn
+                            if (_lastPlayerFinished) ...[
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _currentIndex = 0;
+                                    _showTruthDare = false;
+                                    _lastPlayerFinished = false;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: buttonPaddingH,
+                                    vertical: buttonPaddingV,
+                                  ),
+                                  textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  elevation: 3,
+                                ),
+                                child: const Text('Restart'),
+                              ),
+                              SizedBox(height: spacingLarge * 0.7),
+                              Text(
+                                'All players had their turn!',
+                                style: TextStyle(fontSize: 18, color: Colors.white),
+                              ),
+                            ] else ...[
+                              if (!_showTruthDare) ...[
                                 ElevatedButton(
-                                  onPressed: () => _showTruthOrDareScreen(true),
+                                  onPressed: _showTruthOrDare,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
@@ -571,39 +658,84 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     elevation: 3,
                                   ),
-                                  child: const Text('Truth'),
+                                  child: const Text('Truth or Dare?'),
                                 ),
-                                SizedBox(width: screenWidth * 0.06),
-                                ElevatedButton(
-                                  onPressed: () => _showTruthOrDareScreen(false),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black,
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: buttonPaddingH,
-                                      vertical: buttonPaddingV,
+                              ] else ...[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () => _showTruthOrDareScreen(true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: Colors.black,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: buttonPaddingH,
+                                          vertical: buttonPaddingV,
+                                        ),
+                                        textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        elevation: 3,
+                                      ),
+                                      child: const Text('Truth'),
                                     ),
-                                    textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    elevation: 3,
-                                  ),
-                                  child: const Text('Dare'),
+                                    SizedBox(width: screenWidth * 0.06),
+                                    ElevatedButton(
+                                      onPressed: () => _showTruthOrDareScreen(false),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.black,
+                                        foregroundColor: Colors.white,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: buttonPaddingH,
+                                          vertical: buttonPaddingV,
+                                        ),
+                                        textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        elevation: 3,
+                                      ),
+                                      child: const Text('Dare'),
+                                    ),
+                                  ],
                                 ),
                               ],
+                            ],
+                            SizedBox(height: spacingLarge),
+                            Text(
+                              'Player ${_currentIndex + 1} of ${widget.players.length}',
+                              style: TextStyle(fontSize: buttonFontSize, color: Colors.white),
                             ),
+                            SizedBox(height: spacingLarge),
                           ],
-                        ],
-                        SizedBox(height: spacingLarge),
-                        Text(
-                          'Player ${_currentIndex + 1} of ${widget.players.length}',
-                          style: TextStyle(fontSize: buttonFontSize, color: Colors.white),
                         ),
-                        SizedBox(height: spacingLarge),
-                      ],
-                    ),
+                      ),
+                    );
+                  },
+                ),
+                // Bottom buttons row (volume and scorecard)
+                Positioned(
+                  left: MediaQuery.of(context).size.width * 0.07,
+                  right: MediaQuery.of(context).size.width * 0.07,
+                  bottom: MediaQuery.of(context).size.height * 0.04,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildIconButton(
+                        _isMuted ? Icons.volume_off : Icons.volume_up,
+                        () {
+                          setState(() {
+                            _isMuted = !_isMuted;
+                          });
+                          // TODO: Implement actual volume control logic
+                        },
+                      ),
+                      _buildIconButton(
+                        Icons.emoji_events_outlined,
+                        _showScoreboardDialog,
+                      ),
+                    ],
                   ),
-                );
-              },
+                ),
+              ],
             ),
           ),
         ),

@@ -651,27 +651,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                       });
                                       await _savePreferences(finalGameMode, finalAgeGroup);
                                       Navigator.of(dialogPageContext).pop();
-                                      Navigator.push(
-                                        this.context,
-                                        PageRouteBuilder(
-                                          pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
-                                            gameMode: finalGameMode,
-                                            ageGroup: finalAgeGroup,
-                                          ),
-                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                            const begin = Offset(1.0, 0.0);
-                                            const end = Offset.zero;
-                                            const curve = Curves.ease;
-                                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                            final offsetAnimation = animation.drive(tween);
-                                            return SlideTransition(
-                                              position: offsetAnimation,
-                                              child: child,
-                                            );
-                                          },
-                                          transitionDuration: const Duration(milliseconds: 300),
-                                        ),
-                                      );
+                                      // Removed navigation to CategorySelectionScreen here
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(

@@ -255,41 +255,17 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final double continueBtnHeight = 62;
     final double safePadding = MediaQuery.of(context).padding.top;
     final int categoryCount = _categories.length;
-    // Responsive min/max
-    const double minCardHeight = 38;
-    const double maxCardHeight = 90;
-    const double minSpacing = 6;
-    const double maxSpacing = 18;
-    final double baseSpacing = (size.height * 0.018).clamp(minSpacing, maxSpacing);
-    final double buttonFontSize = (size.width * 0.05).clamp(16, 26);
-    final double cardFont = (size.width < 500) ? 15 : 20;
-    final double iconSize = (size.width < 500) ? 28 : 36;
-    final double cardRadius = 24;
-    final Color glowBlue = const Color(0xFF3B82F6);
-    final Color dark1 = const Color(0xFF1E1E1E);
-    final Color dark2 = const Color(0xFF2A2A2A);
-    final Color frostedOverlay = Colors.white.withOpacity(0.08);
-
-    // Calculate available height for all category buttons (excluding appbar, spacing, continue button)
-    final double availableHeight = size.height - safePadding - appBarHeight - continueBtnHeight - baseSpacing * 2 - 32;
-    // Start with max card height and spacing
-    double cardHeight = maxCardHeight;
-    double spacing = maxSpacing;
-    // Calculate total required height
-    double totalRequired = categoryCount * cardHeight + (categoryCount - 1) * spacing;
-    // If overflow, shrink spacing and card height proportionally
-    if (totalRequired > availableHeight) {
-      // Try reducing spacing to min
-      spacing = minSpacing;
-      cardHeight = ((availableHeight - (categoryCount - 1) * spacing) / categoryCount).clamp(minCardHeight, maxCardHeight);
-      totalRequired = categoryCount * cardHeight + (categoryCount - 1) * spacing;
-      // If still overflow, reduce cardHeight to min
-      if (totalRequired > availableHeight) {
-        cardHeight = minCardHeight;
-        spacing = ((availableHeight - categoryCount * cardHeight) / (categoryCount - 1)).clamp(minSpacing, maxSpacing);
-        if (spacing.isNaN || spacing < minSpacing) spacing = minSpacing;
-      }
-    }
+    // Smaller chip/card sizes
+    const double minCardHeight = 32;
+    const double maxCardHeight = 68; // increased card height
+    const double minSpacing = 4;
+    const double maxSpacing = 12;
+    final double baseSpacing = (size.height * 0.012).clamp(4, 16); // slightly more flexible
+    final double buttonFontSize = (size.width * 0.045).clamp(14, 20);
+    final double cardFont = (size.width * 0.06).clamp(18, 28); // increased font size
+    final double iconSize = (size.width * 0.08).clamp(26, 36); // increased icon size
+    final double cardRadius = 18;
+    final double horizontalChipPadding = (size.width * 0.07).clamp(18, 36); // responsive horizontal padding
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -380,95 +356,91 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   boxShadow: [],
                 ),
                 child: SafeArea(
-                  child: Column(
-                    children: [
-                      SizedBox(height: baseSpacing),
-                      // One category button per row, all fit in screen, no scroll
-                      ..._categories.asMap().entries.map((entry) {
-                        final idx = entry.key;
-                        final cat = entry.value;
-                        final bool selected = _selectedCategoryIds.contains(cat.id);
-                        final iconData = getCategoryIcon(cat.id);
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            left: 18,
-                            right: 18,
-                            bottom: idx == _categories.length - 1 ? 0 : spacing,
-                          ),
-                          child: SizedBox(
-                            height: cardHeight,
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 220),
-                              curve: Curves.easeOutCubic,
-                              decoration: BoxDecoration(
-                                gradient: selected
-                                    ? const LinearGradient(
-                                        colors: [
-                                          Color.fromARGB(255, 255, 104, 123), // Vibrant pink
-                                          Color.fromARGB(255, 255, 153, 128), // Orange-peach
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      )
-                                    : null,
-                                color: selected ? null : Color.fromARGB(255, 255, 228, 232),
-                                borderRadius: BorderRadius.circular(cardRadius),
-                                boxShadow: [
-                                  if (selected)
-                                    const BoxShadow(
-                                      color: Color.fromARGB(60, 255, 104, 123),
-                                      blurRadius: 18,
-                                      spreadRadius: 1.5,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  if (!selected)
-                                    const BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 8,
-                                      offset: Offset(0, 2),
-                                    ),
-                                ],
-                                border: Border.all(
-                                  color: selected ? Colors.transparent : Color.fromARGB(255, 250, 180, 190),
-                                  width: selected ? 2.2 : 1.1,
-                                ),
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(cardRadius),
-                                  onTap: () {
-                                    setState(() {
-                                      if (selected) {
-                                        _selectedCategoryIds.remove(cat.id);
-                                      } else {
-                                        _selectedCategoryIds.add(cat.id);
-                                      }
-                                    });
-                                  },
-                                  child: Stack(
-                                    children: [
-                                      if (selected)
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(cardRadius),
-                                          child: BackdropFilter(
-                                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                                            child: Container(
-                                              color: Colors.white.withOpacity(0.08),
-                                            ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isWide = constraints.maxWidth > 600;
+                      final double gridSpacing = baseSpacing;
+                      final double gridPadding = 12;
+                      final double gridCardHeight = (isWide ? 44.0 : null) ?? maxCardHeight;
+                      final EdgeInsets continueBtnPadding = EdgeInsets.fromLTRB(12, baseSpacing, 12, baseSpacing + 6);
+                      Widget categoryList;
+                      if (isWide) {
+                        // Grid for wide screens
+                        categoryList = Expanded(
+                          child: GridView.builder(
+                            padding: EdgeInsets.only(top: baseSpacing, bottom: baseSpacing),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: baseSpacing, // vertical gap
+                              crossAxisSpacing: baseSpacing, // horizontal gap
+                              childAspectRatio: 4.2,
+                            ),
+                            itemCount: _categories.length,
+                            itemBuilder: (context, idx) {
+                              final cat = _categories[idx];
+                              final bool selected = _selectedCategoryIds.contains(cat.id);
+                              final iconData = getCategoryIcon(cat.id);
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: horizontalChipPadding / 2),
+                                child: SizedBox(
+                                  height: 44.0,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 220),
+                                    curve: Curves.easeOutCubic,
+                                    decoration: BoxDecoration(
+                                      gradient: selected
+                                          ? const LinearGradient(
+                                              colors: [
+                                                Color(0xFF11998E), // Premium dark greenish
+                                                Color(0xFF38EF7D), // Softer green
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            )
+                                          : null,
+                                      color: selected ? null : const Color(0xFFE6F4EA), // subtle greenish for unselected
+                                      borderRadius: BorderRadius.circular(cardRadius),
+                                      boxShadow: [
+                                        if (selected)
+                                          const BoxShadow(
+                                            color: Color(0x8011998E),
+                                            blurRadius: 16,
+                                            spreadRadius: 1.0,
+                                            offset: Offset(0, 2),
                                           ),
-                                        ),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
+                                        if (!selected)
+                                          const BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 5,
+                                            offset: Offset(0, 2),
+                                          ),
+                                      ],
+                                      border: Border.all(
+                                        color: selected ? Colors.transparent : const Color(0xFFB7E2C5), // greenish border
+                                        width: selected ? 1.5 : 0.8,
+                                      ),
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(cardRadius),
+                                        onTap: () {
+                                          setState(() {
+                                            if (selected) {
+                                              _selectedCategoryIds.remove(cat.id);
+                                            } else {
+                                              _selectedCategoryIds.add(cat.id);
+                                            }
+                                          });
+                                        },
                                         child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 35, right: 15),
+                                              padding: const EdgeInsets.only(left: 18, right: 18), // increased right padding for more space
                                               child: Icon(
                                                 iconData,
-                                                color: selected ? Color.fromARGB(255, 255, 255, 255) : Color.fromARGB(255, 180, 70, 90),
+                                                color: selected ? Colors.white : const Color(0xFF11998E),
                                                 size: iconSize,
                                               ),
                                             ),
@@ -478,7 +450,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                 style: GoogleFonts.baloo2(
                                                   fontSize: cardFont,
                                                   fontWeight: FontWeight.bold,
-                                                  color: selected ? Color.fromARGB(255, 255, 255, 255) : Color.fromARGB(255, 100, 20, 40),
+                                                  color: selected ? Colors.white : const Color(0xFF11998E),
                                                   letterSpacing: 0.5,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
@@ -489,106 +461,214 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               duration: const Duration(milliseconds: 180),
                                               child: selected
                                                   ? Padding(
-                                                      padding: const EdgeInsets.only(left: 15, right: 30),
-                                                      child: Icon(Icons.check_circle, color: Color.fromARGB(255, 255, 255, 255), size: 28, key: ValueKey('check')),
+                                                      padding: const EdgeInsets.only(left: 10, right: 14),
+                                                      child: Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.white,
+                                                        size: 32, // increased tick icon size
+                                                        key: ValueKey('check'),
+                                                      ),
                                                     )
-                                                  : const SizedBox(width: 28, key: ValueKey('empty')),
+                                                  : const SizedBox(width: 32, key: ValueKey('empty')), // match tick icon size
                                             ),
                                           ],
                                         ),
                                       ),
-                                      if (selected)
-                                        Positioned.fill(
-                                          child: IgnorePointer(
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(cardRadius),
-                                                boxShadow: [
-                                                  const BoxShadow(
-                                                    color: Color.fromARGB(60, 255, 104, 123),
-                                                    blurRadius: 18,
-                                                    spreadRadius: -8,
-                                                    offset: Offset(0, 2),
-                                                  ),
-                                                ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        // ListView for small screens
+                        categoryList = Expanded(
+                          child: ListView.builder(
+                            padding: EdgeInsets.only(top: baseSpacing, bottom: baseSpacing),
+                            itemCount: _categories.length,
+                            itemBuilder: (context, idx) {
+                              final cat = _categories[idx];
+                              final bool selected = _selectedCategoryIds.contains(cat.id);
+                              final iconData = getCategoryIcon(cat.id);
+                              return Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  horizontalChipPadding,
+                                  0,
+                                  horizontalChipPadding,
+                                  idx == _categories.length - 1 ? 0 : baseSpacing,
+                                ),
+                                child: SizedBox(
+                                  height: 54,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 220),
+                                    curve: Curves.easeOutCubic,
+                                    decoration: BoxDecoration(
+                                      gradient: selected
+                                          ? const LinearGradient(
+                                              colors: [
+                                                Color(0xFF11998E), // Premium dark greenish
+                                                Color(0xFF38EF7D), // Softer green
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            )
+                                          : null,
+                                      color: selected ? null : const Color(0xFFE6F4EA), // subtle greenish for unselected
+                                      borderRadius: BorderRadius.circular(cardRadius),
+                                      boxShadow: [
+                                        if (selected)
+                                          const BoxShadow(
+                                            color: Color(0x8011998E),
+                                            blurRadius: 16,
+                                            spreadRadius: 1.0,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        if (!selected)
+                                          const BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 5,
+                                            offset: Offset(0, 2),
+                                          ),
+                                      ],
+                                      border: Border.all(
+                                        color: selected ? Colors.transparent : const Color(0xFFB7E2C5), // greenish border
+                                        width: selected ? 1.5 : 0.8,
+                                      ),
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(cardRadius),
+                                        onTap: () {
+                                          setState(() {
+                                            if (selected) {
+                                              _selectedCategoryIds.remove(cat.id);
+                                            } else {
+                                              _selectedCategoryIds.add(cat.id);
+                                            }
+                                          });
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 18, right: 18), // increased right padding for more space
+                                              child: Icon(
+                                                iconData,
+                                                color: selected ? Colors.white : const Color(0xFF11998E),
+                                                size: iconSize,
                                               ),
                                             ),
-                                          ),
+                                            Expanded(
+                                              child: Text(
+                                                cat.name,
+                                                style: GoogleFonts.baloo2(
+                                                  fontSize: cardFont,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: selected ? Colors.white : const Color(0xFF11998E),
+                                                  letterSpacing: 0.5,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                            AnimatedSwitcher(
+                                              duration: const Duration(milliseconds: 180),
+                                              child: selected
+                                                  ? Padding(
+                                                      padding: const EdgeInsets.only(left: 10, right: 14),
+                                                      child: Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.white,
+                                                        size: 32, // increased tick icon size
+                                                        key: ValueKey('check'),
+                                                      ),
+                                                    )
+                                                  : const SizedBox(width: 32, key: ValueKey('empty')), // match tick icon size
+                                            ),
+                                          ],
                                         ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          categoryList,
+                          Padding(
+                            padding: continueBtnPadding,
+                            child: _AnimatedButton(
+                              enabled: _selectedCategoryIds.isNotEmpty,
+                              onTap: _selectedCategoryIds.isEmpty
+                                  ? null
+                                  : () async {
+                                      await _saveLastPlayedCategories();
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
+                                            gameMode: widget.gameMode,
+                                            ageGroup: widget.ageGroup,
+                                            selectedCategoryIds: _selectedCategoryIds.toList(),
+                                          ),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            const begin = Offset(1.0, 0.0);
+                                            const end = Offset.zero;
+                                            const curve = Curves.easeOutCubic;
+                                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                            final offsetAnimation = animation.drive(tween);
+                                            return SlideTransition(
+                                              position: offsetAnimation,
+                                              child: child,
+                                            );
+                                          },
+                                          transitionDuration: const Duration(milliseconds: 400),
+                                        ),
+                                      );
+                                    },
+                              child: Container(
+                                width: double.infinity,
+                                height: continueBtnHeight,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 245, 64, 100),
+                                      Color.fromARGB(255, 252, 118, 84),
                                     ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromARGB(60, 245, 64, 100),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Continue",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: buttonFontSize + 1,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    letterSpacing: 1.1,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      }),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(18, baseSpacing, 18, baseSpacing + 8),
-                        child: _AnimatedButton(
-                          enabled: _selectedCategoryIds.isNotEmpty,
-                          onTap: _selectedCategoryIds.isEmpty
-                              ? null
-                              : () async {
-                                  await _saveLastPlayedCategories();
-                                  Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
-                                        gameMode: widget.gameMode,
-                                        ageGroup: widget.ageGroup,
-                                        selectedCategoryIds: _selectedCategoryIds.toList(),
-                                      ),
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        const begin = Offset(1.0, 0.0);
-                                        const end = Offset.zero;
-                                        const curve = Curves.easeOutCubic;
-                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                        final offsetAnimation = animation.drive(tween);
-                                        return SlideTransition(
-                                          position: offsetAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration: const Duration(milliseconds: 400),
-                                    ),
-                                  );
-                                },
-                          child: Container(
-                            width: double.infinity,
-                            height: continueBtnHeight,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color.fromARGB(255, 245, 64, 100), // Reddish Pink
-                                  Color.fromARGB(255, 252, 118, 84), // Sunset Coral
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color.fromARGB(60, 245, 64, 100),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Continue",
-                              style: GoogleFonts.poppins(
-                                fontSize: buttonFontSize + 2,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

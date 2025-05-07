@@ -6,6 +6,8 @@ import 'player_circle_painter.dart'; // Import the player circle widget
 import 'truth_dare_select_screen.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
+import 'truth_dare_data.dart'; // Import for question logic
+import 'truth_dare_question_screen.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -15,12 +17,14 @@ class SpinTheBottleScreen extends StatefulWidget {
   final List<String> players;
   final List<Color> playerColors;
   final AgeGroup ageGroup;
+  final List<String> selectedCategoryIds;
 
   const SpinTheBottleScreen({
     super.key,
     required this.players,
     required this.playerColors,
     required this.ageGroup,
+    required this.selectedCategoryIds,
   });
 
   @override
@@ -43,6 +47,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   Offset? _startDragPos;
   double _startAngle = 0.0;
   // Removed _velocity state variable, rely on DragEndDetails.primaryVelocity
+
+  Map<String, int> _playerScores = {};
 
   @override
   void initState() {
@@ -67,6 +73,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
            }
          }
        });
+    // Initialize scores
+    for (final player in widget.players) {
+      _playerScores[player] = 0;
+    }
   }
 
   @override
@@ -227,24 +237,74 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   }
 
   // --- Truth/Dare Action Handlers ---
-  void _onTruthSelected() {
+  void _onTruthSelected() async {
     if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
-    print("Player ${widget.players[_selectedPlayerIndex!]} chose TRUTH!");
-    // TODO: Implement actual Truth logic (e.g., show question)
-    setState(() {
-      _gamePhase = GamePhase.readyToSpin; // Reset for next turn
-      _selectedPlayerIndex = null;
-    });
+    final question = getRandomQuestion(
+      type: QuestionType.truth,
+      ageGroup: widget.ageGroup,
+      categoryIds: widget.selectedCategoryIds,
+    );
+    final playerName = widget.players[_selectedPlayerIndex!];
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TruthDareQuestionScreen(
+          playerName: playerName,
+          questionText: question?.question ?? 'No truth found for this category.',
+          isTruth: true,
+          onDone: () {
+            _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
+            Navigator.of(context).pop();
+            setState(() {
+              _gamePhase = GamePhase.readyToSpin;
+              _selectedPlayerIndex = null;
+            });
+          },
+          onForfeit: () {
+            Navigator.of(context).pop();
+            setState(() {
+              _gamePhase = GamePhase.readyToSpin;
+              _selectedPlayerIndex = null;
+            });
+          },
+        ),
+      ),
+    );
   }
 
-  void _onDareSelected() {
+  void _onDareSelected() async {
     if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
-    print("Player ${widget.players[_selectedPlayerIndex!]} chose DARE!");
-    // TODO: Implement actual Dare logic (e.g., show challenge)
-    setState(() {
-      _gamePhase = GamePhase.readyToSpin; // Reset for next turn
-      _selectedPlayerIndex = null;
-    });
+    final question = getRandomQuestion(
+      type: QuestionType.dare,
+      ageGroup: widget.ageGroup,
+      categoryIds: widget.selectedCategoryIds,
+    );
+    final playerName = widget.players[_selectedPlayerIndex!];
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TruthDareQuestionScreen(
+          playerName: playerName,
+          questionText: question?.question ?? 'No dare found for this category.',
+          isTruth: false,
+          onDone: () {
+            _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
+            Navigator.of(context).pop();
+            setState(() {
+              _gamePhase = GamePhase.readyToSpin;
+              _selectedPlayerIndex = null;
+            });
+          },
+          onForfeit: () {
+            Navigator.of(context).pop();
+            setState(() {
+              _gamePhase = GamePhase.readyToSpin;
+              _selectedPlayerIndex = null;
+            });
+          },
+        ),
+      ),
+    );
   }
 
   // Helper function to build styled icon buttons (similar to home screen)
@@ -465,6 +525,101 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     ) ?? false;
   }
 
+  void _showScoreboardDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final Size screenSize = MediaQuery.of(context).size;
+        final double cardWidth = screenSize.width * 0.92;
+        final double maxCardWidth = 420;
+        final double cardPadding = 24.0;
+        final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Center(
+            child: Container(
+              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+              padding: EdgeInsets.all(cardPadding),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.32),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.25),
+                  width: 2.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Scoreboard',
+                    style: GoogleFonts.baloo2(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 18),
+                  ...widget.players.map((player) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              player,
+                              style: GoogleFonts.baloo2(
+                                fontSize: fontSize,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.13),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _playerScores[player]?.toString() ?? '0',
+                                style: GoogleFonts.baloo2(
+                                  fontSize: fontSize,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                      textStyle: GoogleFonts.baloo2(fontSize: fontSize, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      elevation: 2,
+                    ),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // ... existing AppBar and background setup ...
@@ -658,10 +813,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                       ),
                                       _buildIconButton(
                                         Icons.emoji_events_outlined, // Use trophy icon
-                                        () {
-                                          print("Scoreboard pressed");
-                                          // TODO: Navigate to Scoreboard screen or show dialog
-                                        },
+                                        _showScoreboardDialog,
                                       ),
                                       _buildIconButton(
                                         Icons.play_circle_outline,

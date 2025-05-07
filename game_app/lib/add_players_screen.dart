@@ -457,6 +457,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                                       players: _players.map((p) => p.name).toList(),
                                       playerColors: _players.map((p) => p.color).toList(),
                                       ageGroup: widget.ageGroup,
+                                      selectedCategoryIds: widget.selectedCategoryIds ?? [],
                                     );
                                     break;
                                   case GameMode.auto:

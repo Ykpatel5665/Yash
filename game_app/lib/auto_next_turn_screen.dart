@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
+import 'truth_dare_data.dart';
+import 'truth_dare_question_screen.dart';
 
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
@@ -17,6 +19,21 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   int _currentIndex = 0;
   bool _showTruthDare = false;
   bool _lastPlayerFinished = false; // Track if last player finished
+  Map<String, int> _playerScores = {};
+  // For demo, use all categories (or pass selectedCategoryIds if you want to filter)
+  List<String> get _allCategoryIds => [
+    'KIDS_FUNNY','KIDS_FAMILY','KIDS_SCHOOL','KIDS_CARTOONS','KIDS_GAMES','KIDS_ANIMALS','KIDS_FOOD','KIDS_IMAGINATION','KIDS_CHALLENGES','KIDS_HOBBIES',
+    'TEENS_FRIENDS','TEENS_SCHOOL','TEENS_MUSIC','TEENS_MOVIES','TEENS_TECH','TEENS_HOBBIES','TEENS_DREAMS','TEENS_EMBARRASSING','TEENS_STYLE','TEENS_ADVENTURE',
+    'ADULTS_RELATIONSHIPS','ADULTS_PARTY','ADULTS_WORK','ADULTS_TRAVEL','ADULTS_DEEP','ADULTS_WILD','ADULTS_FLIRTY','ADULTS_CHILDHOOD','ADULTS_POPCULTURE','ADULTS_PERSONAL',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    for (final player in widget.players) {
+      _playerScores[player] = 0;
+    }
+  }
 
   void _nextTurn() {
     setState(() {
@@ -35,6 +52,135 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     setState(() {
       _showTruthDare = true;
     });
+  }
+
+  void _showTruthOrDareScreen(bool isTruth) async {
+    final playerName = widget.players[_currentIndex];
+    final question = getRandomQuestion(
+      type: isTruth ? QuestionType.truth : QuestionType.dare,
+      ageGroup: widget.ageGroup,
+      categoryIds: _allCategoryIds, // Replace with selectedCategoryIds if available
+    );
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TruthDareQuestionScreen(
+          playerName: playerName,
+          questionText: question?.question ?? (isTruth ? 'No truth found.' : 'No dare found.'),
+          isTruth: isTruth,
+          onDone: () {
+            _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
+            Navigator.of(context).pop();
+            setState(() {
+              _showTruthDare = false;
+              _nextTurn();
+            });
+          },
+          onForfeit: () {
+            Navigator.of(context).pop();
+            setState(() {
+              _showTruthDare = false;
+              _nextTurn();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showScoreboardDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final Size screenSize = MediaQuery.of(context).size;
+        final double cardWidth = screenSize.width * 0.92;
+        final double maxCardWidth = 420;
+        final double cardPadding = 24.0;
+        final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Center(
+            child: Container(
+              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+              padding: EdgeInsets.all(cardPadding),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.32),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.25),
+                  width: 2.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Scoreboard',
+                    style: GoogleFonts.baloo2(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 18),
+                  ...widget.players.map((player) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              player,
+                              style: GoogleFonts.baloo2(
+                                fontSize: fontSize,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.13),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _playerScores[player]?.toString() ?? '0',
+                                style: GoogleFonts.baloo2(
+                                  fontSize: fontSize,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                      textStyle: GoogleFonts.baloo2(fontSize: fontSize, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      elevation: 2,
+                    ),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<bool> _showQuitConfirmation() async {
@@ -413,7 +559,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton(
-                                  onPressed: _nextTurn,
+                                  onPressed: () => _showTruthOrDareScreen(true),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
@@ -429,7 +575,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                 ),
                                 SizedBox(width: screenWidth * 0.06),
                                 ElevatedButton(
-                                  onPressed: _nextTurn,
+                                  onPressed: () => _showTruthOrDareScreen(false),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black,
                                     foregroundColor: Colors.white,

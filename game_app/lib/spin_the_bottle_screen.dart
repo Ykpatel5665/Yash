@@ -534,84 +534,161 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         final double maxCardWidth = 420;
         final double cardPadding = 24.0;
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
+        final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
+        final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
+
+        // Gradient for the Close button (similar to Truth/Dare dialog)
+        BoxDecoration closeButtonDecoration = BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFF4DD0E1), // Cyan
+              Color(0xFF1976D2), // Blue
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.18),
+              blurRadius: 16,
+              spreadRadius: 1,
+            ),
+          ],
+        );
+
+        ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          textStyle: GoogleFonts.baloo2(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
+        );
+
+        TextStyle buttonTextStyle = GoogleFonts.baloo2(
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+          color: Colors.white,
+          shadows: [
+            Shadow(
+              blurRadius: 8,
+              color: Colors.black.withOpacity(0.25),
+              offset: const Offset(0, 2),
+            ),
+          ],
+        );
+
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Center(
-            child: Container(
-              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-              padding: EdgeInsets.all(cardPadding),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.32),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.25),
-                  width: 2.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Scoreboard',
-                    style: GoogleFonts.baloo2(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 18),
-                  ...widget.players.map((player) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              player,
-                              style: GoogleFonts.baloo2(
-                                fontSize: fontSize,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.13),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                _playerScores[player]?.toString() ?? '0',
-                                style: GoogleFonts.baloo2(
-                                  fontSize: fontSize,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Scoreboard',
+                        style: GoogleFonts.baloo2(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
                             ),
                           ],
                         ),
-                      )),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
-                      textStyle: GoogleFonts.baloo2(fontSize: fontSize, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      elevation: 2,
-                    ),
-                    child: const Text('Close'),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      Icon(
+                        Icons.emoji_events_rounded,
+                        color: Color(0xFFFFD700), // Golden color
+                        size: screenSize.width * 0.14,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()),
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 28),
+                      ...widget.players.map((player) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  player,
+                                  style: GoogleFonts.baloo2(
+                                    fontSize: fontSize,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.13),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    _playerScores[player]?.toString() ?? '0',
+                                    style: GoogleFonts.baloo2(
+                                      fontSize: fontSize,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                      SizedBox(height: 32),
+                      DecoratedBox(
+                        decoration: closeButtonDecoration,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: buttonStyle,
+                          child: Center(
+                            child: Text(
+                              'Close',
+                              style: buttonTextStyle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -1034,6 +1111,7 @@ class _TruthDareDialog extends StatelessWidget {
             ),
           ),
         ),
+      
       ),
     );
   }

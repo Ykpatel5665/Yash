@@ -25,6 +25,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   String? _lastChoice;
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
+  bool _isMuted = false; // State for volume button
   List<String> get _allCategoryIds => [
     'KIDS_FUNNY','KIDS_FAMILY','KIDS_SCHOOL','KIDS_CARTOONS','KIDS_GAMES','KIDS_ANIMALS','KIDS_FOOD','KIDS_IMAGINATION','KIDS_CHALLENGES','KIDS_HOBBIES',
     'TEENS_FRIENDS','TEENS_SCHOOL','TEENS_MUSIC','TEENS_MOVIES','TEENS_TECH','TEENS_HOBBIES','TEENS_DREAMS','TEENS_EMBARRASSING','TEENS_STYLE','TEENS_ADVENTURE',
@@ -115,84 +116,154 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         final double maxCardWidth = 420;
         final double cardPadding = 24.0;
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
+        final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
+        // Gradient for the Close button (similar to Truth/Dare dialog)
+        BoxDecoration closeButtonDecoration = BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFF4DD0E1), // Cyan
+              Color(0xFF1976D2), // Blue
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.18),
+              blurRadius: 16,
+              spreadRadius: 1,
+            ),
+          ],
+        );
+        TextStyle titleStyle = GoogleFonts.baloo2(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: [
+            Shadow(
+              blurRadius: 4,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ],
+        );
+        TextStyle playerStyle = GoogleFonts.baloo2(
+          fontSize: fontSize,
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        );
+        TextStyle scoreStyle = GoogleFonts.baloo2(
+          fontSize: fontSize,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        );
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Center(
-            child: Container(
-              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-              padding: EdgeInsets.all(cardPadding),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.32),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.25),
-                  width: 2.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Scoreboard',
-                    style: GoogleFonts.baloo2(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 18),
-                  ...widget.players.map((player) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              player,
-                              style: GoogleFonts.baloo2(
-                                fontSize: fontSize,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.13),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                _playerScores[player]?.toString() ?? '0',
-                                style: GoogleFonts.baloo2(
-                                  fontSize: fontSize,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Scoreboard',
+                        style: titleStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      Icon(
+                        Icons.emoji_events_rounded,
+                        color: Color(0xFFFFD700), // Golden color
+                        size: screenSize.width * 0.14,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()),
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 28),
+                      ...widget.players.map((player) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(player, style: playerStyle),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.13),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    _playerScores[player]?.toString() ?? '0',
+                                    style: scoreStyle,
+                                  ),
                                 ),
+                              ],
+                            ),
+                          )),
+                      SizedBox(height: 32),
+                      DecoratedBox(
+                        decoration: closeButtonDecoration,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            textStyle: GoogleFonts.baloo2(
+                              fontWeight: FontWeight.bold,
+                              fontSize: buttonFontSize,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Close',
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.bold,
+                                fontSize: buttonFontSize,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 8,
+                                    color: Colors.black.withOpacity(0.25),
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      )),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
-                      textStyle: GoogleFonts.baloo2(fontSize: fontSize, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      elevation: 2,
-                    ),
-                    child: const Text('Close'),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -388,13 +459,49 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     });
   }
 
+  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double minBtn = 44, maxBtn = 70;
+    final double btnSize = (screenSize.width * 0.13).clamp(minBtn, maxBtn);
+    final double iconSize = (screenSize.width * 0.07).clamp(22, 36);
+    const Color baseColor = Color.fromARGB(255, 255, 255, 255);
+    final Color shadowDark = Colors.black.withOpacity(0.3);
+    final Color shadowLight = Colors.white.withOpacity(0.4);
+    return Container(
+      decoration: BoxDecoration(
+        color: baseColor.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
+          BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: EdgeInsets.all(btnSize * 0.25),
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          minimumSize: Size(btnSize, btnSize),
+        ),
+        onPressed: onPressed,
+        child: Icon(
+          icon,
+          size: iconSize,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // --- Theme and sizing ---
     final Size size = MediaQuery.of(context).size;
     final double cardWidth = size.width * 0.8;
-    final double cardHeight = size.height * 0.23; // Match auto_next_turn_screen.dart
-    final double avatarSize = size.width * 0.22;
+    final double cardHeight = size.height * 0.23;
     final double buttonFontSize = (size.width * 0.045).clamp(15, 22);
     const LinearGradient backgroundGradient = LinearGradient(
       colors: [
@@ -404,12 +511,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
-    final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
-    const Color baseColor = Color.fromARGB(255, 255, 255, 255);
-    final Color shadowDark = Colors.black.withOpacity(0.3);
-    final Color shadowLight = Colors.white.withOpacity(0.4);
-
-    // --- Fix: Compute cardColor and textColor before widget tree ---
     Color? cardColor;
     Color? textColor;
     if (_currentIndex != null) {
@@ -442,171 +543,234 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: baseColor.withOpacity(0.8),
+                  color: Color.fromARGB(255, 255, 255, 255).withOpacity(0.8),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
-                    BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
-                    BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
+                    BoxShadow(color: Colors.black.withOpacity(0.3), offset: const Offset(3, 3), blurRadius: 6),
+                    BoxShadow(color: Colors.white.withOpacity(0.4), offset: const Offset(-3, -3), blurRadius: 6),
                   ],
                 ),
                 child: const Icon(Icons.home_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 24),
               ),
             ),
           ),
-          title: Text('Whoopsie!', style: appBarTheme.titleTextStyle),
+          title: Text('Whoopsie!', style: Theme.of(context).appBarTheme.titleTextStyle),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          toolbarHeight: appBarTheme.toolbarHeight,
-          titleSpacing: appBarTheme.titleSpacing,
+          toolbarHeight: Theme.of(context).appBarTheme.toolbarHeight,
+          titleSpacing: Theme.of(context).appBarTheme.titleSpacing,
         ),
         extendBodyBehindAppBar: true,
         body: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: const BoxDecoration(gradient: backgroundGradient),
-          child: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final double bottomPadding = constraints.maxHeight * 0.04;
+              final double horizontalPadding = constraints.maxWidth * 0.07;
+              return Stack(
                 children: [
-                  if (_currentIndex != null) ...[
-                    Container(
-                      width: cardWidth,
-                      height: cardHeight,
-                      margin: const EdgeInsets.only(bottom: 32),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        gradient: LinearGradient(
-                          colors: [
-                            cardColor!,
-                            cardColor!.withOpacity(0.7),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(80),
-                            blurRadius: 10.0,
-                            spreadRadius: 1.0,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              widget.players[_currentIndex!],
-                              style: GoogleFonts.baloo2(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                                shadows: [
-                                  Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
+                  // Centered card and content
+                  Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_currentIndex != null) ...[
+                            Container(
+                              width: constraints.maxWidth * 0.8,
+                              height: constraints.maxHeight * 0.23,
+                              margin: EdgeInsets.only(bottom: constraints.maxHeight * 0.04),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18),
+                                gradient: cardColor != null
+                                    ? LinearGradient(
+                                        colors: [cardColor, cardColor.withOpacity(0.7)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      )
+                                    : null,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(80),
+                                    blurRadius: 10.0,
+                                    spreadRadius: 1.0,
+                                    offset: const Offset(0, 4),
+                                  ),
                                 ],
                               ),
-                              textAlign: TextAlign.center,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      widget.players[_currentIndex!],
+                                      style: GoogleFonts.baloo2(
+                                        fontSize: (constraints.maxWidth * 0.08).clamp(22, 36),
+                                        fontWeight: FontWeight.bold,
+                                        color: textColor,
+                                        shadows: [
+                                          Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: (constraints.maxHeight * 0.02).clamp(10, 24)),
+                                    Text(
+                                      "It's your turn!",
+                                      style: GoogleFonts.baloo2(
+                                        fontSize: (constraints.maxWidth * 0.05).clamp(16, 24),
+                                        color: textColor != null ? textColor.withOpacity(0.7) : Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "It's your turn!",
-                              style: GoogleFonts.baloo2(fontSize: 20, color: textColor!.withOpacity(0.7)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
+                            if (_showTruthDarePrompt) ...[
+                              ElevatedButton(
+                                onPressed: _onShowTruthDareButtons,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: (constraints.maxWidth * 0.18).clamp(32, 60),
+                                    vertical: (constraints.maxHeight * 0.025).clamp(14, 28),
+                                  ),
+                                  textStyle: GoogleFonts.baloo2(
+                                    fontSize: buttonFontSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  elevation: 3,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                child: const Text('Truth or Dare?'),
+                              ),
+                              SizedBox(height: (constraints.maxHeight * 0.018).clamp(10, 22)),
+                            ] else if (_showTruthDareButtons) ...[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => _showTruthOrDareScreen(true),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: Colors.black,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: (constraints.maxWidth * 0.13).clamp(24, 48),
+                                        vertical: (constraints.maxHeight * 0.02).clamp(10, 20),
+                                      ),
+                                      textStyle: GoogleFonts.baloo2(
+                                        fontSize: buttonFontSize,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      elevation: 3,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: const Text('Truth'),
+                                  ),
+                                  SizedBox(width: (constraints.maxWidth * 0.06).clamp(16, 32)),
+                                  ElevatedButton(
+                                    onPressed: () => _showTruthOrDareScreen(false),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      foregroundColor: Colors.white,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: (constraints.maxWidth * 0.13).clamp(24, 48),
+                                        vertical: (constraints.maxHeight * 0.02).clamp(10, 20),
+                                      ),
+                                      textStyle: GoogleFonts.baloo2(
+                                        fontSize: buttonFontSize,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      elevation: 3,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: const Text('Dare'),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: (constraints.maxHeight * 0.018).clamp(10, 22)),
+                            ]
+                            else if (_lastPlayerFinished) ...[
+                              Column(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _resetTurns();
+                                        _lastPlayerFinished = false;
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      foregroundColor: Colors.white,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: (constraints.maxWidth * 0.18).clamp(32, 60),
+                                        vertical: (constraints.maxHeight * 0.025).clamp(14, 28),
+                                      ),
+                                      textStyle: GoogleFonts.baloo2(
+                                        fontSize: buttonFontSize,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      elevation: 3,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: const Text('Restart'),
+                                  ),
+                                  SizedBox(height: (constraints.maxHeight * 0.018).clamp(10, 22)),
+                                  Text(
+                                    'All players had their turn!',
+                                    style: GoogleFonts.baloo2(
+                                      fontSize: (constraints.maxWidth * 0.045).clamp(15, 22),
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: (constraints.maxHeight * 0.01).clamp(6, 16)),
+                            ],
+                        ],
+                        ],
                       ),
                     ),
-                    if (_showTruthDarePrompt) ...[
-                      ElevatedButton(
-                        onPressed: _onShowTruthDareButtons,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                          textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          elevation: 3,
-                          shadowColor: Colors.transparent,
+                  ),
+                  // Bottom buttons row
+                  Positioned(
+                    left: horizontalPadding,
+                    right: horizontalPadding,
+                    bottom: bottomPadding,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildIconButton(
+                          _isMuted ? Icons.volume_off : Icons.volume_up,
+                          () {
+                            setState(() {
+                              _isMuted = !_isMuted;
+                            });
+                            // TODO: Implement actual volume control logic
+                          },
                         ),
-                        child: const Text('Truth or Dare?'),
-                      ),
-                      const SizedBox(height: 18),
-                    ] else if (_showTruthDareButtons) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => _showTruthOrDareScreen(true),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              elevation: 3,
-                              shadowColor: Colors.transparent,
-                            ),
-                            child: const Text('Truth'),
-                          ),
-                          const SizedBox(width: 24),
-                          ElevatedButton(
-                            onPressed: () => _showTruthOrDareScreen(false),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              elevation: 3,
-                              shadowColor: Colors.transparent,
-                            ),
-                            child: const Text('Dare'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 18),
-                    ]
-                    // Only show the restart button/message after last player finished
-                    else if (_lastPlayerFinished) ...[
-                      Column(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _resetTurns();
-                                _lastPlayerFinished = false;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              elevation: 3,
-                              shadowColor: Colors.transparent,
-                            ),
-                            child: const Text('Restart'),
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            'All players had their turn!',
-                            style: GoogleFonts.baloo2(fontSize: 18, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  ],
+                        _buildIconButton(
+                          Icons.emoji_events_outlined,
+                          _showScoreboardDialog,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),

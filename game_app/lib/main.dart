@@ -135,6 +135,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final String _gameModePrefsKey = 'gameMode'; // Key for saving game mode
   final String _ageGroupPrefsKey = 'ageGroup'; // Key for saving age group
 
+  // Track adult confirmation for this session
+  bool _adultConfirmedThisSession = false;
+
   @override
   void initState() {
     super.initState();
@@ -364,7 +367,6 @@ class _MyHomePageState extends State<MyHomePage> {
 Future<void> _showModernGameSetupDialog(BuildContext context) async {
   GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
   AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
-  bool currentSaveSelection = _saveSelection;
 
   await showGeneralDialog<void>(
     context: context,
@@ -406,8 +408,8 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                 boxShadow: selected
                     ? [
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.15), // Lowered opacity
-                          blurRadius: 6, // Reduced blur
+                          color: Colors.white.withOpacity(0.15),
+                          blurRadius: 6,
                           spreadRadius: 1,
                         )
                       ]
@@ -435,7 +437,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                               ? [
                                   Shadow(
                                     blurRadius: 2,
-                                    color: Colors.white.withOpacity(0.3), // Lowered opacity
+                                    color: Colors.white.withOpacity(0.3),
                                   )
                                 ]
                               : [],
@@ -458,12 +460,12 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(32),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32), // Increased blur
+                  filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                   child: Container(
                     width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
                     padding: EdgeInsets.all(cardPadding),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.32), // Increased darkness for better text contrast
+                      color: Colors.black.withOpacity(0.32),
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(
                         color: Colors.white.withOpacity(0.25),
@@ -471,257 +473,247 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.10), // Lowered opacity
-                          blurRadius: 12, // Reduced blur
+                          color: Colors.black.withOpacity(0.10),
+                          blurRadius: 12,
                           spreadRadius: 1,
                         ),
                       ],
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Game Setup",
-                          style: GoogleFonts.baloo2(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4,
-                                color: Colors.white.withOpacity(0.3), // Lowered opacity
-                              ),
-                            ],
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * 0.88,
                           ),
-                        ),
-                        const SizedBox(height: 28),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Game Mode",
-                            style: GoogleFonts.baloo2(
-                              color: Colors.white.withOpacity(0.92),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 24, // Increased font size
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(child: buildToggleButton(
-                              label: "Spin",
-                              selected: currentModeSelection == GameMode.spin,
-                              onTap: () => setDialogState(() => currentModeSelection = GameMode.spin),
-                              icon: Icons.casino,
-                              selectedColor: const Color(0xFF5B86E5).withOpacity(0.25),
-                              iconSize: iconSize + 2,
-                              fontSize: fontSize + 4, // Increased font size for button text
-                            )),
-                            Expanded(child: buildToggleButton(
-                              label: "Auto",
-                              selected: currentModeSelection == GameMode.auto,
-                              onTap: () => setDialogState(() => currentModeSelection = GameMode.auto),
-                              icon: Icons.autorenew,
-                              selectedColor: const Color(0xFF8F6ED5).withOpacity(0.25),
-                              iconSize: iconSize + 2,
-                              fontSize: fontSize + 4, // Increased font size for button text
-                            )),
-                            Expanded(child: buildToggleButton(
-                              label: "Random",
-                              selected: currentModeSelection == GameMode.random,
-                              onTap: () => setDialogState(() => currentModeSelection = GameMode.random),
-                              icon: Icons.shuffle,
-                              selectedColor: const Color(0xFFB388FF).withOpacity(0.25),
-                              iconSize: iconSize + 2,
-                              fontSize: fontSize + 4, // Increased font size for button text
-                            )),
-                          ],
-                        ),
-                        const SizedBox(height: 28),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Age Group",
-                            style: GoogleFonts.baloo2(
-                              color: Colors.white.withOpacity(0.92),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 24, // Increased font size
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(child: buildToggleButton(
-                              label: "Kids",
-                              selected: currentAgeSelection == AgeGroup.kids,
-                              onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
-                              icon: Icons.child_care,
-                              selectedColor: const Color(0xFF4DD0E1).withOpacity(0.25),
-                              iconSize: iconSize + 2,
-                              fontSize: fontSize + 4, // Increased font size for button text
-                            )),
-                            Expanded(child: buildToggleButton(
-                              label: "Teen",
-                              selected: currentAgeSelection == AgeGroup.teen,
-                              onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
-                              icon: Icons.school,
-                              selectedColor: const Color(0xFF9575CD).withOpacity(0.25),
-                              iconSize: iconSize + 2,
-                              fontSize: fontSize + 4, // Increased font size for button text
-                            )),
-                            Expanded(child: buildToggleButton(
-                              label: "Adult",
-                              selected: currentAgeSelection == AgeGroup.adult,
-                              onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
-                              icon: Icons.person,
-                              selectedColor: const Color(0xFFBA68C8).withOpacity(0.25),
-                              iconSize: iconSize + 2,
-                              fontSize: fontSize + 4, // Increased font size for button text
-                            )),
-                          ],
-                        ),
-                        const SizedBox(height: 28),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Remember Choice",
-                              style: GoogleFonts.baloo2(
-                                color: Colors.white.withOpacity(0.92),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 17,
-                              ),
-                            ),
-                            Switch(
-                              value: currentSaveSelection,
-                              onChanged: (val) => setDialogState(() => currentSaveSelection = val),
-                              activeColor: Colors.white,
-                              activeTrackColor: Colors.blueAccent.withOpacity(0.5),
-                              inactiveThumbColor: Colors.white54,
-                              inactiveTrackColor: Colors.white24,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 32),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(dialogPageContext).pop();
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white70,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 17,
-                                  ),
-                                ),
-                                child: const Text("Cancel"),
-                              ),
-                            ),
-                            const SizedBox(width: 18),
-                            Expanded(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF5B86E5),
-                                      Color(0xFF8F6ED5),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.white.withOpacity(0.18),
-                                      blurRadius: 16,
-                                      spreadRadius: 1,
+                          child: ListView(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            children: [
+                              Text(
+                                "Game Setup",
+                                style: GoogleFonts.baloo2(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4,
+                                      color: Colors.white.withOpacity(0.3),
                                     ),
                                   ],
                                 ),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    final GameMode finalGameMode = currentModeSelection;
-                                    final AgeGroup finalAgeGroup = currentAgeSelection;
-                                    final bool finalSave = currentSaveSelection;
-                                    bool proceed = true;
-                                    if (finalAgeGroup == AgeGroup.adult) {
-                                      proceed = await _showAdultConfirmationDialog(dialogPageContext);
-                                    }
-                                    if (proceed) {
-                                      setState(() {
-                                        _selectedGameModeEnum = finalGameMode;
-                                        _selectedAgeGroupEnum = finalAgeGroup;
-                                        _saveSelection = finalSave;
-                                      });
-                                      await _savePreferences(finalGameMode, finalAgeGroup);
-                                      Navigator.of(dialogPageContext).pop();
-                                      // Removed navigation to CategorySelectionScreen here
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: 18),
-                                    textStyle: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Save",
-                                      style: GoogleFonts.baloo2(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                            blurRadius: 8,
-                                            color: Colors.black.withOpacity(0.25),
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                              ),
+                              const SizedBox(height: 28),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Game Mode",
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.92),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 24,
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(child: buildToggleButton(
+                                    label: "Spin",
+                                    selected: currentModeSelection == GameMode.spin,
+                                    onTap: () => setDialogState(() => currentModeSelection = GameMode.spin),
+                                    icon: Icons.casino,
+                                    selectedColor: const Color(0xFF5B86E5).withOpacity(0.25),
+                                    iconSize: iconSize + 2,
+                                    fontSize: fontSize + 4,
+                                  )),
+                                  Expanded(child: buildToggleButton(
+                                    label: "Auto",
+                                    selected: currentModeSelection == GameMode.auto,
+                                    onTap: () => setDialogState(() => currentModeSelection = GameMode.auto),
+                                    icon: Icons.autorenew,
+                                    selectedColor: const Color(0xFF8F6ED5).withOpacity(0.25),
+                                    iconSize: iconSize + 2,
+                                    fontSize: fontSize + 4,
+                                  )),
+                                  Expanded(child: buildToggleButton(
+                                    label: "Random",
+                                    selected: currentModeSelection == GameMode.random,
+                                    onTap: () => setDialogState(() => currentModeSelection = GameMode.random),
+                                    icon: Icons.shuffle,
+                                    selectedColor: const Color(0xFFB388FF).withOpacity(0.25),
+                                    iconSize: iconSize + 2,
+                                    fontSize: fontSize + 4,
+                                  )),
+                                ],
+                              ),
+                              const SizedBox(height: 28),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Age Group",
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.92),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(child: buildToggleButton(
+                                    label: "Kids",
+                                    selected: currentAgeSelection == AgeGroup.kids,
+                                    onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
+                                    icon: Icons.child_care,
+                                    selectedColor: const Color(0xFF4DD0E1).withOpacity(0.25),
+                                    iconSize: iconSize + 2,
+                                    fontSize: fontSize + 4,
+                                  )),
+                                  Expanded(child: buildToggleButton(
+                                    label: "Teen",
+                                    selected: currentAgeSelection == AgeGroup.teen,
+                                    onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
+                                    icon: Icons.school,
+                                    selectedColor: const Color(0xFF9575CD).withOpacity(0.25),
+                                    iconSize: iconSize + 2,
+                                    fontSize: fontSize + 4,
+                                  )),
+                                  Expanded(child: buildToggleButton(
+                                    label: "Adult",
+                                    selected: currentAgeSelection == AgeGroup.adult,
+                                    onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
+                                    icon: Icons.person,
+                                    selectedColor: const Color(0xFFBA68C8).withOpacity(0.25),
+                                    iconSize: iconSize + 2,
+                                    fontSize: fontSize + 4,
+                                  )),
+                                ],
+                              ),
+                              const SizedBox(height: 32),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.of(dialogPageContext).pop();
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.white70,
+                                        padding: const EdgeInsets.symmetric(vertical: 16),
+                                        textStyle: GoogleFonts.baloo2(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
+                                      child: const Text("Cancel"),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 18),
+                                  Expanded(
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xFF5B86E5),
+                                            Color(0xFF8F6ED5),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.white.withOpacity(0.18),
+                                            blurRadius: 16,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          final GameMode finalGameMode = currentModeSelection;
+                                          final AgeGroup finalAgeGroup = currentAgeSelection;
+                                          bool proceed = true;
+                                          if (finalAgeGroup == AgeGroup.adult && !_adultConfirmedThisSession) {
+                                            proceed = await _showAdultConfirmationDialog(dialogPageContext);
+                                            if (proceed) {
+                                              setState(() {
+                                                _adultConfirmedThisSession = true;
+                                              });
+                                            }
+                                          }
+                                          if (proceed) {
+                                            setState(() {
+                                              _selectedGameModeEnum = finalGameMode;
+                                              _selectedAgeGroupEnum = finalAgeGroup;
+                                            });
+                                            await _savePreferences(finalGameMode, finalAgeGroup);
+                                            Navigator.of(dialogPageContext).pop();
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(vertical: 18),
+                                          textStyle: GoogleFonts.baloo2(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Save",
+                                            style: GoogleFonts.baloo2(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 22,
+                                              color: Colors.white,
+                                              shadows: [
+                                                Shadow(
+                                                  blurRadius: 8,
+                                                  color: Colors.black.withOpacity(0.25),
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
               ),
-            ),
-          );
+          ),
+            );
         },
       );
     },
-    transitionBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 0.3);
-      const end = Offset.zero;
-      const curve = Curves.easeOutCubic;
-      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      final offsetAnimation = animation.drive(tween);
-      return SlideTransition(
-        position: offsetAnimation,
-        child: child,
-      );
-    },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 0.3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
   );
 }
 // ...existing code...
@@ -786,13 +778,16 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
 
                       // Start Game button logic updated
                       _buildStyledButton('Start Game', Icons.play_arrow, () async {
-                        // Always show category selection after mode/age selection
                         bool proceed = true;
-                        if (_selectedAgeGroupEnum == AgeGroup.adult) {
+                        if (_selectedAgeGroupEnum == AgeGroup.adult && !_adultConfirmedThisSession) {
                           proceed = await _showAdultConfirmationDialog(context);
+                          if (proceed) {
+                            setState(() {
+                              _adultConfirmedThisSession = true;
+                            });
+                          }
                         }
                         if (_selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
-                          // Show setup dialog if not set
                           await _showModernGameSetupDialog(context);
                         }
                         if (proceed && _selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {

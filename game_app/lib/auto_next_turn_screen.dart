@@ -525,7 +525,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.01, top: screenHeight * 0.015, bottom: screenHeight * 0.015),
+            padding: EdgeInsets.only(left: screenWidth * 0, top: screenHeight * 0.03, bottom: screenHeight * 0.03),
             child: GestureDetector(
               onTap: () async {
                 final shouldQuit = await _showQuitConfirmation();

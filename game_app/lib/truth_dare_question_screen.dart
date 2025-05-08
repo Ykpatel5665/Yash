@@ -222,7 +222,7 @@ class TruthDareQuestionScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "$playerName, your question:",
+                          "$playerName, your task:",
                           style: GoogleFonts.baloo2(
                             fontSize: fontSize,
                             color: Colors.white,
@@ -231,7 +231,7 @@ class TruthDareQuestionScreen extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 0.7 * betweenHeaderAndIcon),
+                        SizedBox(height: 2 * betweenHeaderAndIcon),
                         Text(
                           questionText,
                           style: GoogleFonts.baloo2(
@@ -256,7 +256,7 @@ class TruthDareQuestionScreen extends StatelessWidget {
                         onPressed: onForfeit,
                         style: forfeitButtonStyle.copyWith(
                           padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                            EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
                           ),
                         ),
                         child: Row(
@@ -283,7 +283,7 @@ class TruthDareQuestionScreen extends StatelessWidget {
                         onPressed: onDone,
                         style: forfeitButtonStyle.copyWith(
                           padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                            EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
                           ),
                         ),
                         child: Row(

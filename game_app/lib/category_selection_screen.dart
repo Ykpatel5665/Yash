@@ -649,9 +649,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                         backgroundColor: Colors.black,
                                         foregroundColor: Colors.white,
                                         minimumSize: Size(MediaQuery.of(context).size.width * 0.75, continueBtnHeight),
-                                        padding: const EdgeInsets.symmetric(vertical: 30),
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(50),
                                         ),
                                         elevation: 0,
                                         shadowColor: Colors.transparent,
@@ -687,8 +687,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                           const Align(
                                             alignment: Alignment.centerLeft,
                                             child: Padding(
-                                              padding: EdgeInsets.only(left: 10.0),
-                                              child: Icon(Icons.play_arrow_rounded, size: 30, color: Colors.white),
+                                              padding: EdgeInsets.only(left: 25.0),
+                                              child: Icon(Icons.play_arrow_rounded, size: 50, color: Colors.white),
                                             ),
                                           ),
                                           Align(

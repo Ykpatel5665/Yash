@@ -868,7 +868,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
     const double buttonVerticalPadding = 30.0;
     const double fontSize = 25.0;
     const double iconSize = 50.0; // Reverted icon size
-    final double minButtonHeight = screenSize.height * 0.07;
+    final double minButtonHeight = screenSize.height * 0.001;
 
     // Restore conditional styling based on button text
     final bool isStartGame = (text == 'Start Game');

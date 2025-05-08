@@ -31,48 +31,37 @@ class SpinTheBottleScreen extends StatefulWidget {
 }
 
 class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
-    with SingleTickerProviderStateMixin { // Add TickerProviderStateMixin
-
-  double _currentAngle = 0.0; // Angle for the bottle's rotation
-  late AnimationController _controller; // Controller for spin animation
-  Animation<double>? _animation; // Animation object
-  bool _isMuted = false; // State for volume button
-
-  // Game State Management
+    with SingleTickerProviderStateMixin {
+  double _currentAngle = 0.0;
+  late AnimationController _controller;
+  Animation<double>? _animation;
+  bool _isMuted = false;
   GamePhase _gamePhase = GamePhase.readyToSpin;
-  int? _selectedPlayerIndex; // Index of the player the bottle points to
+  int? _selectedPlayerIndex;
+  Map<String, int> _playerScores = {};
 
   // Variables for gesture handling
-  Offset? _startDragPos;
-  double _startAngle = 0.0;
-  // Removed _velocity state variable, rely on DragEndDetails.primaryVelocity
-
-  Map<String, int> _playerScores = {};
+  Offset? _lastPanPosition; // Store the last pan position
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1), // Default duration, will be adjusted by velocity
-      lowerBound: -double.infinity, // Allow indefinite spinning
-      upperBound: double.infinity,
+      // Duration will be set dynamically in _initiateSpinAnimation
     )..addListener(() {
-        // Only update angle if spinning or during manual drag
-        if (_gamePhase == GamePhase.spinning || _startDragPos != null) {
+        if (_animation != null && _gamePhase == GamePhase.spinning) {
           setState(() {
-            _currentAngle = _animation?.value ?? _currentAngle;
+            _currentAngle = _animation!.value;
           });
         }
       })..addStatusListener((status) {
-         // Handle animation completion
-         if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
-           if (_gamePhase == GamePhase.spinning) {
-             _onSpinComplete();
-           }
-         }
-       });
-    // Initialize scores
+        if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
+          if (_gamePhase == GamePhase.spinning) {
+            _onSpinComplete();
+          }
+        }
+      });
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
@@ -84,50 +73,22 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     super.dispose();
   }
 
-  // --- Spin Logic ---
-  void _startSpin(double velocity) {
-    if (_gamePhase != GamePhase.readyToSpin) return; // Prevent spinning if not ready
-
-    setState(() {
-      _gamePhase = GamePhase.spinning;
-      _selectedPlayerIndex = null; // Clear previous selection
-    });
-
-    _controller.stop();
-
-    // Adjust friction and velocity scaling for smoother spin
-    final simulation = FrictionSimulation(
-      0.3, // Lower friction for longer spin (previously 0.6)
-      _currentAngle,
-      velocity / 1000, // Adjust velocity scaling (previously / 1000)
-    );
-
-    _animation = _controller.drive(Tween<double>(begin: _currentAngle, end: simulation.finalX));
-
-    // Use animateWith for physics-based animation
-    _controller.animateWith(simulation);
-    // Completion is now handled by the status listener
-  }
-
   // --- Called when spin animation finishes ---
   void _onSpinComplete() {
-    // Normalize angle to be within 0 to 2*PI
+    // print("Spin Complete. Final Raw Angle: ${_currentAngle.toStringAsFixed(2)}");
     final double finalAngle = _currentAngle % (2 * math.pi);
     final normalizedAngle = finalAngle < 0 ? finalAngle + 2 * math.pi : finalAngle;
 
-    // Calculate selected player
     final selectedIndex = _getSelectedPlayerIndex(normalizedAngle);
 
     setState(() {
-      _currentAngle = normalizedAngle; // Snap to the final normalized angle
+      _currentAngle = normalizedAngle;
       _gamePhase = GamePhase.awaitingTruthDare;
       _selectedPlayerIndex = selectedIndex;
     });
 
-    // Optional: Add haptic feedback or sound effect here
-    print("Spin complete. Final Angle: $normalizedAngle, Selected Player Index: $selectedIndex");
+    // print("Normalized Angle: ${normalizedAngle.toStringAsFixed(2)}, Selected Index: $selectedIndex");
 
-    // Show Truth or Dare selection as a popup dialog
     if (selectedIndex >= 0 && selectedIndex < widget.players.length) {
       final playerName = widget.players[selectedIndex];
       Future.delayed(const Duration(milliseconds: 700), () async {
@@ -158,11 +119,23 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
           _onTruthSelected();
         } else if (result == 'dare') {
           _onDareSelected();
+        } else { // If dialog is dismissed without selection (e.g. back button if barrierDismissible were true)
+           setState(() {
+              _gamePhase = GamePhase.readyToSpin;
+              _selectedPlayerIndex = null;
+              _controller.reset(); // <--- ADDED RESET
+            });
         }
       });
+    } else { // No player selected (e.g. if playerCount is 0 or error in logic)
+        setState(() {
+          _gamePhase = GamePhase.readyToSpin;
+          _selectedPlayerIndex = null;
+          _controller.reset(); // <--- ADDED RESET
+        });
     }
   }
-
+  
   // --- Calculate Selected Player ---
   int _getSelectedPlayerIndex(double finalAngle) {
     final int playerCount = widget.players.length;
@@ -170,17 +143,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
     final double anglePerPlayer = (2 * math.pi) / playerCount;
 
-    // Normalize the final angle (bottle tip) to be within [0, 2*pi)
-    // *** CRITICAL ASSUMPTION: angle = 0 means the bottle tip points UP ***
     final normalizedTipAngle = finalAngle % (2 * math.pi);
     final positiveNormalizedTipAngle = normalizedTipAngle < 0 ? normalizedTipAngle + (2 * math.pi) : normalizedTipAngle;
 
-    // --- Select player based on the TIP's angle --- 
-    // Since the painter starts Player 0 at UP (0 in this relative frame),
-    // we can directly use the tip's angle.
     int selectedIndex = (positiveNormalizedTipAngle / anglePerPlayer).floor();
 
-    // Ensure index is within bounds
     selectedIndex = selectedIndex % playerCount;
 
     print(
@@ -189,50 +156,116 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     return selectedIndex;
   }
 
-  // --- Gesture Handling ---
+  // --- Gesture Handling --- (These are the intended current versions)
   void _onPanStart(DragStartDetails details) {
-    // Allow dragging only when ready to spin
     if (_gamePhase != GamePhase.readyToSpin) return;
-    _controller.stop();
-    _startDragPos = details.localPosition;
-    _startAngle = _currentAngle;
-    // No need to reset _velocity here
+    _controller.stop(); 
+    _lastPanPosition = details.localPosition;
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    if (_startDragPos == null || _gamePhase != GamePhase.readyToSpin) return;
+    if (_gamePhase != GamePhase.readyToSpin || _lastPanPosition == null) return;
 
-    // Calculate center relative to the Stack
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    final center = box.size.center(Offset.zero);
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Offset center = renderBox.size.center(Offset.zero);
 
-    final currentDragPos = details.localPosition;
-    final angleStart = math.atan2(_startDragPos!.dy - center.dy, _startDragPos!.dx - center.dx);
-    final angleUpdate = math.atan2(currentDragPos.dy - center.dy, currentDragPos.dx - center.dx);
-    final angleDelta = angleUpdate - angleStart;
+    final double previousAngle = math.atan2(_lastPanPosition!.dy - center.dy, _lastPanPosition!.dx - center.dx);
+    final double currentGestureAngle = math.atan2(details.localPosition.dy - center.dy, details.localPosition.dx - center.dx);
+    
+    double deltaAngle = currentGestureAngle - previousAngle;
 
-    // Directly update angle during drag without calculating intermediate velocity
+    if (deltaAngle > math.pi) {
+      deltaAngle -= 2 * math.pi;
+    } else if (deltaAngle < -math.pi) {
+      deltaAngle += 2 * math.pi;
+    }
+
     setState(() {
-      _currentAngle = _startAngle + angleDelta;
+      _currentAngle += deltaAngle;
     });
+
+    _lastPanPosition = details.localPosition;
   }
 
   void _onPanEnd(DragEndDetails details) {
-    if (_startDragPos == null || _gamePhase != GamePhase.readyToSpin) return;
-
-    // Use the primary velocity from the gesture detector
-    // This is often more reliable, especially for flicks
-    final double flickVelocity = details.primaryVelocity ?? 0.0;
-
-    // Start the spin animation with the final velocity
-    // Only start if there was some velocity, otherwise just stop dragging
-    if (flickVelocity.abs() > 50) { // Threshold to prevent accidental spins
-       _startSpin(flickVelocity);
-    } else {
-       // If no significant flick, remain in readyToSpin state
-       // Optionally, add a slight animation back to a resting position if needed
+    if (_gamePhase != GamePhase.readyToSpin || _lastPanPosition == null) {
+      _lastPanPosition = null;
+      return;
     }
-    _startDragPos = null; // Reset drag start position
+
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Offset center = renderBox.size.center(Offset.zero);
+    
+    final Offset pixelsPerSecond = details.velocity.pixelsPerSecond;
+    final Offset r = _lastPanPosition! - center;
+
+    if (r.distanceSquared == 0) {
+      _lastPanPosition = null;
+      return;
+    }
+
+    double angularVelocity = (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) / r.distanceSquared;
+    angularVelocity *= 2.0; 
+
+    if (angularVelocity.abs() > 0.5) { 
+      _initiateSpinAnimation(angularVelocity);
+    }
+    _lastPanPosition = null;
+  }
+
+  void _initiateSpinAnimation(double initialAngularVelocity) {
+
+    if (!initialAngularVelocity.isFinite || initialAngularVelocity.abs() < 0.1) {
+      if (_gamePhase == GamePhase.spinning) {
+        setState(() {
+          _gamePhase = GamePhase.readyToSpin;
+        });
+      }
+      return;
+    }
+
+    if (_gamePhase != GamePhase.spinning) {
+      setState(() {
+        _gamePhase = GamePhase.spinning;
+        _selectedPlayerIndex = null;
+      });
+    }
+
+    const double testSpinDurationSeconds = 2.0; 
+    const double testRotations = 3.0;          
+
+    final double direction = initialAngularVelocity.sign;
+    final double targetAngleDelta = direction * testRotations * 2 * math.pi;
+    final double targetAngle = _currentAngle + targetAngleDelta;
+
+    if (!_currentAngle.isFinite || !targetAngle.isFinite) {
+      setState(() {
+        _gamePhase = GamePhase.readyToSpin; 
+      });
+      return;
+    }
+
+    _animation = Tween<double>(
+      begin: _currentAngle,
+      end: targetAngle,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic, 
+      ),
+    );
+
+    final int animationDurationMilliseconds = (testSpinDurationSeconds * 1000).toInt();
+    if (animationDurationMilliseconds <= 0) {
+      setState(() {
+        _gamePhase = GamePhase.readyToSpin; 
+      });
+      return;
+    }
+
+    _controller.duration = Duration(milliseconds: animationDurationMilliseconds);
+    
+    _controller.forward(from: 0.0);
   }
 
   // --- Truth/Dare Action Handlers ---
@@ -264,6 +297,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
+              _controller.reset(); // <--- ADDED RESET
             });
           },
           onForfeit: () {
@@ -271,6 +305,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
+              _controller.reset(); // <--- ADDED RESET
             });
           },
         ),
@@ -295,6 +330,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
+              _controller.reset(); // <--- ADDED RESET
             });
           },
           onForfeit: () {
@@ -302,6 +338,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
+              _controller.reset(); // <--- ADDED RESET
             });
           },
         ),
@@ -854,12 +891,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                     // Spinning Bottle with responsive size
                                     Positioned(
                                       child: GestureDetector(
-                                        onTap: (_gamePhase == GamePhase.readyToSpin)
-                                            ? () {
-                                                final randomVelocity = 5000.0 + math.Random().nextDouble() * 5000.0;
-                                                _startSpin(randomVelocity);
-                                              }
-                                            : null,
                                         onPanStart: _onPanStart,
                                         onPanUpdate: _onPanUpdate,
                                         onPanEnd: _onPanEnd,

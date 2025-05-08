@@ -594,6 +594,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.88,
+                  ),
                   width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
                   padding: EdgeInsets.all(cardPadding),
                   decoration: BoxDecoration(
@@ -611,84 +614,99 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Scoreboard',
-                        style: GoogleFonts.baloo2(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Scoreboard',
+                          style: GoogleFonts.baloo2(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4,
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 28),
+                        Icon(
+                          Icons.emoji_events_rounded,
+                          color: Color(0xFFFFD700), // Gold
+                          size: screenSize.width * 0.14,
                           shadows: [
                             Shadow(
-                              blurRadius: 4,
-                              color: Colors.white.withOpacity(0.3),
+                              blurRadius: 4.0,
+                              color: Colors.black.withAlpha((0.4 * 255).round()),
+                              offset: const Offset(1.0, 1.0),
                             ),
                           ],
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 28),
-                      Icon(
-                        Icons.emoji_events_rounded,
-                        color: Color(0xFFFFD700), // Golden color
-                        size: screenSize.width * 0.14,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4.0,
-                            color: Colors.black.withAlpha((0.4 * 255).round()),
-                            offset: const Offset(1.0, 1.0),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 28),
-                      ...widget.players.map((player) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  player,
-                                  style: GoogleFonts.baloo2(
-                                    fontSize: fontSize,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.13),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    _playerScores[player]?.toString() ?? '0',
+                        SizedBox(height: 28),
+                        Column(
+                          children: [
+                            ...widget.players.map((player) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    player,
                                     style: GoogleFonts.baloo2(
                                       fontSize: fontSize,
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.13),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      _playerScores[player]?.toString() ?? '0',
+                                      style: GoogleFonts.baloo2(
+                                        fontSize: fontSize,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                          ],
+                        ),
+                        SizedBox(height: 32),
+                        DecoratedBox(
+                          decoration: closeButtonDecoration,
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
+                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
                             ),
-                          )),
-                      SizedBox(height: 32),
-                      DecoratedBox(
-                        decoration: closeButtonDecoration,
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: buttonStyle,
-                          child: Center(
-                            child: Text(
-                              'Close',
-                              style: buttonTextStyle,
+                            child: Center(
+                              child: Text(
+                                'Close',
+                                style: buttonTextStyle,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

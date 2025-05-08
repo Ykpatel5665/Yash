@@ -55,6 +55,18 @@ extension AgeGroupExtension on AgeGroup {
         return Icons.person;
     }
   }
+
+  // Permanent solution: provide a name getter for enum value
+  String get name {
+    switch (this) {
+      case AgeGroup.kids:
+        return 'kids';
+      case AgeGroup.teen:
+        return 'teen';
+      case AgeGroup.adult:
+        return 'adult';
+    }
+  }
 }
 
 void main() async {

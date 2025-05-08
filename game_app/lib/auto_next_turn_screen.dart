@@ -3,13 +3,15 @@ import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart';
 import 'truth_dare_question_screen.dart';
+import 'main.dart'; // For AgeGroup enum
 
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
   final List<String> players;
   final List<Color> playerColors;
-  final dynamic ageGroup;
-  const AutoNextTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup});
+  final AgeGroup ageGroup;
+  final List<String> selectedCategoryIds;
+  const AutoNextTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds});
 
   @override
   State<AutoNextTurnScreen> createState() => _AutoNextTurnScreenState();
@@ -55,19 +57,26 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     });
   }
 
-  void _showTruthOrDareScreen(bool isTruth) async {
-    final playerName = widget.players[_currentIndex];
-    final question = getRandomQuestion(
-      type: isTruth ? QuestionType.truth : QuestionType.dare,
-      ageGroup: widget.ageGroup,
-      categoryIds: _allCategoryIds, // Replace with selectedCategoryIds if available
+  Future<Question?> _getRandomQuestionFromJson({required String type}) async {
+    final questions = await loadQuestions(
+      type: type,
+      selectedCategories: widget.selectedCategoryIds,
+      ageGroup: widget.ageGroup.name == 'kids' ? 'Kids' : widget.ageGroup.name == 'teen' ? 'Teens' : 'Adults',
     );
+    if (questions.isEmpty) return null;
+    questions.shuffle();
+    return questions.first;
+  }
+
+  Future<void> _showTruthOrDareScreen(bool isTruth) async {
+    final playerName = widget.players[_currentIndex];
+    final question = await _getRandomQuestionFromJson(type: isTruth ? 'truth' : 'dare');
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TruthDareQuestionScreen(
           playerName: playerName,
-          questionText: question?.question ?? (isTruth ? 'No truth found.' : 'No dare found.'),
+          questionText: question?.text ?? (isTruth ? 'No truth found.' : 'No dare found.'),
           isTruth: isTruth,
           onDone: () {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
@@ -665,7 +674,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     ElevatedButton(
-                                      onPressed: () => _showTruthOrDareScreen(true),
+                                      onPressed: () async {
+                                        await _showTruthOrDareScreen(true);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white,
                                         foregroundColor: Colors.black,
@@ -681,7 +692,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                     ),
                                     SizedBox(width: screenWidth * 0.06),
                                     ElevatedButton(
-                                      onPressed: () => _showTruthOrDareScreen(false),
+                                      onPressed: () async {
+                                        await _showTruthOrDareScreen(false);
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.black,
                                         foregroundColor: Colors.white,

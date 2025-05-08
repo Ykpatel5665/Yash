@@ -3,7 +3,6 @@ import 'dart:math' as math; // Import math for rotation
 import 'package:flutter/physics.dart'; // Import for physics simulation
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
-import 'truth_dare_select_screen.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart'; // Import for question logic
@@ -237,20 +236,27 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   }
 
   // --- Truth/Dare Action Handlers ---
+  Future<Question?> _getRandomQuestionFromJson({required String type}) async {
+    final questions = await loadQuestions(
+      type: type,
+      selectedCategories: widget.selectedCategoryIds,
+      ageGroup: widget.ageGroup.name == 'kids' ? 'Kids' : widget.ageGroup.name == 'teen' ? 'Teens' : 'Adults',
+    );
+    if (questions.isEmpty) return null;
+    questions.shuffle();
+    return questions.first;
+  }
+
   void _onTruthSelected() async {
     if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
-    final question = getRandomQuestion(
-      type: QuestionType.truth,
-      ageGroup: widget.ageGroup,
-      categoryIds: widget.selectedCategoryIds,
-    );
+    final question = await _getRandomQuestionFromJson(type: 'truth');
     final playerName = widget.players[_selectedPlayerIndex!];
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TruthDareQuestionScreen(
           playerName: playerName,
-          questionText: question?.question ?? 'No truth found for this category.',
+          questionText: question?.text ?? 'No truth found for this category.',
           isTruth: true,
           onDone: () {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
@@ -274,18 +280,14 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   void _onDareSelected() async {
     if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
-    final question = getRandomQuestion(
-      type: QuestionType.dare,
-      ageGroup: widget.ageGroup,
-      categoryIds: widget.selectedCategoryIds,
-    );
+    final question = await _getRandomQuestionFromJson(type: 'dare');
     final playerName = widget.players[_selectedPlayerIndex!];
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TruthDareQuestionScreen(
           playerName: playerName,
-          questionText: question?.question ?? 'No dare found for this category.',
+          questionText: question?.text ?? 'No dare found for this category.',
           isTruth: false,
           onDone: () {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
@@ -1073,7 +1075,7 @@ class _TruthDareDialog extends StatelessWidget {
                         child: DecoratedBox(
                           decoration: truthButtonDecoration,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Navigator.of(context).pop('truth');
                             },
                             style: buttonStyle,
@@ -1091,7 +1093,7 @@ class _TruthDareDialog extends StatelessWidget {
                         child: DecoratedBox(
                           decoration: dareButtonDecoration,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Navigator.of(context).pop('dare');
                             },
                             style: buttonStyle,

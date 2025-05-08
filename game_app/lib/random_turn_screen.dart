@@ -9,8 +9,9 @@ import 'truth_dare_question_screen.dart';
 class RandomTurnScreen extends StatefulWidget {
   final List<String> players;
   final List<Color> playerColors;
-  final dynamic ageGroup;
-  const RandomTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup});
+  final AgeGroup ageGroup;
+  final List<String> selectedCategoryIds;
+  const RandomTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds});
 
   @override
   State<RandomTurnScreen> createState() => _RandomTurnScreenState();
@@ -64,20 +65,27 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     });
   }
 
-  void _showTruthOrDareScreen(bool isTruth) async {
+  Future<Question?> _getRandomQuestionFromJson({required String type}) async {
+    final questions = await loadQuestions(
+      type: type,
+      selectedCategories: widget.selectedCategoryIds,
+      ageGroup: widget.ageGroup.name == 'kids' ? 'Kids' : widget.ageGroup.name == 'teen' ? 'Teens' : 'Adults',
+    );
+    if (questions.isEmpty) return null;
+    questions.shuffle();
+    return questions.first;
+  }
+
+  Future<void> _showTruthOrDareScreen(bool isTruth) async {
     if (_currentIndex == null) return;
     final playerName = widget.players[_currentIndex!];
-    final question = getRandomQuestion(
-      type: isTruth ? QuestionType.truth : QuestionType.dare,
-      ageGroup: widget.ageGroup,
-      categoryIds: _allCategoryIds, // Replace with selectedCategoryIds if available
-    );
+    final question = await _getRandomQuestionFromJson(type: isTruth ? 'truth' : 'dare');
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TruthDareQuestionScreen(
           playerName: playerName,
-          questionText: question?.question ?? (isTruth ? 'No truth found.' : 'No dare found.'),
+          questionText: question?.text ?? (isTruth ? 'No truth found.' : 'No dare found.'),
           isTruth: isTruth,
           onDone: () {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
@@ -653,7 +661,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () => _showTruthOrDareScreen(true),
+                                    onPressed: () async {
+                                      await _showTruthOrDareScreen(true);
+                                    },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
                                       foregroundColor: Colors.black,
@@ -673,7 +683,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                   ),
                                   SizedBox(width: (constraints.maxWidth * 0.06).clamp(16, 32)),
                                   ElevatedButton(
-                                    onPressed: () => _showTruthOrDareScreen(false),
+                                    onPressed: () async {
+                                      await _showTruthOrDareScreen(false);
+                                    },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.black,
                                       foregroundColor: Colors.white,

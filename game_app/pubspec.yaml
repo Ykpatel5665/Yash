@@ -1,5 +1,5 @@
-name: game_app
-description: "A new Flutter project."
+name: truth_or_dare
+description: "Truth or Dare game application."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -59,7 +59,7 @@ flutter_icons:
 
 flutter_native_splash:
   color: "#FFFFFF" # White background, you can change this
-  image: assets/logo.png
+  image: assets/splash.png
   android: true
   ios: true
   # You can add more configurations like android_gravity, ios_content_mode, etc.

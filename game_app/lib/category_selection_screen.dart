@@ -337,23 +337,21 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                       final isWide = constraints.maxWidth > 600;
                       final double baseSpacing = (MediaQuery.of(context).size.height * 0.012).clamp(4, 16);
                       final double horizontalChipPadding = (MediaQuery.of(context).size.width * 0.07).clamp(18, 36);
-                      Widget categoryList;
-                      if (isWide) {
-                        categoryList = GridView.builder(
-                          padding: EdgeInsets.only(top: baseSpacing, bottom: 120),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: baseSpacing,
-                            crossAxisSpacing: baseSpacing,
-                            childAspectRatio: 4.2,
-                          ),
+                      Widget categoryList = Padding(
+                        padding: EdgeInsets.only(
+                          top: baseSpacing,
+                          left: horizontalChipPadding,
+                          right: horizontalChipPadding,
+                          bottom: 120,
+                        ),
+                        child: ListView.builder(
                           itemCount: _categories.length,
                           itemBuilder: (context, idx) {
                             final cat = _categories[idx];
                             final bool selected = _selectedCategoryIds.contains(cat.id);
                             final iconData = getCategoryIcon(cat.id);
                             return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: horizontalChipPadding / 2),
+                              padding: EdgeInsets.symmetric(vertical: baseSpacing / 2),
                               child: ToggleButton(
                                 label: cat.name,
                                 selected: selected,
@@ -372,42 +370,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                               ),
                             );
                           },
-                        );
-                      } else {
-                        categoryList = ListView.builder(
-                          padding: EdgeInsets.only(top: baseSpacing, bottom: 180),
-                          itemCount: _categories.length,
-                          itemBuilder: (context, idx) {
-                            final cat = _categories[idx];
-                            final bool selected = _selectedCategoryIds.contains(cat.id);
-                            final iconData = getCategoryIcon(cat.id);
-                            return Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                horizontalChipPadding,
-                                0,
-                                horizontalChipPadding,
-                                idx == _categories.length - 1 ? 0 : baseSpacing,
-                              ),
-                              child: ToggleButton(
-                                label: cat.name,
-                                selected: selected,
-                                onTap: () {
-                                  setState(() {
-                                    if (selected) {
-                                      _selectedCategoryIds.remove(cat.id);
-                                    } else {
-                                      _selectedCategoryIds.add(cat.id);
-                                    }
-                                  });
-                                },
-                                icon: iconData,
-                                iconSize: iconSize,
-                                fontSize: cardFont,
-                              ),
-                            );
-                          },
-                        );
-                      }
+                        ),
+                      );
                       return Stack(
                         children: [
                           Positioned.fill(

@@ -19,12 +19,14 @@ class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
   final AgeGroup ageGroup;
   final List<String>? selectedCategoryIds;
+  final bool useTimer;
 
   const AddPlayersScreen({
     super.key,
     required this.gameMode,
     required this.ageGroup,
     this.selectedCategoryIds,
+    required this.useTimer,
   });
 
   @override
@@ -352,6 +354,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               playerColors: _players.map((p) => p.color).toList(),
                               ageGroup: widget.ageGroup,
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
+                              useTimer: widget.useTimer,
                             );
                             break;
                           case GameMode.auto:
@@ -360,6 +363,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               playerColors: _players.map((p) => p.color).toList(),
                               ageGroup: widget.ageGroup,
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
+                              useTimer: widget.useTimer,
                             );
                             break;
                           case GameMode.random:
@@ -368,6 +372,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               playerColors: _players.map((p) => p.color).toList(),
                               ageGroup: widget.ageGroup,
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
+                              useTimer: widget.useTimer,
                             );
                             break;
                         }

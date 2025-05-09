@@ -132,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _saveSelection = true; // Default to true here as well for consistency
   String? _savedGameModeString; // Still load/save as string for simplicity
   String? _savedAgeGroupString; // Add state variable for saved age group string
+  bool _lastUseTimer = true; // Track last useTimer value
 
   // Define keys for saving preferences
   final String _gameModePrefsKey = 'gameMode'; // Key for saving game mode
@@ -369,6 +370,7 @@ class _MyHomePageState extends State<MyHomePage> {
 Future<void> _showModernGameSetupDialog(BuildContext context) async {
   GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
   AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
+  bool useTimer = _lastUseTimer; // Use last value as default
 
   await showGeneralDialog<void>(
     context: context,
@@ -595,7 +597,42 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                   )),
                                 ],
                               ),
-                              const SizedBox(height: 32),
+                              const SizedBox(height: 28),
+                              // Add Use Timer checkbox
+                              InkWell(
+                                onTap: () {
+                                  setDialogState(() {
+                                    useTimer = !useTimer;
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Row(
+                                  children: [
+                                    Checkbox(
+                                      value: useTimer,
+                                      onChanged: (val) {
+                                        setDialogState(() {
+                                          useTimer = val ?? true;
+                                        });
+                                      },
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Use Timer (60s)',
+                                        style: GoogleFonts.baloo2(
+                                          color: Colors.white.withOpacity(0.92),
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 18),
                               Row(
                                 children: [
                                   Expanded(
@@ -652,9 +689,11 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                             setState(() {
                                               _selectedGameModeEnum = finalGameMode;
                                               _selectedAgeGroupEnum = finalAgeGroup;
+                                              _lastUseTimer = useTimer; // Save last useTimer
                                             });
                                             await _savePreferences(finalGameMode, finalAgeGroup);
                                             Navigator.of(dialogPageContext).pop();
+                                            // Removed: Navigation to CategorySelectionScreen
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -801,6 +840,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                 pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
                                   gameMode: _selectedGameModeEnum!,
                                   ageGroup: _selectedAgeGroupEnum!,
+                                  useTimer: _lastUseTimer, // Pass last useTimer value
                                 ),
                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                   const begin = Offset(1.0, 0.0);

@@ -15,7 +15,8 @@ class AutoNextTurnScreen extends StatefulWidget {
   final List<Color> playerColors;
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
-  const AutoNextTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds});
+  final bool useTimer;
+  const AutoNextTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
 
   @override
   State<AutoNextTurnScreen> createState() => _AutoNextTurnScreenState();
@@ -97,6 +98,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               _nextTurn();
             });
           },
+          useTimer: widget.useTimer,
         ),
       ),
     );
@@ -700,7 +702,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                             SizedBox(height: spacingLarge),
                           ],
                         ),
-                      ),
+                      ),  
                     );
                   },
                 ),

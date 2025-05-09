@@ -14,7 +14,8 @@ class RandomTurnScreen extends StatefulWidget {
   final List<Color> playerColors;
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
-  const RandomTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds});
+  final bool useTimer;
+  const RandomTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
 
   @override
   State<RandomTurnScreen> createState() => _RandomTurnScreenState();
@@ -113,6 +114,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               }
             });
           },
+          useTimer: widget.useTimer,
         ),
       ),
     );

@@ -18,6 +18,7 @@ class SpinTheBottleScreen extends StatefulWidget {
   final List<Color> playerColors;
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
+  final bool useTimer;
 
   const SpinTheBottleScreen({
     super.key,
@@ -25,6 +26,7 @@ class SpinTheBottleScreen extends StatefulWidget {
     required this.playerColors,
     required this.ageGroup,
     required this.selectedCategoryIds,
+    required this.useTimer,
   });
 
   @override
@@ -309,6 +311,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               _controller.reset(); // <--- ADDED RESET
             });
           },
+          useTimer: widget.useTimer,
         ),
       ),
     );
@@ -342,6 +345,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               _controller.reset(); // <--- ADDED RESET
             });
           },
+          useTimer: widget.useTimer,
         ),
       ),
     );

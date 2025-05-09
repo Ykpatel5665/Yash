@@ -57,7 +57,8 @@ const List<Category> adultsCategories = [
 class CategorySelectionScreen extends StatefulWidget {
   final GameMode gameMode;
   final AgeGroup ageGroup;
-  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup});
+  final bool useTimer;
+  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup, required this.useTimer});
 
   @override
   State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
@@ -412,6 +413,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                   gameMode: widget.gameMode,
                                                   ageGroup: widget.ageGroup,
                                                   selectedCategoryIds: _selectedCategoryIds.toList(),
+                                                  useTimer: widget.useTimer,
                                                 ),
                                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                                   const begin = Offset(1.0, 0.0);
@@ -453,6 +455,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               gameMode: widget.gameMode,
                                               ageGroup: widget.ageGroup,
                                               selectedCategoryIds: _selectedCategoryIds.toList(),
+                                              useTimer: widget.useTimer,
                                             ),
                                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                               const begin = Offset(1.0, 0.0);

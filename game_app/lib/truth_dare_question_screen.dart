@@ -11,6 +11,7 @@ class TruthDareQuestionScreen extends StatefulWidget {
   final bool isTruth;
   final VoidCallback onDone;
   final VoidCallback onForfeit;
+  final bool useTimer;
 
   const TruthDareQuestionScreen({
     super.key,
@@ -19,6 +20,7 @@ class TruthDareQuestionScreen extends StatefulWidget {
     required this.isTruth,
     required this.onDone,
     required this.onForfeit,
+    this.useTimer = true,
   });
 
   @override
@@ -54,13 +56,14 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
     _progressController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: _startSeconds),
-    )..forward();
-
+    );
     combo = (List<List<Color>>.from(colorCombos)..shuffle()).first;
     mainColor = combo[0];
     secondaryColor = combo[1];
-
-    _startTimer();
+    if (widget.useTimer) {
+      _progressController.forward();
+      _startTimer();
+    }
   }
 
   void _startTimer() {
@@ -162,6 +165,80 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
       ],
     );
 
+    // Timer Section
+    Widget timerSection = SizedBox.shrink();
+    if (widget.useTimer) {
+      timerSection = Padding(
+        padding: EdgeInsets.only(bottom: (height * 0.06).clamp(18, 48)),
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _progressController,
+            builder: (context, child) {
+              double progress = 1.0 - _progressController.value;
+              final double ringDiameter = timerFontSize * 3.2;
+
+              // Optional Pulse Effect Near End
+              double scale = 1.0;
+              if (_secondsLeft <= 5) {
+                scale += sin(_secondsLeft * 2 * 3.14 / 1.5) * 0.08;
+              }
+
+              return Transform.scale(
+                scale: scale,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: mainColor.withOpacity(0.4),
+                            blurRadius: 20,
+                            spreadRadius: 4,
+                          )
+                        ],
+                      ),
+                      child: SizedBox(
+                        width: ringDiameter,
+                        height: ringDiameter,
+                        child: CustomPaint(
+                          painter: _TimerRingPainter(
+                            progress: progress,
+                            mainColor: mainColor,
+                            secondaryColor: secondaryColor,
+                            smooth: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '$_secondsLeft',
+                      style: GoogleFonts.baloo2(
+                        fontWeight: FontWeight.bold,
+                        fontSize: timerFontSize,
+                        color: Colors.white,
+                        decoration: TextDecoration.none,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 8,
+                            color: Colors.black.withOpacity(0.25),
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
+
     return Stack(
       children: [
         Container(color: Colors.black),
@@ -211,9 +288,12 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                           fontSize: headerFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          decoration: TextDecoration.none, // Set decoration to none
+                          decoration: TextDecoration.none,
                           shadows: [
-                            Shadow(blurRadius: 4, color: Colors.white.withOpacity(0.3)),
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
                           ],
                         ),
                         textAlign: TextAlign.center,
@@ -245,9 +325,15 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                         style: GoogleFonts.baloo2(
                           fontSize: fontSize,
                           color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.none, // Set decoration to none
-                          shadows: [Shadow(blurRadius: 8, color: Colors.black.withOpacity(0.25), offset: Offset(0, 2))],
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.none,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4.0,
+                              color: Colors.black.withAlpha((0.5 * 255).round()),
+                              offset: Offset(1.0, 1.0),
+                            ),
+                          ],
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -258,7 +344,14 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                           fontSize: questionFontSize * 1.18,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none, // Set decoration to none
+                          decoration: TextDecoration.none,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4.0,
+                              color: Colors.black.withAlpha((0.5 * 255).round()),
+                              offset: Offset(1.0, 1.0),
+                            ),
+                          ],
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -267,75 +360,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                 ),
               ),
               // Timer Section
-              Padding(
-                padding: EdgeInsets.only(bottom: (height * 0.06).clamp(18, 48)),
-                child: Center(
-                  child: AnimatedBuilder(
-                    animation: _progressController,
-                    builder: (context, child) {
-                      double progress = 1.0 - _progressController.value;
-                      final double ringDiameter = timerFontSize * 3.2;
-
-                      // Optional Pulse Effect Near End
-                      double scale = 1.0;
-                      if (_secondsLeft <= 5) {
-                        scale += sin(_secondsLeft * 2 * 3.14 / 1.5) * 0.08;
-                      }
-
-                      return Transform.scale(
-                        scale: scale,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: mainColor.withOpacity(0.4),
-                                    blurRadius: 20,
-                                    spreadRadius: 4,
-                                  )
-                                ],
-                              ),
-                              child: SizedBox(
-                                width: ringDiameter,
-                                height: ringDiameter,
-                                child: CustomPaint(
-                                  painter: _TimerRingPainter(
-                                    progress: progress,
-                                    mainColor: mainColor,
-                                    secondaryColor: secondaryColor,
-                                    smooth: true,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Text(
-                              '$_secondsLeft',
-                              style: GoogleFonts.baloo2(
-                                fontWeight: FontWeight.bold,
-                                fontSize: timerFontSize,
-                                color: Colors.white,
-                                decoration: TextDecoration.none,
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 8,
-                                    color: Colors.black.withOpacity(0.25),
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              timerSection,
               Padding(
                 padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, rowBottomPadding),
                 child: Row(

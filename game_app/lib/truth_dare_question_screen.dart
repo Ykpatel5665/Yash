@@ -73,20 +73,182 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
           _secondsLeft--;
         });
       } else {
-        _handleForfeit();
+        _handleForfeit(isTimeout: true);
       }
     });
   }
 
-  void _handleForfeit() {
+  Future<void> _showResultDialog({
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color iconColor,
+  }) async {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double cardWidth = screenSize.width * 0.85;
+    final double maxCardWidth = 420;
+    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32);
+    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36);
+    final double iconSize = (screenSize.width * 0.14).clamp(36, 60);
+    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22);
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22);
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28);
+
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            type: MaterialType.transparency,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, color: iconColor, size: iconSize, shadows: [
+                        Shadow(blurRadius: 4.0, color: Colors.black.withAlpha((0.4 * 255).round()), offset: const Offset(1.0, 1.0)),
+                      ]),
+                      SizedBox(height: 18),
+                      Text(
+                        title,
+                        style: GoogleFonts.baloo2(
+                          fontSize: titleFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(blurRadius: 4, color: Colors.white.withOpacity(0.3)),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        message,
+                        style: GoogleFonts.baloo2(
+                          fontSize: messageFontSize,
+                          color: Colors.white.withOpacity(0.92),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 28),
+                      SizedBox(
+                        width: double.infinity,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [mainColor, secondaryColor],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.18),
+                                blurRadius: 16,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Continue',
+                                style: GoogleFonts.baloo2(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: buttonFontSize,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 8,
+                                      color: Colors.black.withOpacity(0.25),
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 0.3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
+  Future<void> _handleForfeit({bool isTimeout = false}) async {
     _timer?.cancel();
     _progressController.stop();
+    await _showResultDialog(
+      title: isTimeout ? 'Time’s up!' : 'Oops! You lost this round.',
+      message: isTimeout ? 'You ran out of time.' : 'You forfeited this round.',
+      icon: isTimeout ? Icons.timer_off_rounded : Icons.sentiment_dissatisfied,
+      iconColor: Colors.white,
+    );
     widget.onForfeit();
   }
 
-  void _handleDone() {
+  Future<void> _handleDone() async {
     _timer?.cancel();
     _progressController.stop();
+    await _showResultDialog(
+      title: 'Congrats!',
+      message: 'You completed the challenge!',
+      icon: Icons.celebration_rounded, // Changed from trophy to celebration
+      iconColor: Colors.white,
+    );
     widget.onDone();
   }
 
@@ -278,7 +440,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                       ),
                       child: IconButton(
                         icon: Icon(Icons.close_rounded, color: Colors.black, size: buttonIconSize),
-                        onPressed: _handleForfeit,
+                        onPressed: () => _handleForfeit(isTimeout: false),
                       ),
                     ),
                     Expanded(
@@ -367,7 +529,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: _handleForfeit,
+                        onPressed: () => _handleForfeit(isTimeout: false),
                         style: forfeitButtonStyle.copyWith(
                           padding: MaterialStateProperty.all<EdgeInsets>(
                             EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
@@ -387,7 +549,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                     SizedBox(width: buttonSpacing),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: _handleDone,
+                        onPressed: () async => await _handleDone(),
                         style: forfeitButtonStyle.copyWith(
                           padding: MaterialStateProperty.all<EdgeInsets>(
                             EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),

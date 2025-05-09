@@ -137,6 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Define keys for saving preferences
   final String _gameModePrefsKey = 'gameMode'; // Key for saving game mode
   final String _ageGroupPrefsKey = 'ageGroup'; // Key for saving age group
+  final String _useTimerPrefsKey = 'useTimer'; // Key for saving useTimer
 
   // Track adult confirmation for this session
   bool _adultConfirmedThisSession = false;
@@ -152,8 +153,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _savedGameModeString = prefs.getString(_gameModePrefsKey);
-      _savedAgeGroupString =
-          prefs.getString(_ageGroupPrefsKey); // Load age group string
+      _savedAgeGroupString = prefs.getString(_ageGroupPrefsKey);
+      _lastUseTimer = prefs.getBool(_useTimerPrefsKey) ?? true; // Load useTimer, default true
 
       if (_savedGameModeString != null) {
         try {
@@ -188,36 +189,35 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Save game mode and age group enum names to SharedPreferences
-  Future<void> _savePreferences(GameMode? mode, AgeGroup? ageGroup) async {
+  Future<void> _savePreferences(GameMode? mode, AgeGroup? ageGroup, {bool? useTimer}) async {
     final prefs = await SharedPreferences.getInstance();
     if (_saveSelection) {
       if (mode != null) {
-        await prefs.setString(
-            _gameModePrefsKey, mode.name); // Save game mode enum name
-        print("Saved game mode: ${mode.name}");
+        await prefs.setString(_gameModePrefsKey, mode.name);
         _savedGameModeString = mode.name;
       } else {
-        await prefs.remove(
-            _gameModePrefsKey); // Remove if null (shouldn't happen if _saveSelection is true)
+        await prefs.remove(_gameModePrefsKey);
         _savedGameModeString = null;
       }
       if (ageGroup != null) {
-        await prefs.setString(
-            _ageGroupPrefsKey, ageGroup.name); // Save age group enum name
-        print("Saved age group: ${ageGroup.name}");
+        await prefs.setString(_ageGroupPrefsKey, ageGroup.name);
         _savedAgeGroupString = ageGroup.name;
       } else {
-        await prefs.remove(_ageGroupPrefsKey); // Remove if null
+        await prefs.remove(_ageGroupPrefsKey);
         _savedAgeGroupString = null;
+      }
+      if (useTimer != null) {
+        await prefs.setBool(_useTimerPrefsKey, useTimer);
+        _lastUseTimer = useTimer;
       }
     } else {
       await prefs.remove(_gameModePrefsKey);
-      await prefs.remove(_ageGroupPrefsKey); // Remove both keys
-      print("Removed saved preferences.");
+      await prefs.remove(_ageGroupPrefsKey);
+      await prefs.remove(_useTimerPrefsKey);
       _savedGameModeString = null;
       _savedAgeGroupString = null;
+      _lastUseTimer = true;
     }
-    // No need to setState here as it's called from the dialog confirmation
   }
 
   // --- Function to show the ADULT confirmation dialog ---
@@ -691,9 +691,8 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                               _selectedAgeGroupEnum = finalAgeGroup;
                                               _lastUseTimer = useTimer; // Save last useTimer
                                             });
-                                            await _savePreferences(finalGameMode, finalAgeGroup);
+                                            await _savePreferences(finalGameMode, finalAgeGroup, useTimer: useTimer);
                                             Navigator.of(dialogPageContext).pop();
-                                            // Removed: Navigation to CategorySelectionScreen
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(

@@ -345,11 +345,16 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                           top: baseSpacing,
                           left: horizontalChipPadding,
                           right: horizontalChipPadding,
-                          bottom: bottomPadding, // Responsive
+                          // Only a little extra space so last item is visible above the button
+                          bottom: bottomPadding + continueBtnHeight * 0.2,
                         ),
                         child: ListView.builder(
-                          itemCount: _categories.length,
+                          itemCount: _categories.length + 1, // Add one for the extra space
                           itemBuilder: (context, idx) {
+                            if (idx == _categories.length) {
+                              // Add extra space at the end
+                              return const SizedBox(height: 32);
+                            }
                             final cat = _categories[idx];
                             final bool selected = _selectedCategoryIds.contains(cat.id);
                             final iconData = getCategoryIcon(cat.id);

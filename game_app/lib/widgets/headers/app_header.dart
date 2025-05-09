@@ -37,10 +37,11 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         title,
-        style: appBarTheme.titleTextStyle ?? GoogleFonts.baloo2(
+        style: (appBarTheme.titleTextStyle ?? GoogleFonts.baloo2(
           fontWeight: FontWeight.bold,
           fontSize: responsiveFontSize,
           color: Colors.white,
+          decoration: TextDecoration.none, // Ensure no decoration
           shadows: [
             Shadow(
               blurRadius: 4.0,
@@ -48,7 +49,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
               offset: const Offset(1.0, 1.0),
             ),
           ],
-        ),
+        )),
       ),
       centerTitle: centerTitle,
       backgroundColor: backgroundColor ?? Colors.transparent,

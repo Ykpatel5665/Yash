@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart';
@@ -25,13 +25,14 @@ class TruthDareQuestionScreen extends StatefulWidget {
   State<TruthDareQuestionScreen> createState() => _TruthDareQuestionScreenState();
 }
 
-class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with SingleTickerProviderStateMixin {
+class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
+    with SingleTickerProviderStateMixin {
   static const int _startSeconds = 60;
   late int _secondsLeft;
   Timer? _timer;
   late AnimationController _progressController;
 
-  // Move color combo selection here so it only happens once per screen
+  // Color combos for vibrant gradient screens
   static final List<List<Color>> colorCombos = [
     [Color.fromARGB(255, 100, 230, 200), Color.fromARGB(255, 80, 130, 255)],
     [Color(0xFF4DD0E1), Color(0xFF1976D2)],
@@ -41,6 +42,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
     [Color(0xFFFA8BFF), Color(0xFF2BD2FF)],
     [Color(0xFFFFD700), Color(0xFFFF5F6D)],
   ];
+
   late final List<Color> combo;
   late final Color mainColor;
   late final Color secondaryColor;
@@ -53,10 +55,11 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
       vsync: this,
       duration: const Duration(seconds: _startSeconds),
     )..forward();
-    // Only pick a color combo once per screen/question
+
     combo = (List<List<Color>>.from(colorCombos)..shuffle()).first;
     mainColor = combo[0];
     secondaryColor = combo[1];
+
     _startTimer();
   }
 
@@ -91,17 +94,12 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
     super.dispose();
   }
 
-  String _formatTime(int seconds) {
-    final m = (seconds ~/ 60).toString().padLeft(2, '0');
-    final s = (seconds % 60).toString().padLeft(2, '0');
-    return '$m:$s';
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final double width = screenSize.width;
     final double height = screenSize.height;
+
     final double fontSize = (width * 0.045).clamp(14, 28);
     final double questionFontSize = (width * 0.055).clamp(16, 32);
     final double timerFontSize = (width * 0.07).clamp(20, 36);
@@ -117,34 +115,15 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
     final double rowBottomPadding = (height * 0.08).clamp(32, 90);
     final double betweenHeaderAndIcon = (height * 0.02).clamp(8, 28);
     final double betweenIconAndQuestion = (height * 0.01).clamp(4, 18);
-    final double betweenQuestionAndButtons = (height * 0.01).clamp(8, 24);
     final double afterButtons = (height * 0.01).clamp(8, 24);
 
     // Gradient for Done button
-    final BoxDecoration doneButtonDecoration = BoxDecoration(
-      gradient: LinearGradient(
-        colors: [mainColor, secondaryColor],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.white.withOpacity(0.18),
-          blurRadius: 16,
-          spreadRadius: 1,
-        ),
-      ],
-    );
-
     final ButtonStyle doneButtonStyle = ElevatedButton.styleFrom(
       elevation: 0,
       backgroundColor: Colors.transparent,
       shadowColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 26), // Increased height
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.symmetric(vertical: 26),
       textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
     );
 
@@ -165,10 +144,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
       elevation: 0,
       backgroundColor: Colors.black.withOpacity(0.85),
       foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 26), // Increased height
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.symmetric(vertical: 26),
       textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
     );
 
@@ -187,33 +164,16 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
 
     return Stack(
       children: [
-        // Solid background to block splash/logo
+        Container(color: Colors.black),
         Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.black, // or Colors.white for a light base
-        ),
-        // Fully opaque vibrant gradient background
-        Container(
-          width: double.infinity,
-          height: double.infinity,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [mainColor, secondaryColor], // No opacity for vibrancy
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: LinearGradient(colors: [mainColor, secondaryColor], begin: Alignment.topLeft, end: Alignment.bottomRight),
           ),
         ),
-        // Blurred overlay (keep subtle, not hiding gradient)
         Container(
-          width: double.infinity,
-          height: double.infinity,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-            child: Container(
-              color: Colors.black.withOpacity(0.08), // Lower opacity for vibrancy
-            ),
+            child: Container(color: Colors.black.withOpacity(0.08)),
           ),
         ),
         SafeArea(
@@ -229,7 +189,6 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       decoration: BoxDecoration(
@@ -242,7 +201,6 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                       ),
                       child: IconButton(
                         icon: Icon(Icons.close_rounded, color: Colors.black, size: buttonIconSize),
-                        tooltip: 'Forfeit',
                         onPressed: _handleForfeit,
                       ),
                     ),
@@ -253,12 +211,9 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                           fontSize: headerFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          decoration: TextDecoration.none,
+                          decoration: TextDecoration.none, // Set decoration to none
                           shadows: [
-                            Shadow(
-                              blurRadius: 4,
-                              color: Colors.white.withOpacity(0.3),
-                            ),
+                            Shadow(blurRadius: 4, color: Colors.white.withOpacity(0.3)),
                           ],
                         ),
                         textAlign: TextAlign.center,
@@ -275,11 +230,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                   color: widget.isTruth ? mainColor : secondaryColor,
                   size: iconSize,
                   shadows: [
-                    Shadow(
-                      blurRadius: 8.0,
-                      color: Colors.black.withAlpha((0.4 * 255).round()),
-                      offset: const Offset(1.0, 1.0),
-                    ),
+                    Shadow(blurRadius: 8.0, color: Colors.black.withAlpha((0.4 * 255).round()), offset: Offset(1.0, 1.0)),
                   ],
                 ),
               ),
@@ -288,7 +239,6 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         "${widget.playerName}, your task:",
@@ -296,14 +246,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                           fontSize: fontSize,
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.none,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 8,
-                              color: Colors.black.withOpacity(0.25),
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          decoration: TextDecoration.none, // Set decoration to none
+                          shadows: [Shadow(blurRadius: 8, color: Colors.black.withOpacity(0.25), offset: Offset(0, 2))],
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -314,7 +258,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                           fontSize: questionFontSize * 1.18,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none,
+                          decoration: TextDecoration.none, // Set decoration to none
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -322,34 +266,54 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                   ),
                 ),
               ),
-              // Timer is now only above the buttons, not affecting the question
+              // Timer Section
               Padding(
-                padding: EdgeInsets.only(bottom: (height * 0.06).clamp(18, 48)), // Increased bottom padding for more lift
+                padding: EdgeInsets.only(bottom: (height * 0.06).clamp(18, 48)),
                 child: Center(
                   child: AnimatedBuilder(
                     animation: _progressController,
                     builder: (context, child) {
                       double progress = 1.0 - _progressController.value;
                       final double ringDiameter = timerFontSize * 3.2;
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            width: ringDiameter,
-                            height: ringDiameter,
-                            child: CustomPaint(
-                              painter: _TimerRingPainter(
-                                progress: progress,
-                                mainColor: mainColor,
-                                secondaryColor: secondaryColor,
-                                smooth: true,
+
+                      // Optional Pulse Effect Near End
+                      double scale = 1.0;
+                      if (_secondsLeft <= 5) {
+                        scale += sin(_secondsLeft * 2 * 3.14 / 1.5) * 0.08;
+                      }
+
+                      return Transform.scale(
+                        scale: scale,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: mainColor.withOpacity(0.4),
+                                    blurRadius: 20,
+                                    spreadRadius: 4,
+                                  )
+                                ],
+                              ),
+                              child: SizedBox(
+                                width: ringDiameter,
+                                height: ringDiameter,
+                                child: CustomPaint(
+                                  painter: _TimerRingPainter(
+                                    progress: progress,
+                                    mainColor: mainColor,
+                                    secondaryColor: secondaryColor,
+                                    smooth: true,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            child: Text(
-                              (_secondsLeft - 1).clamp(0, 59).toString(),
+                            Text(
+                              '$_secondsLeft',
                               style: GoogleFonts.baloo2(
                                 fontWeight: FontWeight.bold,
                                 fontSize: timerFontSize,
@@ -359,14 +323,14 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                                   Shadow(
                                     blurRadius: 8,
                                     color: Colors.black.withOpacity(0.25),
-                                    offset: const Offset(0, 2),
+                                    offset: Offset(0, 2),
                                   ),
                                 ],
                               ),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -388,16 +352,9 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.flag_rounded,
-                              color: Colors.white,
-                              size: buttonIconSize,
-                            ),
+                            Icon(Icons.flag_rounded, color: Colors.white, size: buttonIconSize),
                             SizedBox(width: buttonSpacing / 2),
-                            Text(
-                              'Forfeit',
-                              style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize),
-                            ),
+                            Text('Forfeit', style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
                           ],
                         ),
                       ),
@@ -415,16 +372,9 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.check_circle_rounded,
-                              color: Colors.white,
-                              size: buttonIconSize,
-                            ),
+                            Icon(Icons.check_circle_rounded, color: Colors.white, size: buttonIconSize),
                             SizedBox(width: buttonSpacing / 2),
-                            Text(
-                              'Done',
-                              style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize),
-                            ),
+                            Text('Done', style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
                           ],
                         ),
                       ),
@@ -433,8 +383,6 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
                 ),
               ),
               SizedBox(height: afterButtons),
-              // Placeholder for smart ad banner
-              // SmartBannerMobile(),
             ],
           ),
         ),
@@ -443,51 +391,75 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen> with 
   }
 }
 
+// Custom Painter for Circular Timer Ring
 class _TimerRingPainter extends CustomPainter {
   final double progress;
   final Color mainColor;
   final Color secondaryColor;
   final bool smooth;
-  _TimerRingPainter({required this.progress, required this.mainColor, required this.secondaryColor, this.smooth = false});
+
+  _TimerRingPainter({
+    required this.progress,
+    required this.mainColor,
+    required this.secondaryColor,
+    this.smooth = false,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final stroke = size.width * 0.10; // Slightly thinner for bigger ring
-    final rect = Offset.zero & size;
+    final stroke = size.width * 0.10;
+    final rect = Rect.fromLTWH(stroke / 2, stroke / 2, size.width - stroke, size.height - stroke);
+
     final bgPaint = Paint()
       ..color = Colors.white.withOpacity(0.13)
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..isAntiAlias = true;
-    final fgPaint = Paint()
-      ..color = mainColor
-      ..style = PaintingStyle.stroke
-      ..strokeCap = smooth ? StrokeCap.round : StrokeCap.butt
-      ..strokeWidth = stroke * 1.1
-      ..isAntiAlias = true;
-    // Draw background ring
-    canvas.drawArc(
-      Rect.fromLTWH(stroke / 2, stroke / 2, size.width - stroke, size.height - stroke),
-      0,
-      2 * 3.1415926535,
-      false,
-      bgPaint,
-    );
-    // Draw progress arc
-    double sweep = 2 * 3.1415926535 * progress;
-    if (sweep > 0.01) {
-      canvas.drawArc(
-        Rect.fromLTWH(stroke / 2, stroke / 2, size.width - stroke, size.height - stroke),
-        -3.1415926535 / 2,
-        sweep,
-        false,
-        fgPaint,
+
+    canvas.drawArc(rect, 0, 2 * 3.1415926535, false, bgPaint);
+
+    if (progress > 0) {
+      final sweepAngle = 2 * 3.1415926535 * progress;
+
+      final gradient = SweepGradient(
+        colors: [mainColor, secondaryColor],
+        center: Alignment.center,
+        transform: GradientRotation(-pi / 2),
       );
+
+      final fgPaint = Paint()
+        ..shader = gradient.createShader(rect)
+        ..style = PaintingStyle.stroke
+        ..strokeCap = smooth ? StrokeCap.round : StrokeCap.butt
+        ..strokeWidth = stroke * 1.1
+        ..isAntiAlias = true;
+
+      canvas.drawArc(rect, -pi / 2, sweepAngle, false, fgPaint);
+
+      // Add tick marks every 5 seconds
+      const int totalTicks = 12;
+      final tickPaint = Paint()
+        ..color = Colors.white.withOpacity(0.3)
+        ..strokeWidth = stroke * 0.4
+        ..style = PaintingStyle.stroke;
+
+      for (int i = 0; i < totalTicks; i++) {
+        final angle = 2 * pi * (i / totalTicks) - pi / 2;
+        final from = Offset(size.width / 2 + (size.width / 2 - stroke * 1.5) * cos(angle),
+            size.height / 2 + (size.width / 2 - stroke * 1.5) * sin(angle));
+        final to = Offset(size.width / 2 + (size.width / 2 - stroke * 0.8) * cos(angle),
+            size.height / 2 + (size.width / 2 - stroke * 0.8) * sin(angle));
+
+        canvas.drawLine(from, to, tickPaint);
+      }
     }
   }
 
   @override
   bool shouldRepaint(covariant _TimerRingPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.mainColor != mainColor || oldDelegate.secondaryColor != secondaryColor || oldDelegate.smooth != smooth;
+    return oldDelegate.progress != progress ||
+        oldDelegate.mainColor != mainColor ||
+        oldDelegate.secondaryColor != secondaryColor ||
+        oldDelegate.smooth != smooth;
   }
 }

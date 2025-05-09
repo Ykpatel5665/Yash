@@ -304,30 +304,37 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 69.0),
                 child: Center(
-                  child: SizedBox(
+                  child: Container(
                     width: MediaQuery.of(context).size.width * 0.75,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha((0.3 * 255).round()),
+                          blurRadius: 10.0,
+                          spreadRadius: 1.0,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 62),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
                         textStyle: GoogleFonts.baloo2(
-                          fontSize: 25.0,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 3,
-                        shadowColor: Colors.transparent,
-                        minimumSize: Size(MediaQuery.of(context).size.width * 0.75, MediaQuery.of(context).size.height * 0.001),
-                        alignment: Alignment.center,
                       ),
                       onPressed: () {
                         // Navigate based on the selected game mode
-                        print(
-                            "Let's Begin pressed! Mode: [widget.gameMode}, Age: [widget.ageGroup}, Players: $_players");
-
                         Widget nextScreen;
                         switch (widget.gameMode) {
                           case GameMode.spin:
@@ -355,20 +362,23 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                             );
                             break;
                         }
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => nextScreen),
                         );
                       },
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.play_arrow_rounded, size: 50.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 25.0),
+                            child: Icon(Icons.play_arrow_rounded, size: 50.0),
+                          ),
                           Expanded(
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                "Let's begin!",
+                                "Let's Begin!",
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 textAlign: TextAlign.center,

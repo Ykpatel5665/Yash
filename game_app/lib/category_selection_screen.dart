@@ -466,13 +466,6 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                       child: Stack(
                                         alignment: Alignment.center,
                                         children: [
-                                          const Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Padding(
-                                              padding: EdgeInsets.only(left: 25.0),
-                                              child: Icon(Icons.play_arrow_rounded, size: 50, color: Colors.white),
-                                            ),
-                                          ),
                                           Align(
                                             alignment: Alignment.center,
                                             child: Text(

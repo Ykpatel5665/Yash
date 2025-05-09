@@ -21,19 +21,25 @@ class PlayerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double avatarSize = (MediaQuery.of(context).size.width * 0.09).clamp(28, 48); // Responsive
+    final double borderRadius = (MediaQuery.of(context).size.width * 0.025).clamp(6, 16); // Responsive
+    final double borderWidth = (MediaQuery.of(context).size.width * 0.011).clamp(2, 6); // Responsive
+    final double fontSize = (MediaQuery.of(context).size.width * 0.045).clamp(14, 22); // Responsive
+    final double splashRadius = (MediaQuery.of(context).size.width * 0.06).clamp(18, 32); // Responsive
+    final double contentPaddingH = (MediaQuery.of(context).size.width * 0.02).clamp(4, 16);
     return ListTile(
       leading: GestureDetector(
         onTap: onColorTap,
         child: Container(
-          width: 36,
-          height: 36,
+          width: avatarSize,
+          height: avatarSize,
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(borderRadius),
             color: player.color,
             border: Border.all(
               color: Colors.white,
-              width: 4,
+              width: borderWidth,
             ),
           ),
         ),
@@ -42,17 +48,17 @@ class PlayerListTile extends StatelessWidget {
         player.name,
         style: GoogleFonts.baloo2(
           color: Colors.white,
-          fontSize: 18,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
       trailing: IconButton(
         icon: const Icon(Icons.close, color: Colors.white),
-        tooltip: 'Remove ${player.name}',
+        tooltip: 'Remove ${player.name}',
         onPressed: onRemoveTap,
-        splashRadius: 24,
+        splashRadius: splashRadius,
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+      contentPadding: EdgeInsets.symmetric(horizontal: contentPaddingH, vertical: 0),
     );
   }
 }

@@ -390,7 +390,17 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
-    final double cardPadding = 24.0;
+    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
+    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
+    final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
+    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
+    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
+    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
+    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
+    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
+
     return await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -407,7 +417,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
                   width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding),
+                  padding: EdgeInsets.all(cardPadding), // Responsive
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
                     borderRadius: BorderRadius.circular(32),
@@ -429,7 +439,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       Text(
                         'Quit Game?',
                         style: GoogleFonts.baloo2(
-                          fontSize: 32,
+                          fontSize: titleFontSize, // Responsive
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           shadows: [
@@ -441,11 +451,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 28),
+                      SizedBox(height: sectionSpacing), // Responsive
                       Icon(
                         Icons.sentiment_dissatisfied,
                         color: Colors.white70,
-                        size: screenSize.width * 0.14,
+                        size: iconSize, // Responsive
                         shadows: [
                           Shadow(
                             blurRadius: 4.0,
@@ -454,17 +464,17 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           ),
                         ],
                       ),
-                      const SizedBox(height: 28),
+                      SizedBox(height: sectionSpacing), // Responsive
                       Text(
                         'Are you sure you want to quit the game?',
                         style: GoogleFonts.baloo2(
-                          fontSize: 20,
+                          fontSize: messageFontSize, // Responsive
                           color: Colors.white.withOpacity(0.92),
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 32),
+                      SizedBox(height: buttonRowSpacing), // Responsive
                       Row(
                         children: [
                           Expanded(
@@ -498,10 +508,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
                                   textStyle: GoogleFonts.baloo2(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 22,
+                                    fontSize: buttonFontSize, // Responsive
                                   ),
                                 ),
                                 child: Center(
@@ -509,7 +519,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                     "No",
                                     style: GoogleFonts.baloo2(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 22,
+                                      fontSize: buttonFontSize, // Responsive
                                       color: Colors.white,
                                       shadows: [
                                         Shadow(
@@ -524,7 +534,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               ),
                             ),
                           ),
-                          const SizedBox(width: 18),
+                          SizedBox(width: buttonSpacing), // Responsive
                           Expanded(
                             child: TextButton(
                               onPressed: () {
@@ -532,10 +542,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.white70,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
                                 textStyle: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 17,
+                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
                                 ),
                               ),
                               child: const Text("Yes"),

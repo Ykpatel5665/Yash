@@ -36,9 +36,9 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double effectiveRadius = borderRadius ?? 32.0;
+    final double effectiveRadius = borderRadius ?? (MediaQuery.of(context).size.width * 0.08).clamp(18, 40); // Responsive
     final Color effectiveBg = backgroundColor ?? Colors.black.withOpacity(0.32);
-    final EdgeInsetsGeometry effectivePadding = padding ?? const EdgeInsets.all(24.0);
+    final EdgeInsetsGeometry effectivePadding = padding ?? EdgeInsets.all((MediaQuery.of(context).size.width * 0.06).clamp(12, 32)); // Responsive
     final List<BoxShadow> effectiveShadow = boxShadow ?? [
       BoxShadow(
         color: Colors.black.withOpacity(0.10),

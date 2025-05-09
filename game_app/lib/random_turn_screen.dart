@@ -125,9 +125,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         final Size screenSize = MediaQuery.of(context).size;
         final double cardWidth = screenSize.width * 0.92;
         final double maxCardWidth = 420;
-        final double cardPadding = 24.0;
+        final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
+        final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
         return Dialog(
           backgroundColor: Colors.transparent,
           child: GameCard(
@@ -140,7 +141,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                   Text(
                     'Scoreboard',
                     style: GoogleFonts.baloo2(
-                      fontSize: 32,
+                      fontSize: (screenSize.width * 0.08).clamp(24, 36), // Responsive
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       shadows: [
@@ -152,11 +153,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 28),
+                  SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)), // Responsive
                   Icon(
                     Icons.emoji_events_rounded,
                     color: Color(0xFFFFD700), // Gold
-                    size: screenSize.width * 0.14,
+                    size: iconSize,
                     shadows: [
                       Shadow(
                         blurRadius: 4.0,
@@ -165,11 +166,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 28),
+                  SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)), // Responsive
                   Column(
                     children: [
                       ...widget.players.map((player) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        padding: EdgeInsets.symmetric(vertical: (screenSize.height * 0.008).clamp(4, 12)), // Responsive
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -182,7 +183,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: (screenSize.width * 0.04).clamp(8, 20),
+                                vertical: (screenSize.height * 0.008).clamp(4, 12),
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.13),
                                 borderRadius: BorderRadius.circular(12),
@@ -201,7 +205,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       )),
                     ],
                   ),
-                  SizedBox(height: 32),
+                  SizedBox(height: (screenSize.height * 0.04).clamp(18, 40)), // Responsive
                   DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
@@ -230,7 +234,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
+                        padding: EdgeInsets.symmetric(vertical: (screenSize.height * 0.022).clamp(12, 28), horizontal: (screenSize.width * 0.08).clamp(18, 40)), // Responsive
                         textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
                       ),
                       child: Center(
@@ -265,7 +269,17 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
-    final double cardPadding = 24.0;
+    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
+    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
+    final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
+    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
+    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
+    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
+    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
+    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
+
     return await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -282,7 +296,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
                   width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding),
+                  padding: EdgeInsets.all(cardPadding), // Responsive
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
                     borderRadius: BorderRadius.circular(32),
@@ -304,7 +318,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       Text(
                         'Quit Game?',
                         style: GoogleFonts.baloo2(
-                          fontSize: 32,
+                          fontSize: titleFontSize, // Responsive
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           shadows: [
@@ -316,11 +330,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 28),
+                      SizedBox(height: sectionSpacing), // Responsive
                       Icon(
                         Icons.sentiment_dissatisfied,
                         color: Colors.white70,
-                        size: screenSize.width * 0.14,
+                        size: iconSize, // Responsive
                         shadows: [
                           Shadow(
                             blurRadius: 4.0,
@@ -329,17 +343,17 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 28),
+                      SizedBox(height: sectionSpacing), // Responsive
                       Text(
                         'Are you sure you want to quit the game?',
                         style: GoogleFonts.baloo2(
-                          fontSize: 20,
+                          fontSize: messageFontSize, // Responsive
                           color: Colors.white.withOpacity(0.92),
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 32),
+                      SizedBox(height: buttonRowSpacing), // Responsive
                       Row(
                         children: [
                           Expanded(
@@ -373,10 +387,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
                                   textStyle: GoogleFonts.baloo2(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 22,
+                                    fontSize: buttonFontSize, // Responsive
                                   ),
                                 ),
                                 child: Center(
@@ -384,7 +398,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                     "No",
                                     style: GoogleFonts.baloo2(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 22,
+                                      fontSize: buttonFontSize, // Responsive
                                       color: Colors.white,
                                       shadows: [
                                         Shadow(
@@ -399,7 +413,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 18),
+                          SizedBox(width: buttonSpacing), // Responsive
                           Expanded(
                             child: TextButton(
                               onPressed: () {
@@ -407,10 +421,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               },
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.white70,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
                                 textStyle: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 17,
+                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
                                 ),
                               ),
                               child: const Text("Yes"),
@@ -731,16 +745,14 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        NeumorphicIconButton(
-                          icon: _isMuted ? Icons.volume_off : Icons.volume_up,
-                          onPressed: () {
+                        _buildIconButton(
+                          _isMuted ? Icons.volume_off : Icons.volume_up,
+                          () {
                             setState(() {
                               _isMuted = !_isMuted;
                             });
                             // TODO: Implement actual volume control logic
                           },
-                          size: 44,
-                          iconSize: 28,
                         ),
                         _buildIconButton(
                           Icons.emoji_events_outlined,

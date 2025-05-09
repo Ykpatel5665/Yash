@@ -34,27 +34,27 @@ class NeumorphicIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double effectiveSize = size ?? 40;
-    final double effectiveIconSize = iconSize ?? 24;
+    final double responsiveSize = size ?? (MediaQuery.of(context).size.width * 0.11).clamp(32, 60);
+    final double responsiveIconSize = iconSize ?? (MediaQuery.of(context).size.width * 0.06).clamp(18, 36);
+    final double responsiveRadius = borderRadius ?? (MediaQuery.of(context).size.width * 0.025).clamp(6, 18);
     final Color baseColor = backgroundColor ?? const Color.fromARGB(255, 255, 255, 255);
-    final double effectiveRadius = borderRadius ?? 10.0;
     final Color darkShadow = shadowDark ?? Colors.black.withOpacity(0.3);
     final Color lightShadow = shadowLight ?? Colors.white.withOpacity(0.4);
     return Container(
-      width: effectiveSize,
-      height: effectiveSize,
+      width: responsiveSize,
+      height: responsiveSize,
       decoration: BoxDecoration(
         color: baseColor.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(effectiveRadius),
+        borderRadius: BorderRadius.circular(responsiveRadius),
         boxShadow: [
           BoxShadow(color: darkShadow, offset: const Offset(3, 3), blurRadius: 6),
           BoxShadow(color: lightShadow, offset: const Offset(-3, -3), blurRadius: 6),
         ],
       ),
       child: IconButton(
-        icon: Icon(icon, size: effectiveIconSize, color: Colors.black),
+        icon: Icon(icon, size: responsiveIconSize, color: Colors.black),
         onPressed: onPressed,
-        splashRadius: effectiveSize / 2,
+        splashRadius: responsiveSize / 2,
         color: Colors.black,
       ),
     );

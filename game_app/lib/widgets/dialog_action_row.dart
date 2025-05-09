@@ -17,10 +17,11 @@ class DialogActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double responsiveSpacing = (MediaQuery.of(context).size.width * 0.045).clamp(10, 28); // Responsive spacing
     return Row(
       children: [
         for (int i = 0; i < actions.length; i++) ...[
-          if (i > 0) SizedBox(width: spacing),
+          if (i > 0) SizedBox(width: spacing == 18 ? responsiveSpacing : spacing),
           Expanded(child: actions[i]),
         ],
       ],

@@ -43,11 +43,11 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double effectiveRadius = borderRadius ?? 10.0;
-    final double effectiveFontSize = fontSize ?? 22.0;
+    final double responsiveRadius = borderRadius ?? (MediaQuery.of(context).size.width * 0.025).clamp(6, 18);
+    final double responsiveFontSize = fontSize ?? (MediaQuery.of(context).size.width * 0.055).clamp(15, 28);
+    final EdgeInsetsGeometry responsivePadding = padding ?? EdgeInsets.symmetric(vertical: (MediaQuery.of(context).size.height * 0.018).clamp(8, 22));
     final Color effectiveFg = foregroundColor ?? Colors.white;
     final Color effectiveBg = backgroundColor ?? Colors.black;
-    final EdgeInsetsGeometry effectivePadding = padding ?? const EdgeInsets.symmetric(vertical: 18);
     final double effectiveElevation = elevation ?? 3.0;
 
     Widget buttonChild = Row(
@@ -55,14 +55,14 @@ class PrimaryButton extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (icon != null) ...[
-          Icon(icon, color: effectiveFg, size: effectiveFontSize + 8),
-          const SizedBox(width: 12),
+          Icon(icon, color: effectiveFg, size: responsiveFontSize + 8),
+          SizedBox(width: (MediaQuery.of(context).size.width * 0.025).clamp(6, 18)),
         ],
         Text(
           label,
           style: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
-            fontSize: effectiveFontSize,
+            fontSize: responsiveFontSize,
             color: effectiveFg,
             shadows: [
               const Shadow(blurRadius: 8, color: Colors.black26, offset: Offset(0, 2)),
@@ -77,11 +77,11 @@ class PrimaryButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: gradient == null ? effectiveBg : Colors.transparent,
         foregroundColor: effectiveFg,
-        padding: effectivePadding,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(effectiveRadius)),
+        padding: responsivePadding,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(responsiveRadius)),
         elevation: gradient == null ? effectiveElevation : 0,
         shadowColor: Colors.transparent,
-        textStyle: GoogleFonts.baloo2(fontWeight: FontWeight.bold, fontSize: effectiveFontSize),
+        textStyle: GoogleFonts.baloo2(fontWeight: FontWeight.bold, fontSize: responsiveFontSize),
       ),
       child: buttonChild,
     );
@@ -90,7 +90,7 @@ class PrimaryButton extends StatelessWidget {
       button = DecoratedBox(
         decoration: BoxDecoration(
           gradient: gradient,
-          borderRadius: BorderRadius.circular(effectiveRadius),
+          borderRadius: BorderRadius.circular(responsiveRadius),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.18),

@@ -253,21 +253,23 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double appBarHeight = 100;
-    final double continueBtnHeight = 62;
+    final double appBarHeight = (size.height * 0.12).clamp(64, 120); // Responsive
+    final double continueBtnHeight = (size.height * 0.08).clamp(48, 70); // Responsive
     final double safePadding = MediaQuery.of(context).padding.top;
     final int categoryCount = _categories.length;
-    // Smaller chip/card sizes
-    const double minCardHeight = 32;
-    const double maxCardHeight = 68; // increased card height
-    const double minSpacing = 4;
-    const double maxSpacing = 12;
-    final double baseSpacing = (size.height * 0.012).clamp(4, 16); // slightly more flexible
+    // Responsive chip/card sizes
+    final double minCardHeight = (size.height * 0.045).clamp(24, 36);
+    final double maxCardHeight = (size.height * 0.09).clamp(48, 80);
+    final double minSpacing = (size.height * 0.005).clamp(2, 8);
+    final double maxSpacing = (size.height * 0.015).clamp(8, 24);
+    final double baseSpacing = (size.height * 0.012).clamp(4, 16);
     final double buttonFontSize = (size.width * 0.045).clamp(14, 20);
-    final double cardFont = (size.width * 0.06).clamp(16, 26); // increased font size
-    final double iconSize = (size.width * 0.08).clamp(26, 36); // increased icon size
-    final double cardRadius = 18;
-    final double horizontalChipPadding = (size.width * 0.07).clamp(18, 36); // responsive horizontal padding
+    final double cardFont = (size.width * 0.06).clamp(16, 26);
+    final double iconSize = (size.width * 0.08).clamp(26, 36);
+    final double cardRadius = (size.width * 0.045).clamp(12, 22);
+    final double horizontalChipPadding = (size.width * 0.07).clamp(18, 36);
+    final double bottomPadding = (size.height * 0.09).clamp(48, 90); // replaces 69
+    final double continueFontSize = (size.width * 0.06).clamp(18, 28);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -282,7 +284,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           'Select Categories',
           style: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
-            fontSize: 32,
+            fontSize: (size.width * 0.08).clamp(24, 36), // Responsive
             color: Colors.white,
             shadows: [
               Shadow(
@@ -342,7 +344,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                           top: baseSpacing,
                           left: horizontalChipPadding,
                           right: horizontalChipPadding,
-                          bottom: 120,
+                          bottom: bottomPadding, // Responsive
                         ),
                         child: ListView.builder(
                           itemCount: _categories.length,
@@ -382,12 +384,12 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                             right: 0,
                             bottom: 0,
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 69.0),
+                              padding: EdgeInsets.only(bottom: bottomPadding), // Responsive
                               child: Center(
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width * 0.75,
+                                  width: (size.width * 0.75).clamp(220, 420), // Responsive
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(50),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withAlpha((0.3 * 255).round()),
@@ -430,13 +432,17 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.black,
                                         foregroundColor: Colors.white,
-                                        minimumSize: Size(MediaQuery.of(context).size.width * 0.75, continueBtnHeight),
-                                        padding: const EdgeInsets.symmetric(vertical: 10),
+                                        minimumSize: Size((size.width * 0.75).clamp(220, 420), continueBtnHeight), // Responsive
+                                        padding: EdgeInsets.symmetric(vertical: (size.height * 0.014).clamp(8, 18)), // Responsive
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(50),
                                         ),
                                         elevation: 0,
                                         shadowColor: Colors.transparent,
+                                        textStyle: GoogleFonts.baloo2(
+                                          fontSize: continueFontSize, // Responsive
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                       onPressed: _selectedCategoryIds.isEmpty ? null : () async {
                                         await _saveLastPlayedCategories();
@@ -471,7 +477,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                             child: Text(
                                               "Continue!",
                                               style: GoogleFonts.baloo2(
-                                                fontSize: 25,
+                                                fontSize: continueFontSize, // Responsive
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                               ),

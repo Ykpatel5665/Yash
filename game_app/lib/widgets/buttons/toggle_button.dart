@@ -35,16 +35,18 @@ class ToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double responsiveIconSize = iconSize ?? (MediaQuery.of(context).size.width * 0.07).clamp(20, 36);
+    final double responsiveFontSize = fontSize ?? (MediaQuery.of(context).size.width * 0.045).clamp(13, 22);
+    final double horizontalPadding = (MediaQuery.of(context).size.width * 0.02).clamp(4, 16);
+    final double verticalPadding = (MediaQuery.of(context).size.width * 0.035).clamp(8, 20);
     final Color bg = selected
         ? (selectedColor ?? Colors.white.withOpacity(0.15))
         : (unselectedColor ?? Colors.white.withOpacity(0.05));
     final Color border = selected ? Colors.white : Colors.white24;
-    final double effectiveIconSize = iconSize ?? 28;
-    final double effectiveFontSize = fontSize ?? 15;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      margin: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding / 3), // Responsive
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(14),
@@ -66,19 +68,19 @@ class ToggleButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding), // Responsive
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null)
-                Icon(icon, color: Colors.white, size: effectiveIconSize),
-              if (icon != null) const SizedBox(height: 6),
+                Icon(icon, color: Colors.white, size: responsiveIconSize),
+              if (icon != null) SizedBox(height: verticalPadding / 2),
               Text(
                 label,
                 style: GoogleFonts.baloo2(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: effectiveFontSize,
+                  fontSize: responsiveFontSize,
                   height: 1.1,
                   shadows: selected
                       ? [

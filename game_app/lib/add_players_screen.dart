@@ -171,6 +171,23 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     final Color shadowDark = Colors.black.withOpacity(0.3);
     final Color shadowLight = Colors.white.withOpacity(0.4);
 
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
+    // Responsive values
+    final double horizontalPadding = (screenWidth * 0.05).clamp(10, 32); // replaces 20.0
+    final double verticalPadding = (screenHeight * 0.012).clamp(6, 20); // replaces 10.0
+    final double inputRowSpacing = (screenHeight * 0.018).clamp(10, 28); // replaces 15
+    final double inputButtonSpacing = (screenWidth * 0.025).clamp(6, 18); // replaces 10
+    final double addIconSize = (screenWidth * 0.08).clamp(26, 40); // replaces 32
+    final double listTopSpacing = (screenHeight * 0.04).clamp(18, 40); // replaces 30
+    final double bottomButtonWidth = (screenWidth * 0.75).clamp(220, 420);
+    final double bottomButtonMinHeight = (screenHeight * 0.08).clamp(48, 70); // replaces 62
+    final double bottomButtonIconSize = (screenWidth * 0.13).clamp(36, 56); // replaces 50
+    final double bottomPadding = (screenHeight * 0.09).clamp(48, 90); // replaces 69
+    final double infoTextFontSize = (screenWidth * 0.04).clamp(13, 18); // replaces 16
+    final double beginTextFontSize = (screenWidth * 0.06).clamp(18, 28);
+
     return Scaffold(
       appBar: AppHeader(
         title: 'Add Players',
@@ -196,25 +213,22 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding), // Responsive
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const SizedBox(height: 15),
+                  SizedBox(height: inputRowSpacing), // Responsive
                   // Player Input Row
                   Row(
                     children: [
                       Expanded(
-                        // Wrap TextField in Container for shadow
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors
-                                .white, // Ensure container background is white
+                            color: Colors.white,
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.black.withAlpha(80), // Similar shadow
+                                color: Colors.black.withAlpha(80),
                                 blurRadius: 8.0,
                                 spreadRadius: 1.0,
                                 offset: const Offset(0, 4),
@@ -229,8 +243,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      // Wrap Button in Container for shadow
+                      SizedBox(width: inputButtonSpacing), // Responsive
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -248,28 +261,25 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all((screenWidth * 0.04).clamp(10, 20)), // Responsive
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            elevation:
-                                0, // Remove button's own elevation, container has shadow
+                            elevation: 0,
                             shadowColor: Colors.transparent,
                           ),
-                          // Use the standard add icon, potentially increase size for perceived thickness
-                          child: const Icon(Icons.add,
-                              size: 32), // Standard add, slightly larger size
+                          child: Icon(Icons.add, size: addIconSize), // Responsive
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: listTopSpacing), // Responsive
                   Expanded(
                     child: _players.isEmpty
                         ? const SizedBox.shrink()
                         : ListView.separated(
                             itemCount: _players.length,
-                            padding: const EdgeInsets.only(top: 5, bottom: 120), // Add bottom padding for button
+                            padding: EdgeInsets.only(top: 5, bottom: bottomPadding), // Responsive
                             itemBuilder: (context, index) {
                               // Use a gradient background for the avatar
                               final Color baseColor = _players[index].color;
@@ -282,12 +292,11 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               );
                             },
                             separatorBuilder: (context, index) => Divider(
-                              color: Colors.white
-                                  .withOpacity(0.3), // Simple line color
-                              height: 1, // Thin line
+                              color: Colors.white.withOpacity(0.3),
+                              height: 1,
                               thickness: 1,
-                              indent: 16, // Optional indent
-                              endIndent: 16, // Optional end indent
+                              indent: 16,
+                              endIndent: 16,
                             ),
                           ),
                   ),
@@ -302,10 +311,10 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
               right: 0,
               bottom: 0,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 69.0),
+                padding: EdgeInsets.only(bottom: bottomPadding), // Responsive
                 child: Center(
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: bottomButtonWidth, // Responsive
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
                       boxShadow: [
@@ -321,15 +330,15 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
-                        minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 62),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        minimumSize: Size(bottomButtonWidth, bottomButtonMinHeight), // Responsive
+                        padding: EdgeInsets.symmetric(vertical: (screenHeight * 0.014).clamp(8, 18)), // Responsive
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
                         elevation: 0,
                         shadowColor: Colors.transparent,
                         textStyle: GoogleFonts.baloo2(
-                          fontSize: 25,
+                          fontSize: beginTextFontSize, // Responsive
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -371,8 +380,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 25.0),
-                            child: Icon(Icons.play_arrow_rounded, size: 50.0),
+                            padding: EdgeInsets.only(left: (screenWidth * 0.06).clamp(12, 32)), // Responsive
+                            child: Icon(Icons.play_arrow_rounded, size: bottomButtonIconSize), // Responsive
                           ),
                           Expanded(
                             child: Align(
@@ -387,7 +396,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           ),
                           Opacity(
                             opacity: 0,
-                            child: Icon(Icons.play_arrow_rounded, size: 50.0),
+                            child: Icon(Icons.play_arrow_rounded, size: bottomButtonIconSize), // Responsive
                           ),
                         ],
                       ),
@@ -402,11 +411,11 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
               right: 0,
               bottom: 0,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 69.0),
+                padding: EdgeInsets.only(bottom: bottomPadding), // Responsive
                 child: Center(
                   child: Text(
                     'Add at least 2 players',
-                    style: GoogleFonts.baloo2(fontSize: 16, color: Colors.white70),
+                    style: GoogleFonts.baloo2(fontSize: infoTextFontSize, color: Colors.white70), // Responsive
                   ),
                 ),
               ),

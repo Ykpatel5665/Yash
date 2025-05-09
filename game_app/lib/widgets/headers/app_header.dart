@@ -33,12 +33,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
+    final double responsiveFontSize = (MediaQuery.of(context).size.width * 0.08).clamp(22, 36); // Responsive
     return AppBar(
       title: Text(
         title,
         style: appBarTheme.titleTextStyle ?? GoogleFonts.baloo2(
           fontWeight: FontWeight.bold,
-          fontSize: 32,
+          fontSize: responsiveFontSize,
           color: Colors.white,
           shadows: [
             Shadow(

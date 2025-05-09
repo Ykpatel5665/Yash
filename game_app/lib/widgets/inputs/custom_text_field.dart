@@ -45,9 +45,14 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color effectiveBg = backgroundColor ?? Colors.white;
-    final double effectiveRadius = borderRadius ?? 10.0;
+    final double effectiveRadius = borderRadius ?? (MediaQuery.of(context).size.width * 0.025).clamp(6, 18);
     final EdgeInsetsGeometry effectivePadding = padding ?? EdgeInsets.zero;
-    final TextStyle effectiveTextStyle = textStyle ?? GoogleFonts.baloo2(color: Colors.black, fontSize: 18);
+    final double responsiveFontSize = (MediaQuery.of(context).size.width * 0.045).clamp(14, 22);
+    final TextStyle effectiveTextStyle = textStyle ?? GoogleFonts.baloo2(color: Colors.black, fontSize: responsiveFontSize);
+    final EdgeInsets contentPadding = EdgeInsets.symmetric(
+      horizontal: (MediaQuery.of(context).size.width * 0.04).clamp(8, 24),
+      vertical: (MediaQuery.of(context).size.height * 0.018).clamp(8, 22),
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -72,10 +77,10 @@ class CustomTextField extends StatelessWidget {
         style: effectiveTextStyle,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: GoogleFonts.baloo2(color: Colors.grey[600]),
+          hintStyle: GoogleFonts.baloo2(color: Colors.grey[600], fontSize: responsiveFontSize),
           filled: true,
           fillColor: Colors.transparent, // Container handles color
-          contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          contentPadding: contentPadding, // Responsive
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,

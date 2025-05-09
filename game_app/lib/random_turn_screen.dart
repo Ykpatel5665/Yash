@@ -5,6 +5,9 @@ import 'main.dart';
 import 'dart:ui';
 import 'truth_dare_data.dart';
 import 'truth_dare_question_screen.dart';
+import 'widgets/cards/game_card.dart';
+import 'widgets/buttons/neumorphic_icon_button.dart';
+import 'custom_appbar_button.dart';
 
 class RandomTurnScreen extends StatefulWidget {
   final List<String> players;
@@ -127,155 +130,129 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
         return Dialog(
           backgroundColor: Colors.transparent,
-          child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.88,
-                  ),
-                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.32),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Scoreboard',
-                          style: GoogleFonts.baloo2(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4,
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 28),
-                        Icon(
-                          Icons.emoji_events_rounded,
-                          color: Color(0xFFFFD700), // Gold
-                          size: screenSize.width * 0.14,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black.withAlpha((0.4 * 255).round()),
-                              offset: const Offset(1.0, 1.0),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 28),
-                        Column(
-                          children: [
-                            ...widget.players.map((player) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    player,
-                                    style: GoogleFonts.baloo2(
-                                      fontSize: fontSize,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.13),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      _playerScores[player]?.toString() ?? '0',
-                                      style: GoogleFonts.baloo2(
-                                        fontSize: fontSize,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                          ],
-                        ),
-                        SizedBox(height: 32),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF5B86E5),
-                                Color(0xFF8F6ED5),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.18),
-                                blurRadius: 16,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Close',
-                                style: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: buttonFontSize,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 8,
-                                      color: Colors.black.withOpacity(0.25),
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+          child: GameCard(
+            maxWidth: maxCardWidth,
+            padding: EdgeInsets.all(cardPadding),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Scoreboard',
+                    style: GoogleFonts.baloo2(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.white.withOpacity(0.3),
                         ),
                       ],
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
+                  SizedBox(height: 28),
+                  Icon(
+                    Icons.emoji_events_rounded,
+                    color: Color(0xFFFFD700), // Gold
+                    size: screenSize.width * 0.14,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 4.0,
+                        color: Colors.black.withAlpha((0.4 * 255).round()),
+                        offset: const Offset(1.0, 1.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 28),
+                  Column(
+                    children: [
+                      ...widget.players.map((player) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              player,
+                              style: GoogleFonts.baloo2(
+                                fontSize: fontSize,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.13),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _playerScores[player]?.toString() ?? '0',
+                                style: GoogleFonts.baloo2(
+                                  fontSize: fontSize,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                    ],
+                  ),
+                  SizedBox(height: 32),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF5B86E5),
+                          Color(0xFF8F6ED5),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.18),
+                          blurRadius: 16,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
+                        textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Close',
+                          style: GoogleFonts.baloo2(
+                            fontWeight: FontWeight.bold,
+                            fontSize: buttonFontSize,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 8,
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -538,33 +515,19 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 5.0, top: 15, bottom: 15),
-            child: GestureDetector(
-              onTap: () async {
-                final shouldQuit = await _showQuitConfirmation();
-                if (shouldQuit) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MyHomePage()),
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 255, 255, 255).withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.3), offset: const Offset(3, 3), blurRadius: 6),
-                    BoxShadow(color: Colors.white.withOpacity(0.4), offset: const Offset(-3, -3), blurRadius: 6),
-                  ],
-                ),
-                child: const Icon(Icons.home_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 24),
-              ),
-            ),
+          leading: CustomAppBarButton(
+            icon: Icons.home_rounded,
+            onPressed: () async {
+              final shouldQuit = await _showQuitConfirmation();
+              if (shouldQuit) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  (Route<dynamic> route) => false,
+                );
+              }
+            },
+            tooltip: 'Home',
           ),
           title: Text('Whoopsie!', style: Theme.of(context).appBarTheme.titleTextStyle),
           centerTitle: true,
@@ -768,14 +731,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildIconButton(
-                          _isMuted ? Icons.volume_off : Icons.volume_up,
-                          () {
+                        NeumorphicIconButton(
+                          icon: _isMuted ? Icons.volume_off : Icons.volume_up,
+                          onPressed: () {
                             setState(() {
                               _isMuted = !_isMuted;
                             });
                             // TODO: Implement actual volume control logic
                           },
+                          size: 44,
+                          iconSize: 28,
                         ),
                         _buildIconButton(
                           Icons.emoji_events_outlined,

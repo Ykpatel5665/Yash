@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'add_players_screen.dart'; // Import the new screen
 import 'dart:ui';
 import 'category_selection_screen.dart';
+import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
+import 'widgets/buttons/toggle_button.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -776,44 +778,47 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                       ),
                       SizedBox(height: screenHeight * 0.06),
 
-                      // Start Game button logic updated
-                      _buildStyledButton('Start Game', Icons.play_arrow, () async {
-                        bool proceed = true;
-                        if (_selectedAgeGroupEnum == AgeGroup.adult && !_adultConfirmedThisSession) {
-                          proceed = await _showAdultConfirmationDialog(context);
-                          if (proceed) {
-                            setState(() {
-                              _adultConfirmedThisSession = true;
-                            });
+                      _buildStyledButton(
+                        'Start Game',
+                        Icons.play_arrow,
+                        () async {
+                          bool proceed = true;
+                          if (_selectedAgeGroupEnum == AgeGroup.adult && !_adultConfirmedThisSession) {
+                            proceed = await _showAdultConfirmationDialog(context);
+                            if (proceed) {
+                              setState(() {
+                                _adultConfirmedThisSession = true;
+                              });
+                            }
                           }
-                        }
-                        if (_selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
-                          await _showModernGameSetupDialog(context);
-                        }
-                        if (proceed && _selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
-                                gameMode: _selectedGameModeEnum!,
-                                ageGroup: _selectedAgeGroupEnum!,
+                          if (_selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
+                            await _showModernGameSetupDialog(context);
+                          }
+                          if (proceed && _selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
+                                  gameMode: _selectedGameModeEnum!,
+                                  ageGroup: _selectedAgeGroupEnum!,
+                                ),
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.ease;
+                                  final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                  final offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                    position: offsetAnimation,
+                                    child: child,
+                                  );
+                                },
+                                transitionDuration: const Duration(milliseconds: 300),
                               ),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                const begin = Offset(1.0, 0.0);
-                                const end = Offset.zero;
-                                const curve = Curves.ease;
-                                final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                final offsetAnimation = animation.drive(tween);
-                                return SlideTransition(
-                                  position: offsetAnimation,
-                                  child: child,
-                                );
-                              },
-                              transitionDuration: const Duration(milliseconds: 300),
-                            ),
-                          );
-                        }
-                      }),
+                            );
+                          }
+                        },
+                      ),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton('Add Truths', Icons.add, () {
                         print("Add Truths pressed");

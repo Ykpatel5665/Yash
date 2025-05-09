@@ -7,20 +7,13 @@ import 'auto_next_turn_screen.dart'; // Import Auto Next Turn screen
 import 'random_turn_screen.dart'; // Import Random Turn screen
 import 'package:flutter_colorpicker/flutter_colorpicker.dart'; // Add this import for color picker
 import 'dart:convert';
-
-// Define a Player model
-class Player {
-  String name;
-  Color color;
-  Player({required this.name, required this.color});
-
-  // For saving/loading from SharedPreferences
-  Map<String, dynamic> toJson() => {'name': name, 'color': color.value};
-  static Player fromJson(Map<String, dynamic> json) => Player(
-        name: json['name'],
-        color: Color(json['color']),
-      );
-}
+import 'widgets/inputs/custom_text_field.dart'; // Import CustomTextField
+import 'widgets/headers/app_header.dart'; // Import AppHeader
+import 'widgets/buttons/neumorphic_icon_button.dart'; // Import NeumorphicIconButton
+import 'widgets/player_list_tile.dart'; // Import PlayerListTile
+import 'models/player.dart';
+import 'custom_appbar_button.dart';
+import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -179,56 +172,17 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     final Color shadowLight = Colors.white.withOpacity(0.4);
 
     return Scaffold(
-      appBar: AppBar(
-        // Remove default back button
-        automaticallyImplyLeading: false,
-        // Add custom leading button
-        leading: Padding(
-          padding: const EdgeInsets.only(
-              left: 5.0,
-              top: 15,
-              bottom: 15), // Reduced left padding, adjusted vertical padding
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              width: 40, // Decreased size
-              height: 40, // Decreased size
-              decoration: BoxDecoration(
-                color: baseColor.withOpacity(0.8), // Slightly transparent base
-                borderRadius:
-                    BorderRadius.circular(10), // Slightly smaller radius
-                boxShadow: [
-                  // Adjust shadows for smaller size
-                  BoxShadow(
-                    color: shadowDark,
-                    offset: const Offset(3, 3), // Smaller offset
-                    blurRadius: 6, // Smaller blur
-                  ),
-                  BoxShadow(
-                    color: shadowLight,
-                    offset: const Offset(-3, -3), // Smaller offset
-                    blurRadius: 6, // Smaller blur
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Color.fromARGB(255, 0, 0, 0), // Icon color
-                size: 20, // Smaller icon size
-              ),
-            ),
-          ),
-        ),
-        title: Text(
-          'Add Players',
-          style: appBarTheme.titleTextStyle,
-        ),
+      appBar: AppHeader(
+        title: 'Add Players',
         centerTitle: true,
-        backgroundColor: Colors.transparent, // Keep AppBar transparent
+        leading: CustomAppBarButton(
+          icon: Icons.arrow_back_ios_new_rounded,
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Back',
+        ),
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        // iconTheme: appBarTheme.iconTheme, // No longer needed for default icon
         toolbarHeight: appBarTheme.toolbarHeight,
-        titleSpacing: appBarTheme.titleSpacing,
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -267,25 +221,10 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               ),
                             ],
                           ),
-                          child: TextField(
+                          child: CustomTextField(
                             controller: _playerNameController,
                             focusNode: _textFieldFocusNode,
-                            style: GoogleFonts.baloo2(
-                                color: Colors.black, fontSize: 18),
-                            decoration: InputDecoration(
-                              hintText: 'Add Player...',
-                              hintStyle:
-                                  GoogleFonts.baloo2(color: Colors.grey[600]),
-                              filled: true,
-                              fillColor: Colors
-                                  .transparent, // Make TextField transparent, container has color
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 15),
-                              border: InputBorder
-                                  .none, // Remove TextField border, container handles shape
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
+                            hintText: 'Add Player...',
                             onSubmitted: (_) => _addPlayer(),
                           ),
                         ),
@@ -336,42 +275,10 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               final Color baseColor = _players[index].color;
                               // Create a lighter shade for the gradient
                               Color lighterColor = Color.lerp(baseColor, Colors.white, 0.5)!;
-                              return ListTile(
-                                leading: GestureDetector(
-                                  onTap: () => _pickColor(index),
-                                  child: Container(
-                                    width: 36,
-                                    height: 36,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(10),
-                                        color: baseColor,
-                                      border: Border.all(
-                                      color: Colors.white,
-                                      width: 4, // Thick white border
-                                      ),
-                                    ),
-                                    // child: const Icon(Icons.color_lens, color: Colors.white, size: 16),
-                                  ),
-                                ),
-                                title: Text(
-                                  _players[index].name,
-                                  style: GoogleFonts.baloo2(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight:
-                                          FontWeight.bold), // Make text bolder
-                                ),
-                                trailing: IconButton(
-                                  // Use close icon and match text color
-                                  icon: const Icon(Icons.close,
-                                      color: Colors.white),
-                                  tooltip: 'Remove ${_players[index].name}',
-                                  onPressed: () => _removePlayer(index),
-                                  splashRadius: 24,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 0), // Adjust padding
+                              return PlayerListTile(
+                                player: _players[index],
+                                onColorTap: () => _pickColor(index),
+                                onRemoveTap: () => _removePlayer(index),
                               );
                             },
                             separatorBuilder: (context, index) => Divider(
@@ -397,36 +304,29 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 69.0),
                 child: Center(
-                  child: Container(
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.75,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha((0.3 * 255).round()),
-                          blurRadius: 10.0,
-                          spreadRadius: 1.0,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(MediaQuery.of(context).size.width * 0.75, MediaQuery.of(context).size.height * 0.07),
-                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                        textStyle: GoogleFonts.baloo2(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        elevation:
-                            0, // Remove default elevation, container has shadow
+                        elevation: 3,
                         shadowColor: Colors.transparent,
+                        minimumSize: Size(MediaQuery.of(context).size.width * 0.75, MediaQuery.of(context).size.height * 0.001),
+                        alignment: Alignment.center,
                       ),
                       onPressed: () {
                         // Navigate based on the selected game mode
                         print(
-                            "Let's Begin pressed! Mode: ${widget.gameMode}, Age: ${widget.ageGroup}, Players: $_players");
+                            "Let's Begin pressed! Mode: [widget.gameMode}, Age: [widget.ageGroup}, Players: $_players");
 
                         Widget nextScreen;
                         switch (widget.gameMode) {
@@ -461,21 +361,23 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           MaterialPageRoute(builder: (context) => nextScreen),
                         );
                       },
-                      child: Stack(
-                        alignment: Alignment.center,
+                      child: Row(
                         children: [
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Icon(Icons.play_arrow_rounded, size: 30),
+                          Icon(Icons.play_arrow_rounded, size: 50.0),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Let's begin!",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text("Let's begin!",
-                                style: GoogleFonts.baloo2(
-                                    fontSize: 25, fontWeight: FontWeight.bold)),
+                          Opacity(
+                            opacity: 0,
+                            child: Icon(Icons.play_arrow_rounded, size: 50.0),
                           ),
                         ],
                       ),

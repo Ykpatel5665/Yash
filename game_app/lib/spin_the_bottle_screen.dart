@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart'; // Import for question logic
 import 'truth_dare_question_screen.dart';
+import 'custom_appbar_button.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -781,37 +782,21 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         // ... existing AppBar ...
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 5.0, top: 15, bottom: 15),
-            child: GestureDetector(
-              // Change onTap to navigate to home screen and clear stack
-              onTap: () async {
-                final shouldQuit = await _showQuitConfirmation();
-                if (shouldQuit) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MyHomePage()),
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              },
-              child: Container(
-                // ... existing container decoration ...
-                width: 40, height: 40,
-                decoration: BoxDecoration(
-                  color: baseColor.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
-                    BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
-                  ],
-                ),
-                // Changed icon to home
-                child: const Icon(Icons.home_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 24),
-              ),
-            ),
+          leading: CustomAppBarButton(
+            icon: Icons.home_rounded,
+            onPressed: () async {
+              final shouldQuit = await _showQuitConfirmation();
+              if (shouldQuit) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  (Route<dynamic> route) => false,
+                );
+              }
+            },
+            tooltip: 'Home',
           ),
-          // ... rest of AppBar properties ...
+          // ...rest of AppBar properties...
           title: Text('Spin the Bottle', style: appBarTheme.titleTextStyle),
           centerTitle: true,
           backgroundColor: Colors.transparent,

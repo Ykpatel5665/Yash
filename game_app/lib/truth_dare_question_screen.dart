@@ -127,21 +127,32 @@ class TruthDareQuestionScreen extends StatelessWidget {
 
     return Stack(
       children: [
-        // Blurred vibrant gradient background
+        // Solid background to block splash/logo
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black, // or Colors.white for a light base
+        ),
+        // Fully opaque vibrant gradient background
         Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [mainColor.withOpacity(0.18), secondaryColor.withOpacity(0.45)],
+              colors: [mainColor, secondaryColor], // No opacity for vibrancy
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
+        ),
+        // Blurred overlay (keep subtle, not hiding gradient)
+        Container(
+          width: double.infinity,
+          height: double.infinity,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
             child: Container(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withOpacity(0.08), // Lower opacity for vibrancy
             ),
           ),
         ),

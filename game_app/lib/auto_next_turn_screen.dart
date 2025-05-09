@@ -4,6 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart';
 import 'truth_dare_question_screen.dart';
 import 'main.dart'; // For AgeGroup enum
+import 'widgets/cards/game_card.dart';
+import 'widgets/buttons/neumorphic_icon_button.dart';
+import 'widgets/dialog_action_row.dart';
+import 'custom_appbar_button.dart';
 
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
@@ -110,155 +114,129 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
         return Dialog(
           backgroundColor: Colors.transparent,
-          child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.88,
-                  ),
-                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.32),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Scoreboard',
-                          style: GoogleFonts.baloo2(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4,
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 28),
-                        Icon(
-                          Icons.emoji_events_rounded,
-                          color: Color(0xFFFFD700), // Gold
-                          size: screenSize.width * 0.14,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black.withAlpha((0.4 * 255).round()),
-                              offset: const Offset(1.0, 1.0),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 28),
-                        Column(
-                          children: [
-                            ...widget.players.map((player) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    player,
-                                    style: GoogleFonts.baloo2(
-                                      fontSize: fontSize,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.13),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      _playerScores[player]?.toString() ?? '0',
-                                      style: GoogleFonts.baloo2(
-                                        fontSize: fontSize,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                          ],
-                        ),
-                        SizedBox(height: 32),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF5B86E5),
-                                Color(0xFF8F6ED5),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.18),
-                                blurRadius: 16,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Close',
-                                style: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: buttonFontSize,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 8,
-                                      color: Colors.black.withOpacity(0.25),
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+          child: GameCard(
+            maxWidth: maxCardWidth,
+            padding: EdgeInsets.all(cardPadding),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Scoreboard',
+                    style: GoogleFonts.baloo2(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.white.withOpacity(0.3),
                         ),
                       ],
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
+                  SizedBox(height: 28),
+                  Icon(
+                    Icons.emoji_events_rounded,
+                    color: Color(0xFFFFD700), // Gold
+                    size: screenSize.width * 0.14,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 4.0,
+                        color: Colors.black.withAlpha((0.4 * 255).round()),
+                        offset: const Offset(1.0, 1.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 28),
+                  Column(
+                    children: [
+                      ...widget.players.map((player) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              player,
+                              style: GoogleFonts.baloo2(
+                                fontSize: fontSize,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.13),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _playerScores[player]?.toString() ?? '0',
+                                style: GoogleFonts.baloo2(
+                                  fontSize: fontSize,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                    ],
+                  ),
+                  SizedBox(height: 32),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF5B86E5),
+                          Color(0xFF8F6ED5),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.18),
+                          blurRadius: 16,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
+                        textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Close',
+                          style: GoogleFonts.baloo2(
+                            fontWeight: FontWeight.bold,
+                            fontSize: buttonFontSize,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 8,
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -346,81 +324,73 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF5B86E5),
-                                    Color(0xFF8F6ED5),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.18),
-                                    blurRadius: 16,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
+                      DialogActionRow(
+                        actions: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop(false);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
-                                  textStyle: GoogleFonts.baloo2(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.18),
+                                  blurRadius: 16,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop(false);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                textStyle: GoogleFonts.baloo2(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "No",
+                                  style: GoogleFonts.baloo2(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 22,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "No",
-                                    style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 8,
-                                          color: Colors.black.withOpacity(0.25),
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 8,
+                                        color: Colors.black.withOpacity(0.25),
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 18),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.of(dialogContext).pop(true);
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                textStyle: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 17,
-                                ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(true);
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.white70,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              textStyle: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
                               ),
-                              child: const Text("Yes"),
                             ),
+                            child: const Text("Yes"),
                           ),
                         ],
                       ),
@@ -524,36 +494,15 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
           title: Text('Whoopsie!', style: appBarTheme.titleTextStyle),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0, top: screenHeight * 0.03, bottom: screenHeight * 0.03),
-            child: GestureDetector(
-              onTap: () async {
-                final shouldQuit = await _showQuitConfirmation();
-                if (shouldQuit) {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                }
-              },
-              child: Builder(
-                builder: (context) {
-                  const Color baseColor = Color.fromARGB(255, 255, 255, 255);
-                  final Color shadowDark = Colors.black.withOpacity(0.3);
-                  final Color shadowLight = Colors.white.withOpacity(0.4);
-                  return Container(
-                    width: screenWidth * 0.11,
-                    height: screenWidth * 0.11,
-                    decoration: BoxDecoration(
-                      color: baseColor.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
-                        BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
-                      ],
-                    ),
-                    child: Icon(Icons.home_rounded, color: Colors.black, size: screenWidth * 0.065),
-                  );
-                },
-              ),
-            ),
+          leading: CustomAppBarButton(
+            icon: Icons.home_rounded,
+            onPressed: () async {
+              final shouldQuit = await _showQuitConfirmation();
+              if (shouldQuit) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            },
+            tooltip: 'Home',
           ),
         ),
         extendBodyBehindAppBar: true,

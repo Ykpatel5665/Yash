@@ -68,30 +68,41 @@ class ToggleButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding), // Responsive
-          child: Column(
+          padding: EdgeInsets.only(
+            left: horizontalPadding * 2.2, // Add extra left space
+            right: horizontalPadding,
+            top: verticalPadding * 0.6,
+            bottom: verticalPadding * 0.6,
+          ),
+          child: Row(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (icon != null)
+              if (icon != null) ...[
                 Icon(icon, color: Colors.white, size: responsiveIconSize),
-              if (icon != null) SizedBox(height: verticalPadding / 2),
-              Text(
-                label,
-                style: GoogleFonts.baloo2(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: responsiveFontSize,
-                  height: 1.1,
-                  shadows: selected
-                      ? [
-                          Shadow(
-                            blurRadius: 2,
-                            color: Colors.white.withOpacity(0.3),
-                          )
-                        ]
-                      : [],
+                SizedBox(width: horizontalPadding),
+              ],
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.baloo2(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: responsiveFontSize,
+                    height: 1.1,
+                    shadows: selected
+                        ? [
+                            Shadow(
+                              blurRadius: 2,
+                              color: Colors.white.withOpacity(0.3),
+                            )
+                          ]
+                        : [],
+                  ),
+                  textAlign: TextAlign.left,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

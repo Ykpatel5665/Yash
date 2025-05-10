@@ -346,7 +346,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                           left: horizontalChipPadding,
                           right: horizontalChipPadding,
                           // Only a little extra space so last item is visible above the button
-                          bottom: bottomPadding + continueBtnHeight * 0.2,
+                          bottom: bottomPadding + continueBtnHeight * 0.5,
                         ),
                         child: ListView.builder(
                           itemCount: _categories.length + 1, // Add one for the extra space

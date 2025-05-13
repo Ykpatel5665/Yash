@@ -49,6 +49,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   bool _quitDialogOpen = false;
   bool _pendingShowTruthDare = false;
 
+  // --- ADDED: Store shuffled player colors for this game session ---
+  late List<Color> _playerColors;
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +74,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
+    // --- ADDED: Shuffle the color palette at the start of the game ---
+    _playerColors = PlayerCirclePainter.shuffleColors();
   }
 
   @override
@@ -942,6 +947,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                       size: circleDiameter,
                                       // Highlight the selected player
                                       highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
+                                      colors: _playerColors, // Pass the shuffled palette
                                     ),
 
                                     // Spinning Bottle with responsive size

@@ -41,13 +41,16 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   int _pendingHighlightIndex = -1; // For transition animation
   bool _isAnimatingHighlight = false;
-  
+  late List<Color> _playerColors;
+
   @override
   void initState() {
     super.initState();
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
+    // --- ADDED: Shuffle the color palette at the start of the game ---
+    _playerColors = PlayerCirclePainter.shuffleColors();
     // Automatically show the Truth/Dare dialog after 2 seconds for the first player
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted && !_lastPlayerFinished) {
@@ -660,6 +663,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                             animated: true,
                             animationDuration: const Duration(milliseconds: 1800), // smoother and slower
                             previousIndex: _isAnimatingHighlight ? _currentIndex : null,
+                            colors: _playerColors, // Pass the shuffled palette
                           ),
                           SizedBox(height: spacingLarge),
                           if (_lastPlayerFinished) ...[
@@ -669,6 +673,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   _currentIndex = 0;
                                   _showTruthDare = false;
                                   _lastPlayerFinished = false;
+                                  // --- ADDED: Shuffle the color palette on restart ---
+                                  _playerColors = PlayerCirclePainter.shuffleColors();
                                   // Auto show dialog for first player after restart
                                   Future.delayed(const Duration(seconds: 2), () {
                                     if (mounted && !_lastPlayerFinished) {

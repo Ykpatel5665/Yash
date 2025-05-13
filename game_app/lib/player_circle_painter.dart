@@ -7,7 +7,45 @@ class PlayerCirclePainter extends CustomPainter {
   final double radius;
   final int? highlightedIndex;
 
-  PlayerCirclePainter({required this.players, required this.radius, this.highlightedIndex});
+  // LOCKED: 20 high-saturation, punchy colors for the wheel (reordered and tweaked for maximum contrast between neighbors)
+  static const List<Color> _basePlayerColors = [
+    Color(0xFF2B183A), // deep purple
+    Color(0xFFFFF200), // yellow
+    Color(0xFF5575C7), // blue
+    Color(0xFFFF3B3B), // red
+    Color(0xFF00FFD0), // aqua
+    Color(0xFFFFA14A), // orange
+    Color(0xFF8A2FA6), // purple
+    Color(0xFF67D758), // green
+    Color(0xFFFF2E8A), // magenta
+    Color(0xFFB04CFF), // vibrant purple
+    Color(0xFF4A7CFF), // blue
+    Color(0xFFE955AE), // pink
+    Color(0xFF1DBB8B), // teal
+    Color(0xFFFFED6B), // light yellow
+    Color(0xFFB12B5A), // wine
+    Color(0xFF6ED6E8), // cyan
+    Color(0xFF943C59), // dark pink
+    Color(0xFF7AFFB2), // mint
+    Color(0xFF4A3571), // dark purple
+    Color(0xFFFFFFFF), // white
+  ];
+
+  // Returns a shuffled copy of the color palette
+  static List<Color> shuffleColors() {
+    final colors = List<Color>.from(_basePlayerColors);
+    colors.shuffle();
+    return colors;
+  }
+
+  final List<Color> playerColors;
+
+  PlayerCirclePainter({
+    required this.players,
+    required this.radius,
+    this.highlightedIndex,
+    List<Color>? playerColors,
+  }) : playerColors = playerColors ?? _basePlayerColors;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -15,7 +53,6 @@ class PlayerCirclePainter extends CustomPainter {
     if (players.isEmpty) return;
 
     final double sweepAngle = (2 * math.pi) / players.length;
-    final Paint sectionPaint = Paint()..style = PaintingStyle.fill;
     final double responsiveBorderWidth = math.max(10.0, radius * 0.015);
     final Paint outerBorderPaint = Paint()
       ..color = Colors.white
@@ -24,24 +61,39 @@ class PlayerCirclePainter extends CustomPainter {
 
     for (int i = 0; i < players.length; i++) {
       final double startAngle = -math.pi / 2 + i * sweepAngle;
-      // Use a default color palette or a generated color
-      final Color color = Colors.primaries[i % Colors.primaries.length].shade400;
-      sectionPaint.color = color;
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
+      final Color baseColor = playerColors[i % playerColors.length];
+      final Rect arcRect = Rect.fromCircle(center: center, radius: radius);
+      // Use a radial gradient for each slice (center 70% opacity, edge 100%)
+      final Paint sectionPaint = Paint()
+        ..shader = RadialGradient(
+          center: Alignment.center,
+          radius: 1.0,
+          colors: [baseColor.withOpacity(0.7), baseColor],
+          stops: const [0.3, 1.0],
+        ).createShader(arcRect)
+        ..style = PaintingStyle.fill;
+      // Draw only the slice using a path
+      final Path slicePath = Path();
+      slicePath.moveTo(center.dx, center.dy);
+      slicePath.arcTo(
+        arcRect,
         startAngle,
         sweepAngle,
-        true,
-        sectionPaint,
+        false,
       );
+      slicePath.close();
+      canvas.save();
+      canvas.clipPath(slicePath);
+      canvas.drawCircle(center, radius, sectionPaint);
+      canvas.restore();
       if (highlightedIndex != null && i == highlightedIndex) {
         final Paint highlightPaint = Paint()
-          ..color = Colors.white.withOpacity(0.45) // Decreased from 0.7 for less glow
+          ..color = Colors.white.withOpacity(0.45)
           ..style = PaintingStyle.stroke
           ..strokeWidth = responsiveBorderWidth * 2.2
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
         canvas.drawArc(
-          Rect.fromCircle(center: center, radius: radius),
+          arcRect,
           startAngle,
           sweepAngle,
           true,
@@ -54,8 +106,8 @@ class PlayerCirclePainter extends CustomPainter {
       final double textX = center.dx + textRadius * math.cos(textAngle);
       final double textY = center.dy + textRadius * math.sin(textAngle);
       final double responsiveFontSize = radius * 0.12;
-      final double luminance = color.computeLuminance();
-      final Color textColor = luminance > 0.6 ? Colors.black : Colors.white;
+      // Use only white text for all slices
+      final Color textColor = Colors.white;
       final TextSpan span = TextSpan(
         style: GoogleFonts.baloo2(
           color: textColor,
@@ -102,6 +154,7 @@ class PlayerCircle extends StatelessWidget {
   final int? previousIndex;
   final bool animated;
   final Duration animationDuration;
+  final List<Color>? colors;
 
   const PlayerCircle({
     super.key,
@@ -111,6 +164,7 @@ class PlayerCircle extends StatelessWidget {
     this.previousIndex,
     this.animated = false,
     this.animationDuration = const Duration(milliseconds: 600),
+    this.colors,
   });
 
   @override
@@ -122,6 +176,7 @@ class PlayerCircle extends StatelessWidget {
         fromIndex: previousIndex!,
         toIndex: highlightedIndex!,
         duration: animationDuration,
+        colors: colors,
       );
     }
     const Color baseColor = Color.fromARGB(255, 235, 235, 235);
@@ -155,6 +210,7 @@ class PlayerCircle extends StatelessWidget {
           players: players,
           radius: (size / 2) - (responsivePainterBorderWidth / 2),
           highlightedIndex: highlightedIndex,
+          playerColors: colors,
         ),
       ),
     );
@@ -167,6 +223,7 @@ class _AnimatedPlayerCircle extends StatefulWidget {
   final int fromIndex;
   final int toIndex;
   final Duration duration;
+  final List<Color>? colors;
 
   const _AnimatedPlayerCircle({
     required this.players,
@@ -174,6 +231,7 @@ class _AnimatedPlayerCircle extends StatefulWidget {
     required this.fromIndex,
     required this.toIndex,
     required this.duration,
+    this.colors,
   });
 
   @override
@@ -251,6 +309,7 @@ class _AnimatedPlayerCircleState extends State<_AnimatedPlayerCircle> with Singl
               players: widget.players,
               radius: (widget.size / 2) - (responsivePainterBorderWidth / 2),
               highlightedIndex: highlighted,
+              playerColors: widget.colors,
             ),
           ),
         );

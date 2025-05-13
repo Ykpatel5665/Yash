@@ -212,23 +212,19 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
   bool _isMuted = false; // State for volume button
-  List<String> get _allCategoryIds => [
-    'KIDS_FUNNY','KIDS_FAMILY','KIDS_SCHOOL','KIDS_CARTOONS','KIDS_GAMES','KIDS_ANIMALS','KIDS_FOOD','KIDS_IMAGINATION','KIDS_CHALLENGES','KIDS_HOBBIES',
-    'TEENS_FRIENDS','TEENS_SCHOOL','TEENS_MUSIC','TEENS_MOVIES','TEENS_TECH','TEENS_HOBBIES','TEENS_DREAMS','TEENS_EMBARRASSING','TEENS_STYLE','TEENS_ADVENTURE',
-    'ADULTS_RELATIONSHIPS','ADULTS_PARTY','ADULTS_WORK','ADULTS_TRAVEL','ADULTS_DEEP','ADULTS_WILD','ADULTS_FLIRTY','ADULTS_CHILDHOOD','ADULTS_POPCULTURE','ADULTS_PERSONAL',
-  ];
 
-  int? _highlightedIndex; // For spinning highlight
+  // --- ADDED: Robust dialog and state management flags ---
   bool _isSpinning = false;
-  int? _spinningToIndex;
-  int? _previousIndex; // Track previous index for animation
-
-  // Add these fields to the _RandomTurnScreenState class:
-  bool _dialogInterrupted = false;
-  Future<void>? _pendingDialogFuture;
   bool _scoreboardOpen = false;
   bool _quitDialogOpen = false;
   bool _pendingShowTruthDare = false;
+
+  // --- ADDED: Store shuffled player colors for this game session ---
+  late List<Color> _playerColors;
+
+  // --- ADDED: Animation/highlight state fields ---
+  int? _highlightedIndex;
+  int? _previousIndex;
 
   @override
   void initState() {
@@ -237,8 +233,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
-    // Remove this line:
-    // _pickRandomPlayer();
+    // --- ADDED: Shuffle the color palette at the start of the game ---
+    _playerColors = PlayerCirclePainter.shuffleColors();
   }
 
   void _resetTurns() {
@@ -250,6 +246,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
       _lastPlayerFinished = false;
       // Immediately pick the first player after reset
       Future.delayed(Duration.zero, _pickRandomPlayerWithSpin);
+      // --- ADDED: Shuffle the color palette on new game/restart ---
+      _playerColors = PlayerCirclePainter.shuffleColors();
     });
   }
 
@@ -879,6 +877,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             animated: _isSpinning,
                             animationDuration: const Duration(milliseconds: 1800),
                             previousIndex: _isSpinning ? _previousIndex : null,
+                            colors: _playerColors, // Pass the shuffled palette
                           ),
                         SizedBox(height: spacingLarge),
                         if (_lastPlayerFinished) ...[

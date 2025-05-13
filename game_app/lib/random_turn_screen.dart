@@ -11,11 +11,10 @@ import 'custom_appbar_button.dart';
 
 class RandomTurnScreen extends StatefulWidget {
   final List<String> players;
-  final List<Color> playerColors;
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
   final bool useTimer;
-  const RandomTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
+  const RandomTurnScreen({super.key, required this.players, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
 
   @override
   State<RandomTurnScreen> createState() => _RandomTurnScreenState();
@@ -519,8 +518,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     Color? cardColor;
     Color? textColor;
     if (_currentIndex != null) {
-      cardColor = widget.playerColors[_currentIndex!];
-      textColor = cardColor.computeLuminance() > 0.6 ? Colors.black : Colors.white;
+      // Remove cardColor assignment from playerColors
+      // Use a default color or gradient if needed
+      textColor = Colors.white;
     }
 
     return WillPopScope(

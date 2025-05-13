@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 
 class Player {
   String name;
-  Color color;
-  Player({required this.name, required this.color});
+  Player({required this.name});
 
   // For saving/loading from SharedPreferences
-  Map<String, dynamic> toJson() => {'name': name, 'color': color.value};
+  Map<String, dynamic> toJson() => {'name': name};
   static Player fromJson(Map<String, dynamic> json) => Player(
         name: json['name'],
-        color: Color(json['color']),
       );
 }

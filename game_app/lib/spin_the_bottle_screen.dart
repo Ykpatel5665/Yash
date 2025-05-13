@@ -15,7 +15,6 @@ enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
 // Convert to StatefulWidget
 class SpinTheBottleScreen extends StatefulWidget {
   final List<String> players;
-  final List<Color> playerColors;
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
   final bool useTimer;
@@ -23,7 +22,6 @@ class SpinTheBottleScreen extends StatefulWidget {
   const SpinTheBottleScreen({
     super.key,
     required this.players,
-    required this.playerColors,
     required this.ageGroup,
     required this.selectedCategoryIds,
     required this.useTimer,
@@ -881,7 +879,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                     // Player Circle with responsive size and highlight
                                     PlayerCircle(
                                       players: widget.players,
-                                      colors: widget.playerColors,
                                       size: circleDiameter,
                                       // Highlight the selected player
                                       highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,

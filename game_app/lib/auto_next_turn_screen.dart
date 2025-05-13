@@ -13,11 +13,10 @@ import 'player_circle_painter.dart';
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
   final List<String> players;
-  final List<Color> playerColors;
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
   final bool useTimer;
-  const AutoNextTurnScreen({super.key, required this.players, required this.playerColors, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
+  const AutoNextTurnScreen({super.key, required this.players, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
 
   @override
   State<AutoNextTurnScreen> createState() => _AutoNextTurnScreenState();
@@ -29,6 +28,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
   bool _isMuted = false; // State for volume button
+  bool _scoreboardOpen = false;
+  bool _pendingShowTruthDare = false; // Track if dialog should show after scoreboard
+  bool _quitDialogOpen = false; // Track if quit confirmation dialog is open
+
   // For demo, use all categories (or pass selectedCategoryIds if you want to filter)
   List<String> get _allCategoryIds => [
     'KIDS_FUNNY','KIDS_FAMILY','KIDS_SCHOOL','KIDS_CARTOONS','KIDS_GAMES','KIDS_ANIMALS','KIDS_FOOD','KIDS_IMAGINATION','KIDS_CHALLENGES','KIDS_HOBBIES',
@@ -36,25 +39,47 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     'ADULTS_RELATIONSHIPS','ADULTS_PARTY','ADULTS_WORK','ADULTS_TRAVEL','ADULTS_DEEP','ADULTS_WILD','ADULTS_FLIRTY','ADULTS_CHILDHOOD','ADULTS_POPCULTURE','ADULTS_PERSONAL',
   ];
 
+  int _pendingHighlightIndex = -1; // For transition animation
+  bool _isAnimatingHighlight = false;
+  
   @override
   void initState() {
     super.initState();
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
+    // Automatically show the Truth/Dare dialog after 2 seconds for the first player
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted && !_lastPlayerFinished) {
+        _showTruthOrDareDialog();
+      }
+    });
   }
 
   void _nextTurn() {
-    setState(() {
-      if (_currentIndex == widget.players.length - 1) {
-        // Last player just finished their turn
+    if (_currentIndex == widget.players.length - 1) {
+      setState(() {
         _showTruthDare = false;
         _lastPlayerFinished = true;
-      } else {
-        _showTruthDare = false;
-        _currentIndex = (_currentIndex + 1) % widget.players.length;
-      }
-    });
+      });
+    } else {
+      // Animate highlight transition to next player
+      setState(() {
+        _isAnimatingHighlight = true;
+        _pendingHighlightIndex = _currentIndex + 1;
+      });
+      Future.delayed(const Duration(milliseconds: 1800), () { // smoother and slower transition
+        if (!mounted) return;
+        setState(() {
+          _currentIndex = _pendingHighlightIndex;
+          _isAnimatingHighlight = false;
+        });
+        // Only show dialog if scoreboard is not open
+        if (mounted && !_lastPlayerFinished && !_scoreboardOpen) {
+          _showTruthOrDareDialog();
+        }
+      });
+    }
   }
 
   void _showTruthOrDare() {
@@ -105,8 +130,11 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     );
   }
 
-  void _showScoreboardDialog() {
-    showDialog(
+  void _showScoreboardDialog() async {
+    setState(() {
+      _scoreboardOpen = true;
+    });
+    await showDialog(
       context: context,
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
@@ -250,24 +278,40 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         );
       },
     );
+    setState(() {
+      _scoreboardOpen = false;
+    });
+    // Only show dialog if we are still on this screen and not in the process of popping
+    if (mounted && ModalRoute.of(context)?.isCurrent == true && (_pendingShowTruthDare || (!_lastPlayerFinished && !_showTruthDare))) {
+      _pendingShowTruthDare = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_lastPlayerFinished && !_showTruthDare && ModalRoute.of(context)?.isCurrent == true && !_quitDialogOpen) {
+          _showTruthOrDareDialog();
+        }
+      });
+    }
   }
 
   Future<bool> _showQuitConfirmation() async {
+    // Track if the Truth/Dare dialog should resume after closing
+    final bool shouldResumeTruthDare = !_lastPlayerFinished && !_showTruthDare && !_scoreboardOpen && !_quitDialogOpen;
+    _pendingShowTruthDare = false; // Block dialog while quit dialog is open
+    _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
     final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
-    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
+    final double titleFontSize = (screenSize.width * 0.07).clamp(22, 36);
+    final double messageFontSize = (screenSize.width * 0.045).clamp(14, 24);
+    final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
     final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
-    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
-    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
-    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
-    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
-    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
-    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
-
-    return await showGeneralDialog<bool>(
+    final double sectionSpacing = (screenSize.height * 0.02).clamp(10, 20);
+    final double buttonSpacing = (screenSize.width * 0.05).clamp(8, 16);
+    final double buttonVerticalPadding = (screenSize.height * 0.018).clamp(10, 22);
+    final double textButtonVerticalPadding = (screenSize.height * 0.012).clamp(8, 16);
+    final double buttonRowSpacing = (screenSize.height * 0.02).clamp(10, 20); // Responsive
+    // ...existing code...
+    final result = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
@@ -439,6 +483,16 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         );
       },
     ) ?? false;
+    _quitDialogOpen = false;
+    // Resume Truth/Dare dialog if it was supposed to show and user said No
+    if (!result && mounted && shouldResumeTruthDare) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_lastPlayerFinished && !_showTruthDare && ModalRoute.of(context)?.isCurrent == true) {
+          _showTruthOrDareDialog();
+        }
+      });
+    }
+    return result;
   }
 
   Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
@@ -480,6 +534,11 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   }
 
   Future<void> _showTruthOrDareDialog() async {
+    if (_scoreboardOpen || _quitDialogOpen) {
+      _pendingShowTruthDare = true;
+      return; // Prevent dialog if scoreboard or quit dialog is open
+    }
+    _pendingShowTruthDare = false;
     final playerName = widget.players[_currentIndex];
     final result = await showGeneralDialog(
       context: context,
@@ -512,13 +571,19 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   }
 
   @override
+  void deactivate() {
+    // Prevent dialog from showing if navigating away (e.g., Home pressed)
+    _pendingShowTruthDare = false;
+    super.deactivate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Use the same AppBar style from MyApp theme, but allow customization if needed
     final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
 
     final playerName = widget.players[_currentIndex];
-    final playerColor = widget.playerColors[_currentIndex];
-    final Color textColor = playerColor.computeLuminance() > 0.6 ? Colors.black : Colors.white;
+    final Color textColor = Colors.white;
     final size = MediaQuery.of(context).size;
     final double screenWidth = size.width;
     final double screenHeight = size.height;
@@ -548,7 +613,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Whoopsie!', style: appBarTheme.titleTextStyle),
+          title: Text('Truth or Dare', style: appBarTheme.titleTextStyle),
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: CustomAppBarButton(
@@ -582,117 +647,57 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return Center(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: spacingLarge),
-                            // Card design instead of colored circle
-                            // Replace with PlayerCircle wheel
-                            PlayerCircle(
-                              players: widget.players,
-                              colors: widget.playerColors,
-                              size: screenWidth * 0.8, // Responsive size
-                              highlightedIndex: _currentIndex,
-                            ),
-                            SizedBox(height: spacingLarge),
-                            // Only show restart and message after last player has finished their turn
-                            if (_lastPlayerFinished) ...[
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _currentIndex = 0;
-                                    _showTruthDare = false;
-                                    _lastPlayerFinished = false;
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: spacingLarge,
+                          ),
+                          PlayerCircle(
+                            players: widget.players,
+                            size: screenWidth * 0.8, // Responsive size
+                            highlightedIndex: _isAnimatingHighlight ? _pendingHighlightIndex : _currentIndex,
+                            animated: true,
+                            animationDuration: const Duration(milliseconds: 1800), // smoother and slower
+                            previousIndex: _isAnimatingHighlight ? _currentIndex : null,
+                          ),
+                          SizedBox(height: spacingLarge),
+                          if (_lastPlayerFinished) ...[
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _currentIndex = 0;
+                                  _showTruthDare = false;
+                                  _lastPlayerFinished = false;
+                                  // Auto show dialog for first player after restart
+                                  Future.delayed(const Duration(seconds: 2), () {
+                                    if (mounted && !_lastPlayerFinished) {
+                                      _showTruthOrDareDialog();
+                                    }
                                   });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: buttonPaddingH,
-                                    vertical: buttonPaddingV,
-                                  ),
-                                  textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  elevation: 3,
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: buttonPaddingH,
+                                  vertical: buttonPaddingV,
                                 ),
-                                child: const Text('Restart'),
+                                textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                elevation: 3,
                               ),
-                              SizedBox(height: spacingLarge * 0.7),
-                              Text(
-                                'All players had their turn!',
-                                style: TextStyle(fontSize: 18, color: Colors.white),
-                              ),
-                            ] else ...[
-                              if (!_showTruthDare) ...[
-                                ElevatedButton(
-                                  onPressed: _showTruthOrDareDialog,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: Colors.black,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: buttonPaddingH,
-                                      vertical: buttonPaddingV,
-                                    ),
-                                    textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    elevation: 3,
-                                  ),
-                                  child: const Text('Click to Begin!'),
-                                ),
-                              ] else ...[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        await _showTruthOrDareScreen(true);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white,
-                                        foregroundColor: Colors.black,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: buttonPaddingH,
-                                          vertical: buttonPaddingV,
-                                        ),
-                                        textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                        elevation: 3,
-                                      ),
-                                      child: const Text('Truth'),
-                                    ),
-                                    SizedBox(width: screenWidth * 0.06),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        await _showTruthOrDareScreen(false);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.black,
-                                        foregroundColor: Colors.white,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: buttonPaddingH,
-                                          vertical: buttonPaddingV,
-                                        ),
-                                        textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                        elevation: 3,
-                                      ),
-                                      child: const Text('Dare'),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ],
-                            SizedBox(height: spacingLarge),
-                            Text(
-                              'Player ${_currentIndex + 1} of ${widget.players.length}',
-                              style: TextStyle(fontSize: buttonFontSize, color: Colors.white),
+                              child: const Text('Restart'),
                             ),
-                            SizedBox(height: spacingLarge),
+                            SizedBox(height: spacingLarge * 0.7),
+                            Text(
+                              'All players had their turn!',
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            ),
                           ],
-                        ),
-                      ),  
+                        ],
+                      ),
                     );
                   },
                 ),

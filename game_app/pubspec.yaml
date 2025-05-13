@@ -58,10 +58,14 @@ flutter_icons:
   image_path: "assets/logo.png" # Tell the package to use your logo
 
 flutter_native_splash:
-  color: "#FFFFFF" # White background, you can change this
+  color: "#2f1056" # White background, you can change this
   image: assets/splash.png
   android: true
   ios: true
+  fullscreen: true
+
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
   # You can add more configurations like android_gravity, ios_content_mode, etc.
 
 # For information on the generic Dart part of this file, see the

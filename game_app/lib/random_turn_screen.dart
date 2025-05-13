@@ -8,6 +8,188 @@ import 'truth_dare_question_screen.dart';
 import 'widgets/cards/game_card.dart';
 import 'widgets/buttons/neumorphic_icon_button.dart';
 import 'custom_appbar_button.dart';
+import 'player_circle_painter.dart';
+
+// --- Add the Whoopsie! _TruthDareDialog widget (copied and adapted from AutoNextTurnScreen) ---
+class _TruthDareDialog extends StatelessWidget {
+  final String playerName;
+  const _TruthDareDialog({required this.playerName});
+
+  @override
+  Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double cardWidth = screenSize.width * 0.92;
+    final double maxCardWidth = 420;
+    final double cardPadding = 24.0;
+    BoxDecoration truthButtonDecoration = BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF4DD0E1), Color(0xFF1976D2)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white.withOpacity(0.18),
+          blurRadius: 16,
+          spreadRadius: 1,
+        ),
+      ],
+    );
+    BoxDecoration dareButtonDecoration = BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFFFF5F6D), Color(0xFFFFC371)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white.withOpacity(0.18),
+          blurRadius: 16,
+          spreadRadius: 1,
+        ),
+      ],
+    );
+    ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      textStyle: GoogleFonts.baloo2(
+        fontWeight: FontWeight.bold,
+        fontSize: 22,
+      ),
+    );
+    TextStyle buttonTextStyle = GoogleFonts.baloo2(
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+      color: Colors.white,
+      shadows: [
+        Shadow(
+          blurRadius: 8,
+          color: Colors.black.withOpacity(0.25),
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+    return Center(
+      child: Material(
+        type: MaterialType.transparency,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+            child: Container(
+              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+              padding: EdgeInsets.all(cardPadding),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.32),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.25),
+                  width: 2.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Whoopsie!',
+                    style: GoogleFonts.baloo2(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 28),
+                  Icon(
+                    Icons.sentiment_very_satisfied_rounded,
+                    color: Colors.white70,
+                    size: screenSize.width * 0.14,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 4.0,
+                        color: Colors.black.withAlpha((0.4 * 255).round()),
+                        offset: const Offset(1.0, 1.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 28),
+                  Text(
+                    "It's $playerName's turn",
+                    style: GoogleFonts.baloo2(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DecoratedBox(
+                          decoration: truthButtonDecoration,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop('truth');
+                            },
+                            style: buttonStyle,
+                            child: Center(
+                              child: Text(
+                                "Truth!",
+                                style: buttonTextStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 18),
+                      Expanded(
+                        child: DecoratedBox(
+                          decoration: dareButtonDecoration,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop('dare');
+                            },
+                            style: buttonStyle,
+                            child: Center(
+                              child: Text(
+                                "Dare!",
+                                style: buttonTextStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class RandomTurnScreen extends StatefulWidget {
   final List<String> players;
@@ -36,6 +218,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     'ADULTS_RELATIONSHIPS','ADULTS_PARTY','ADULTS_WORK','ADULTS_TRAVEL','ADULTS_DEEP','ADULTS_WILD','ADULTS_FLIRTY','ADULTS_CHILDHOOD','ADULTS_POPCULTURE','ADULTS_PERSONAL',
   ];
 
+  int? _highlightedIndex; // For spinning highlight
+  bool _isSpinning = false;
+  int? _spinningToIndex;
+  int? _previousIndex; // Track previous index for animation
+
   @override
   void initState() {
     super.initState();
@@ -52,16 +239,46 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
       _remainingIndices = List.generate(widget.players.length, (i) => i);
       _remainingIndices.shuffle(_random); // Shuffle for random order
       _currentIndex = null;
+      _highlightedIndex = null;
       _lastPlayerFinished = false;
       // Immediately pick the first player after reset
-      Future.delayed(Duration.zero, _pickRandomPlayer);
+      Future.delayed(Duration.zero, _pickRandomPlayerWithSpin);
     });
+  }
+
+  void _pickRandomPlayerWithSpin() async {
+    if (_remainingIndices.isEmpty || _isSpinning) return;
+    final int playerCount = widget.players.length;
+    final int from = _highlightedIndex ?? 0;
+    final int spins = 3 + _random.nextInt(3); // 3, 4, or 5 full spins
+    final int to = _remainingIndices.last;
+    // Always move clockwise: calculate the offset to the target
+    final int offset = (to - from + playerCount) % playerCount;
+    final int finalIndex = (from + spins * playerCount + offset) % playerCount;
+    setState(() {
+      _isSpinning = true;
+      _previousIndex = from;
+      _highlightedIndex = finalIndex;
+    });
+    // Animate the highlight using PlayerCircle's animationDuration
+    await Future.delayed(const Duration(milliseconds: 1800));
+    setState(() {
+      _currentIndex = to;
+      _isSpinning = false;
+      _showTruthDarePrompt = true;
+      _showTruthDareButtons = false;
+      _lastChoice = null;
+      _previousIndex = null;
+      _highlightedIndex = to;
+    });
+    _showTruthDareDialog(); // Show the dialog after spinning
   }
 
   void _pickRandomPlayer() {
     if (_remainingIndices.isEmpty) return;
     setState(() {
       _currentIndex = _remainingIndices.removeLast(); // Always pick last for true random order
+      _highlightedIndex = _currentIndex;
       _showTruthDarePrompt = true;
       _showTruthDareButtons = false;
       _lastChoice = null;
@@ -501,6 +718,40 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     );
   }
 
+  // Replace _showTruthDareDialog with the dialog logic from AutoNextTurnScreen
+  Future<void> _showTruthDareDialog() async {
+    if (_currentIndex == null) return;
+    final playerName = widget.players[_currentIndex!];
+    final result = await showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: _TruthDareDialog(playerName: playerName),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 0.3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+    if (result == 'truth') {
+      await _showTruthOrDareScreen(true);
+    } else if (result == 'dare') {
+      await _showTruthOrDareScreen(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -545,7 +796,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             },
             tooltip: 'Home',
           ),
-          title: Text('Whoopsie!', style: Theme.of(context).appBarTheme.titleTextStyle),
+          title: Text('Truth or Dare!', style: Theme.of(context).appBarTheme.titleTextStyle),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -561,182 +812,57 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             builder: (context, constraints) {
               final double bottomPadding = constraints.maxHeight * 0.04;
               final double horizontalPadding = constraints.maxWidth * 0.07;
+              final double spacingLarge = (constraints.maxHeight * 0.06).clamp(24, 60);
+              final double screenWidth = constraints.maxWidth;
               return Stack(
                 children: [
-                  // Centered card and content
                   Center(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_currentIndex != null) ...[
-                            Container(
-                              width: constraints.maxWidth * 0.8,
-                              height: constraints.maxHeight * 0.23,
-                              margin: EdgeInsets.only(bottom: constraints.maxHeight * 0.04),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                gradient: cardColor != null
-                                    ? LinearGradient(
-                                        colors: [cardColor, cardColor.withOpacity(0.7)],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      )
-                                    : null,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(80),
-                                    blurRadius: 10.0,
-                                    spreadRadius: 1.0,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: spacingLarge),
+                        if (_currentIndex != null || _isSpinning)
+                          PlayerCircle(
+                            players: widget.players,
+                            size: screenWidth * 0.8,
+                            highlightedIndex: _isSpinning ? _highlightedIndex : _currentIndex,
+                            animated: _isSpinning,
+                            animationDuration: const Duration(milliseconds: 1800),
+                            previousIndex: _isSpinning ? _previousIndex : null,
+                          ),
+                        SizedBox(height: spacingLarge),
+                        if (_lastPlayerFinished) ...[
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _resetTurns();
+                                _lastPlayerFinished = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: (screenWidth * 0.18).clamp(32, 60),
+                                vertical: (constraints.maxHeight * 0.025).clamp(14, 28),
                               ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      widget.players[_currentIndex!],
-                                      style: GoogleFonts.baloo2(
-                                        fontSize: (constraints.maxWidth * 0.08).clamp(22, 36),
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor,
-                                        shadows: [
-                                          Shadow(blurRadius: 2, color: Colors.black54, offset: Offset(1, 1)),
-                                        ],
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(height: (constraints.maxHeight * 0.02).clamp(10, 24)),
-                                    Text(
-                                      "It's your turn!",
-                                      style: GoogleFonts.baloo2(
-                                        fontSize: (constraints.maxWidth * 0.05).clamp(16, 24),
-                                        color: textColor != null ? textColor.withOpacity(0.7) : Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
+                              textStyle: GoogleFonts.baloo2(
+                                fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                fontWeight: FontWeight.bold,
                               ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 3,
+                              shadowColor: Colors.transparent,
                             ),
-                            if (_showTruthDarePrompt) ...[
-                              ElevatedButton(
-                                onPressed: _onShowTruthDareButtons,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.black,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: (constraints.maxWidth * 0.18).clamp(32, 60),
-                                    vertical: (constraints.maxHeight * 0.025).clamp(14, 28),
-                                  ),
-                                  textStyle: GoogleFonts.baloo2(
-                                    fontSize: buttonFontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  elevation: 3,
-                                  shadowColor: Colors.transparent,
-                                ),
-                                child: const Text('Truth or Dare?'),
-                              ),
-                              SizedBox(height: (constraints.maxHeight * 0.018).clamp(10, 22)),
-                            ] else if (_showTruthDareButtons) ...[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await _showTruthOrDareScreen(true);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: Colors.black,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: (constraints.maxWidth * 0.13).clamp(24, 48),
-                                        vertical: (constraints.maxHeight * 0.02).clamp(10, 20),
-                                      ),
-                                      textStyle: GoogleFonts.baloo2(
-                                        fontSize: buttonFontSize,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      elevation: 3,
-                                      shadowColor: Colors.transparent,
-                                    ),
-                                    child: const Text('Truth'),
-                                  ),
-                                  SizedBox(width: (constraints.maxWidth * 0.06).clamp(16, 32)),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await _showTruthOrDareScreen(false);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      foregroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: (constraints.maxWidth * 0.13).clamp(24, 48),
-                                        vertical: (constraints.maxHeight * 0.02).clamp(10, 20),
-                                      ),
-                                      textStyle: GoogleFonts.baloo2(
-                                        fontSize: buttonFontSize,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      elevation: 3,
-                                      shadowColor: Colors.transparent,
-                                    ),
-                                    child: const Text('Dare'),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: (constraints.maxHeight * 0.018).clamp(10, 22)),
-                            ]
-                            else if (_lastPlayerFinished) ...[
-                              Column(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _resetTurns();
-                                        _lastPlayerFinished = false;
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      foregroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: (constraints.maxWidth * 0.18).clamp(32, 60),
-                                        vertical: (constraints.maxHeight * 0.025).clamp(14, 28),
-                                      ),
-                                      textStyle: GoogleFonts.baloo2(
-                                        fontSize: buttonFontSize,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      elevation: 3,
-                                      shadowColor: Colors.transparent,
-                                    ),
-                                    child: const Text('Restart'),
-                                  ),
-                                  SizedBox(height: (constraints.maxHeight * 0.018).clamp(10, 22)),
-                                  Text(
-                                    'All players had their turn!',
-                                    style: GoogleFonts.baloo2(
-                                      fontSize: (constraints.maxWidth * 0.045).clamp(15, 22),
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: (constraints.maxHeight * 0.01).clamp(6, 16)),
-                            ],
+                            child: const Text('Restart'),
+                          ),
+                          SizedBox(height: spacingLarge * 0.7),
+                          Text(
+                            'All players had their turn!',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                         ],
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                   // Bottom buttons row
@@ -753,7 +879,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             setState(() {
                               _isMuted = !_isMuted;
                             });
-                            // TODO: Implement actual volume control logic
                           },
                         ),
                         _buildIconButton(
@@ -763,6 +888,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       ],
                     ),
                   ),
+                  // Truth/Dare dialog/buttons
+                  // Removed the overlay for _showTruthDarePrompt
                 ],
               );
             },

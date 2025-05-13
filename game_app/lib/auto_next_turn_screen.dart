@@ -303,12 +303,12 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
     final double titleFontSize = (screenSize.width * 0.07).clamp(22, 36);
     final double messageFontSize = (screenSize.width * 0.045).clamp(14, 24);
-    final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Match spin_the_bottle_screen
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Match spin_the_bottle_screen
+    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Match spin_the_bottle_screen
     final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
     final double sectionSpacing = (screenSize.height * 0.02).clamp(10, 20);
     final double buttonSpacing = (screenSize.width * 0.05).clamp(8, 16);
-    final double buttonVerticalPadding = (screenSize.height * 0.018).clamp(10, 22);
-    final double textButtonVerticalPadding = (screenSize.height * 0.012).clamp(8, 16);
     final double buttonRowSpacing = (screenSize.height * 0.02).clamp(10, 20); // Responsive
     // ...existing code...
     final result = await showGeneralDialog<bool>(

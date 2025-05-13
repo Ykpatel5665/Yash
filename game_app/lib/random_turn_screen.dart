@@ -223,6 +223,13 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   int? _spinningToIndex;
   int? _previousIndex; // Track previous index for animation
 
+  // Add these fields to the _RandomTurnScreenState class:
+  bool _dialogInterrupted = false;
+  Future<void>? _pendingDialogFuture;
+  bool _scoreboardOpen = false;
+  bool _quitDialogOpen = false;
+  bool _pendingShowTruthDare = false;
+
   @override
   void initState() {
     super.initState();
@@ -249,29 +256,31 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   void _pickRandomPlayerWithSpin() async {
     if (_remainingIndices.isEmpty || _isSpinning) return;
     final int playerCount = widget.players.length;
-    final int from = _highlightedIndex ?? 0;
+    final int from = _highlightedIndex ?? _currentIndex ?? 0;
+    // Find the next clockwise index in _remainingIndices
+    int nextIdx = _remainingIndices.firstWhere(
+      (i) => i > from,
+      orElse: () => _remainingIndices.first,
+    );
     final int spins = 3 + _random.nextInt(3); // 3, 4, or 5 full spins
-    final int to = _remainingIndices.last;
-    // Always move clockwise: calculate the offset to the target
-    final int offset = (to - from + playerCount) % playerCount;
-    final int finalIndex = (from + spins * playerCount + offset) % playerCount;
+    final int stepsToNext = (nextIdx - from + playerCount) % playerCount;
+    final int totalSteps = spins * playerCount + stepsToNext;
     setState(() {
       _isSpinning = true;
       _previousIndex = from;
-      _highlightedIndex = finalIndex;
+      _highlightedIndex = from + totalSteps; // Always forward, never backward
     });
-    // Animate the highlight using PlayerCircle's animationDuration
     await Future.delayed(const Duration(milliseconds: 1800));
     setState(() {
-      _currentIndex = to;
+      _currentIndex = nextIdx;
       _isSpinning = false;
       _showTruthDarePrompt = true;
       _showTruthDareButtons = false;
       _lastChoice = null;
       _previousIndex = null;
-      _highlightedIndex = to;
+      _highlightedIndex = nextIdx;
     });
-    _showTruthDareDialog(); // Show the dialog after spinning
+    _showTruthDareDialog();
   }
 
   void _pickRandomPlayer() {
@@ -312,10 +321,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             Navigator.of(context).pop();
             setState(() {
               _showTruthDareButtons = false;
+              _remainingIndices.remove(_currentIndex); // Remove current player
               if (_remainingIndices.isEmpty) {
                 _lastPlayerFinished = true;
               } else {
-                _pickRandomPlayer();
+                _pickRandomPlayerWithSpin();
               }
             });
           },
@@ -323,10 +333,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             Navigator.of(context).pop();
             setState(() {
               _showTruthDareButtons = false;
+              _remainingIndices.remove(_currentIndex); // Remove current player
               if (_remainingIndices.isEmpty) {
                 _lastPlayerFinished = true;
               } else {
-                _pickRandomPlayer();
+                _pickRandomPlayerWithSpin();
               }
             });
           },
@@ -336,8 +347,56 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     );
   }
 
-  void _showScoreboardDialog() {
-    showDialog(
+  // Move the actual dialog logic to a new method
+  Future<void> _showTruthDareDialogInternal() async {
+    final playerName = widget.players[_currentIndex!];
+    final result = await showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: _TruthDareDialog(playerName: playerName),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 0.3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+    if (result == 'truth') {
+      await _showTruthOrDareScreen(true);
+    } else if (result == 'dare') {
+      await _showTruthOrDareScreen(false);
+    }
+  }
+
+  // Replace _showTruthDareDialog with state-driven version
+  Future<void> _showTruthDareDialog() async {
+    if (_scoreboardOpen || _quitDialogOpen) {
+      _pendingShowTruthDare = true;
+      return;
+    }
+    _pendingShowTruthDare = false;
+    if (_currentIndex == null) return;
+    await _showTruthDareDialogInternal();
+  }
+
+  void _showScoreboardDialog() async {
+    if (_scoreboardOpen) return;
+    setState(() {
+      _scoreboardOpen = true;
+    });
+    await showDialog(
       context: context,
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
@@ -481,9 +540,23 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         );
       },
     );
+    setState(() {
+      _scoreboardOpen = false;
+    });
+    // Resume dialog if needed
+    if (mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+      _pendingShowTruthDare = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+          _showTruthDareDialog();
+        }
+      });
+    }
   }
 
   Future<bool> _showQuitConfirmation() async {
+    if (_quitDialogOpen) return false;
+    _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
@@ -498,7 +571,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
     final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
 
-    return await showGeneralDialog<bool>(
+    final result = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
@@ -670,6 +743,17 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         );
       },
     ) ?? false;
+    _quitDialogOpen = false;
+    // Resume dialog if needed
+    if (!result && mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+      _pendingShowTruthDare = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+          _showTruthDareDialog();
+        }
+      });
+    }
+    return result;
   }
 
   void _onShowTruthDareButtons() {
@@ -716,40 +800,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         ),
       ),
     );
-  }
-
-  // Replace _showTruthDareDialog with the dialog logic from AutoNextTurnScreen
-  Future<void> _showTruthDareDialog() async {
-    if (_currentIndex == null) return;
-    final playerName = widget.players[_currentIndex!];
-    final result = await showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        return Center(
-          child: _TruthDareDialog(playerName: playerName),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 0.3);
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-    if (result == 'truth') {
-      await _showTruthOrDareScreen(true);
-    } else if (result == 'dare') {
-      await _showTruthOrDareScreen(false);
-    }
   }
 
   @override

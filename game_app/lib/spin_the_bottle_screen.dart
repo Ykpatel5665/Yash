@@ -44,6 +44,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   // Variables for gesture handling
   Offset? _lastPanPosition; // Store the last pan position
 
+  // Flags for dialog and game state management
+  bool _scoreboardOpen = false;
+  bool _quitDialogOpen = false;
+  bool _pendingShowTruthDare = false;
+
   @override
   void initState() {
     super.initState();
@@ -93,42 +98,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     if (selectedIndex >= 0 && selectedIndex < widget.players.length) {
       final playerName = widget.players[selectedIndex];
       Future.delayed(const Duration(milliseconds: 700), () async {
-        final result = await showGeneralDialog(
-          context: context,
-          barrierDismissible: false,
-          barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          barrierColor: Colors.black54,
-          transitionDuration: const Duration(milliseconds: 350),
-          pageBuilder: (dialogContext, animation, secondaryAnimation) {
-            return Center(
-              child: _TruthDareDialog(playerName: playerName),
-            );
-          },
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 0.3);
-            const end = Offset.zero;
-            const curve = Curves.easeOutCubic;
-            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            final offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        );
-        if (result == 'truth') {
-          _onTruthSelected();
-        } else if (result == 'dare') {
-          _onDareSelected();
-        } else { // If dialog is dismissed without selection (e.g. back button if barrierDismissible were true)
-           setState(() {
-              _gamePhase = GamePhase.readyToSpin;
-              _selectedPlayerIndex = null;
-              _controller.reset(); // <--- ADDED RESET
-            });
-        }
+        await _showTruthDareDialog(playerName);
       });
-    } else { // No player selected (e.g. if playerCount is 0 or error in logic)
+    } else {
+      // No player selected (e.g. if playerCount is 0 or error in logic)
         setState(() {
           _gamePhase = GamePhase.readyToSpin;
           _selectedPlayerIndex = null;
@@ -136,7 +109,50 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         });
     }
   }
-  
+
+  // --- Show Truth/Dare dialog with interruption logic ---
+  Future<void> _showTruthDareDialog(String playerName) async {
+    if (_scoreboardOpen || _quitDialogOpen) {
+      _pendingShowTruthDare = true;
+      return;
+    }
+    _pendingShowTruthDare = false;
+    final result = await showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: _TruthDareDialog(playerName: playerName),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 0.3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+    if (result == 'truth') {
+      _onTruthSelected();
+    } else if (result == 'dare') {
+      _onDareSelected();
+    } else {
+      setState(() {
+        _gamePhase = GamePhase.readyToSpin;
+        _selectedPlayerIndex = null;
+        _controller.reset();
+      });
+    }
+  }
+
   // --- Calculate Selected Player ---
   int _getSelectedPlayerIndex(double finalAngle) {
     final int playerCount = widget.players.length;
@@ -388,197 +404,13 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     );
   }
 
-  Future<bool> _showQuitConfirmation() async {
-    final Size screenSize = MediaQuery.of(context).size;
-    final double cardWidth = screenSize.width * 0.92;
-    final double maxCardWidth = 420;
-    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
-    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
-    final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
-    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
-    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
-    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
-    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
-    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
-    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
-
-    return await showGeneralDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        return Center(
-          child: Material(
-            type: MaterialType.transparency,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                child: Container(
-                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding), // Responsive
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.32),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Quit Game?',
-                        style: GoogleFonts.baloo2(
-                          fontSize: titleFontSize, // Responsive
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4,
-                              color: Colors.white.withOpacity(0.3),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: sectionSpacing), // Responsive
-                      Icon(
-                        Icons.sentiment_dissatisfied,
-                        color: Colors.white70,
-                        size: iconSize, // Responsive
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4.0,
-                            color: Colors.black.withAlpha((0.4 * 255).round()),
-                            offset: const Offset(1.0, 1.0),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: sectionSpacing), // Responsive
-                      Text(
-                        'Are you sure you want to quit the game?',
-                        style: GoogleFonts.baloo2(
-                          fontSize: messageFontSize, // Responsive
-                          color: Colors.white.withOpacity(0.92),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: buttonRowSpacing), // Responsive
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF5B86E5),
-                                    Color(0xFF8F6ED5),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.18),
-                                    blurRadius: 16,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop(false);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
-                                  textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: buttonFontSize, // Responsive
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "No",
-                                    style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: buttonFontSize, // Responsive
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 8,
-                                          color: Colors.black.withOpacity(0.25),
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: buttonSpacing), // Responsive
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.of(dialogContext).pop(true);
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
-                                textStyle: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
-                                ),
-                              ),
-                              child: const Text("Yes"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 3);
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    ) ?? false;
-  }
-
-  void _showScoreboardDialog() {
-    showDialog(
+  // --- Scoreboard dialog with interruption/resume logic ---
+  void _showScoreboardDialog() async {
+    if (_scoreboardOpen) return;
+    setState(() {
+      _scoreboardOpen = true;
+    });
+    await showDialog(
       context: context,
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
@@ -750,7 +582,18 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                             child: Center(
                               child: Text(
                                 'Close',
-                                style: buttonTextStyle,
+                                style: GoogleFonts.baloo2(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: buttonFontSize,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 8,
+                                      color: Colors.black.withOpacity(0.25),
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -765,6 +608,223 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         );
       },
     );
+    setState(() {
+      _scoreboardOpen = false;
+    });
+    // Resume dialog if needed
+    if (mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+      _pendingShowTruthDare = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && _gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null) {
+          final playerName = widget.players[_selectedPlayerIndex!];
+          _showTruthDareDialog(playerName);
+        }
+      });
+    }
+  }
+
+  // --- Quit confirmation dialog with interruption/resume logic ---
+  Future<bool> _showQuitConfirmation() async {
+    if (_quitDialogOpen) return false;
+    _quitDialogOpen = true;
+    final Size screenSize = MediaQuery.of(context).size;
+    final double cardWidth = screenSize.width * 0.92;
+    final double maxCardWidth = 420;
+    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
+    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
+    final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
+    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
+    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
+    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
+    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
+    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
+
+    final result = await showGeneralDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            type: MaterialType.transparency,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding), // Responsive
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Quit Game?',
+                        style: GoogleFonts.baloo2(
+                          fontSize: titleFontSize, // Responsive
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: sectionSpacing), // Responsive
+                      Icon(
+                        Icons.sentiment_dissatisfied,
+                        color: Colors.white70,
+                        size: iconSize, // Responsive
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()),
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: sectionSpacing), // Responsive
+                      Text(
+                        'Are you sure you want to quit the game?',
+                        style: GoogleFonts.baloo2(
+                          fontSize: messageFontSize, // Responsive
+                          color: Colors.white.withOpacity(0.92),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: buttonRowSpacing), // Responsive
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF5B86E5),
+                                    Color(0xFF8F6ED5),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white.withOpacity(0.18),
+                                    blurRadius: 16,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop(false);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
+                                  textStyle: GoogleFonts.baloo2(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: buttonFontSize, // Responsive
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "No",
+                                    style: GoogleFonts.baloo2(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: buttonFontSize, // Responsive
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 8,
+                                          color: Colors.black.withOpacity(0.25),
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: buttonSpacing), // Responsive
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop(true);
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white70,
+                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
+                                textStyle: GoogleFonts.baloo2(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
+                                ),
+                              ),
+                              child: const Text("Yes"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    ) ?? false;
+    _quitDialogOpen = false;
+    // Resume dialog if needed
+    if (!result && mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+      _pendingShowTruthDare = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && _gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null) {
+          final playerName = widget.players[_selectedPlayerIndex!];
+          _showTruthDareDialog(playerName);
+        }
+      });
+    }
+    return result;
   }
 
   @override

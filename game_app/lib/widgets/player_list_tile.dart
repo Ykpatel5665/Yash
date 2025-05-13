@@ -5,17 +5,14 @@ import '../../models/player.dart';
 /// A reusable widget for displaying player information in a list.
 ///
 /// [player]: The player object containing name and color.
-/// [onColorTap]: Callback when the color box is tapped.
 /// [onRemoveTap]: Callback when the remove button is pressed.
 class PlayerListTile extends StatelessWidget {
   final Player player;
-  final VoidCallback onColorTap;
   final VoidCallback onRemoveTap;
 
   const PlayerListTile({
     super.key,
     required this.player,
-    required this.onColorTap,
     required this.onRemoveTap,
   });
 
@@ -28,22 +25,7 @@ class PlayerListTile extends StatelessWidget {
     final double splashRadius = (MediaQuery.of(context).size.width * 0.06).clamp(18, 32); // Responsive
     final double contentPaddingH = (MediaQuery.of(context).size.width * 0.02).clamp(4, 16);
     return ListTile(
-      leading: GestureDetector(
-        onTap: onColorTap,
-        child: Container(
-          width: avatarSize,
-          height: avatarSize,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(borderRadius),
-            color: player.color,
-            border: Border.all(
-              color: Colors.white,
-              width: borderWidth,
-            ),
-          ),
-        ),
-      ),
+      // Remove the leading color box
       title: Text(
         player.name,
         style: GoogleFonts.baloo2(
@@ -54,7 +36,7 @@ class PlayerListTile extends StatelessWidget {
       ),
       trailing: IconButton(
         icon: const Icon(Icons.close, color: Colors.white),
-        tooltip: 'Remove ${player.name}',
+        tooltip: 'Remove ${player.name}',
         onPressed: onRemoveTap,
         splashRadius: splashRadius,
       ),

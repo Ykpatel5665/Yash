@@ -53,12 +53,13 @@ class PlayerCirclePainter extends CustomPainter {
         );
       }
       final double textAngle = startAngle + sweepAngle / 2;
-      final double textRadius = radius * 0.7;
+      // --- Place text just inside the edge, starting from the border ---
+      final double spacing = radius * 0.08; // adjust for desired gap from edge
+      final double textRadius = radius - spacing; // now inside the wheel
       final double textX = center.dx + textRadius * math.cos(textAngle);
       final double textY = center.dy + textRadius * math.sin(textAngle);
       final double responsiveFontSize = radius * 0.12;
       // --- Dynamic text color based on background ---
-      // Compute luminance to decide text color
       final double luminance = color.computeLuminance();
       final Color textColor = luminance > 0.6 ? Colors.black : Colors.white;
       final TextSpan span = TextSpan(
@@ -76,16 +77,20 @@ class PlayerCirclePainter extends CustomPainter {
         ),
         text: players[i],
       );
+      final double maxTextWidth = sweepAngle * textRadius * 2.2; // slightly less than arc length for margin
       final TextPainter tp = TextPainter(
         text: span,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left,
         textDirection: TextDirection.ltr,
+        maxLines: 1,
+        ellipsis: '…',
       );
-      tp.layout();
+      tp.layout(minWidth: 0, maxWidth: maxTextWidth);
       canvas.save();
       canvas.translate(textX, textY);
       canvas.rotate(textAngle + math.pi);
-      tp.paint(canvas, Offset(-tp.width / 2, -tp.height / 2));
+      // Paint so that the left edge of the text is at the edge of the circle
+      tp.paint(canvas, Offset(0, -tp.height / 2));
       canvas.restore();
     }
     canvas.drawCircle(center, radius, outerBorderPaint);

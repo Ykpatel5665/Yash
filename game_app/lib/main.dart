@@ -908,7 +908,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
     );
   }
 
-  // Fix the _buildStyledButton function to ensure proper button design with background color and shadow
+  // Adjust the _buildStyledButton function to ensure the icon stays aligned to the left
   Widget _buildStyledButton(String text, IconData iconData, VoidCallback onPressed) {
     final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round());
     final Size screenSize = MediaQuery.of(context).size;
@@ -936,23 +936,38 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
           ),
         ],
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            left: 20, // Align the icon to the left with some padding
-            child: Icon(iconData, size: iconSize, color: fgColor),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent, // Use transparent to keep the container's color
+          shadowColor: Colors.transparent,
+          padding: EdgeInsets.zero, // Remove padding to align with container
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          Text(
-            text,
-            textAlign: TextAlign.center, // Keep the text centered
-            style: GoogleFonts.baloo2(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: fgColor,
+        ),
+        onPressed: onPressed, // Restore button functionality
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0), // Add spacing between icon and edge
+                child: Icon(iconData, size: iconSize, color: fgColor),
+              ),
             ),
-          ),
-        ],
+            Center(
+              child: Text(
+                text,
+                textAlign: TextAlign.center, // Keep the text centered
+                style: GoogleFonts.baloo2(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: fgColor,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

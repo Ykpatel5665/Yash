@@ -419,38 +419,45 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                       ]
                     : [],
               ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: onTap,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (icon != null)
-                        Icon(icon, color: Colors.white, size: iconSize ?? 28),
-                      if (icon != null) const SizedBox(height: 6),
-                      Text(
-                        label,
-                        style: GoogleFonts.baloo2(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: fontSize ?? 15,
-                          height: 1.1,
-                          shadows: selected
-                              ? [
-                                  Shadow(
-                                    blurRadius: 2,
-                                    color: Colors.white.withOpacity(0.3),
-                                  )
-                                ]
-                              : [],
-                        ),
-                        textAlign: TextAlign.center,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final double adjustedIconSize = (constraints.maxWidth * 0.3).clamp(20, 36);
+                  final double adjustedFontSize = (constraints.maxWidth * 0.15).clamp(12, 16);
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: onTap,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (icon != null)
+                            Icon(icon, color: Colors.white, size: adjustedIconSize),
+                          if (icon != null) const SizedBox(height: 6),
+                          Text(
+                            label,
+                            style: GoogleFonts.baloo2(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: adjustedFontSize,
+                              height: 1.1,
+                              shadows: selected
+                                  ? [
+                                      Shadow(
+                                        blurRadius: 2,
+                                        color: Colors.white.withOpacity(0.3),
+                                      )
+                                    ]
+                                  : [],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             );
           }
@@ -756,7 +763,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
       },
   );
 }
-// ...existing code...
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -901,78 +908,51 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
     );
   }
 
-  // Keep _buildStyledButton (for main screen buttons)
-  Widget _buildStyledButton(
-      String text, IconData iconData, VoidCallback onPressed) {
-    // ...existing code...
+  // Fix the _buildStyledButton function to ensure proper button design with background color and shadow
+  Widget _buildStyledButton(String text, IconData iconData, VoidCallback onPressed) {
     final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round());
-    final Size screenSize = MediaQuery.of(context).size; // Access context here
+    final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;
     final double buttonWidth = screenWidth * 0.75;
-    const double buttonVerticalPadding = 30.0;
-    const double fontSize = 25.0;
-    const double iconSize = 50.0; // Reverted icon size
-    final double minButtonHeight = screenSize.height * 0.001;
+    final double buttonHeight = (screenSize.height * 0.08).clamp(50, 80); // Ensure a responsive height
+    final double fontSize = (screenSize.width * 0.05).clamp(16, 24); // Responsive font size
+    final double iconSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive icon size
 
-    // Restore conditional styling based on button text
     final bool isStartGame = (text == 'Start Game');
     final Color bgColor = isStartGame ? Colors.white : Colors.black;
     final Color fgColor = isStartGame ? Colors.black : Colors.white;
 
-    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: bgColor, // Use conditional background color
-      foregroundColor: fgColor, // Use conditional foreground color
-      padding: const EdgeInsets.symmetric(
-          horizontal: 20, vertical: buttonVerticalPadding),
-      textStyle: GoogleFonts.baloo2(
-        fontSize: fontSize,
-        fontWeight: FontWeight.bold,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 3,
-      shadowColor: Colors.transparent,
-      minimumSize: Size(buttonWidth, minButtonHeight),
-      alignment: Alignment.center,
-    );
-
     return Container(
       width: buttonWidth,
+      height: buttonHeight, // Ensure consistent height
       decoration: BoxDecoration(
+        color: bgColor, // Set the background color
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: shadowColor,
-            blurRadius: 10.0,
-            spreadRadius: 1.0,
-            offset: const Offset(0, 5),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: ElevatedButton(
-        style: buttonStyle,
-        onPressed: onPressed,
-        child: Row(
-          children: [
-            Icon(iconData, size: iconSize),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  text,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                ),
-              ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            left: 20, // Align the icon to the left with some padding
+            child: Icon(iconData, size: iconSize, color: fgColor),
+          ),
+          Text(
+            text,
+            textAlign: TextAlign.center, // Keep the text centered
+            style: GoogleFonts.baloo2(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: fgColor,
             ),
-            Opacity(
-              opacity: 0,
-              child: Icon(iconData, size: iconSize),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

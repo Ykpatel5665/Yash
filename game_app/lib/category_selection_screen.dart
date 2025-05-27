@@ -630,7 +630,7 @@ class _AnimatedCategoryCardState extends State<_AnimatedCategoryCard> with Singl
               const SizedBox(width: 16),
               Expanded(
                 child: AutoSizeText(
-                  widget.category.name,
+                  _localizedCategoryLabel(context, widget.category.id, widget.category.name),
                   style: GoogleFonts.baloo2(
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
@@ -701,71 +701,79 @@ class _AnimatedButtonState extends State<_AnimatedButton> with SingleTickerProvi
   }
 }
 
-// Add this helper function at the end of the file (or in a suitable place):
+// Add this mapping at the end of the file (or in a suitable place):
+const Map<String, String> _categoryIdToKey = {
+  'KIDS_FUNNY': 'categoryFunny',
+  'KIDS_FAMILY': 'categoryFamily',
+  'KIDS_SCHOOL': 'categorySchool',
+  'KIDS_CARTOONS': 'categoryCartoons',
+  'KIDS_GAMES': 'categoryGames',
+  'KIDS_ANIMALS': 'categoryAnimals',
+  'KIDS_FOOD': 'categoryFood',
+  'KIDS_IMAGINATION': 'categoryImagination',
+  'KIDS_CHALLENGES': 'categoryChallenges',
+  'KIDS_HOBBIES': 'categoryHobbies',
+  'TEENS_FRIENDS': 'categoryFriends',
+  'TEENS_SCHOOL': 'categorySchool',
+  'TEENS_MUSIC': 'categoryMusic',
+  'TEENS_MOVIES': 'categoryMovies',
+  'TEENS_TECH': 'categoryTech',
+  'TEENS_HOBBIES': 'categoryHobbies',
+  'TEENS_DREAMS': 'categoryDreams',
+  'TEENS_EMBARRASSING': 'categoryEmbarrassing',
+  'TEENS_STYLE': 'categoryStyle',
+  'TEENS_ADVENTURE': 'categoryAdventure',
+  'ADULTS_RELATIONSHIPS': 'categoryRelationships',
+  'ADULTS_PARTY': 'categoryParty',
+  'ADULTS_WORK': 'categoryWork',
+  'ADULTS_TRAVEL': 'categoryTravel',
+  'ADULTS_DEEP': 'categoryDeep',
+  'ADULTS_WILD': 'categoryWild',
+  'ADULTS_FLIRTY': 'categoryFlirty',
+  'ADULTS_CHILDHOOD': 'categoryChildhood',
+  'ADULTS_POPCULTURE': 'categoryPopculture',
+  'ADULTS_PERSONAL': 'categoryPersonal',
+};
+
 String _localizedCategoryLabel(BuildContext context, String id, String fallback) {
   final loc = AppLocalizations.of(context)!;
-  switch (id) {
-    case 'KIDS_FUNNY':
-      return 'Divertido';
-    case 'KIDS_FAMILY':
-      return 'Familia';
-    case 'KIDS_SCHOOL':
-      return 'Escuela';
-    case 'KIDS_CARTOONS':
-      return 'Dibujos animados';
-    case 'KIDS_GAMES':
-      return 'Juegos';
-    case 'KIDS_ANIMALS':
-      return 'Animales';
-    case 'KIDS_FOOD':
-      return 'Comida';
-    case 'KIDS_IMAGINATION':
-      return 'Sueños';
-    case 'KIDS_CHALLENGES':
-      return 'Desafíos';
-    case 'KIDS_HOBBIES':
-      return 'Pasatiempos';
-    case 'TEENS_FRIENDS':
-      return 'Amigos';
-    case 'TEENS_SCHOOL':
-      return 'Escuela';
-    case 'TEENS_MUSIC':
-      return 'Música';
-    case 'TEENS_MOVIES':
-      return 'Películas';
-    case 'TEENS_TECH':
-      return 'Tecnología';
-    case 'TEENS_HOBBIES':
-      return 'Pasatiempos';
-    case 'TEENS_DREAMS':
-      return 'Sueños';
-    case 'TEENS_EMBARRASSING':
-      return 'Vergonzoso';
-    case 'TEENS_STYLE':
-      return 'Estilo';
-    case 'TEENS_ADVENTURE':
-      return 'Viajes';
-    case 'ADULTS_RELATIONSHIPS':
-      return 'Amor';
-    case 'ADULTS_PARTY':
-      return 'Fiesta';
-    case 'ADULTS_WORK':
-      return 'Trabajo';
-    case 'ADULTS_TRAVEL':
-      return 'Viajes';
-    case 'ADULTS_DEEP':
-      return 'Profundo';
-    case 'ADULTS_WILD':
-      return 'Atrevido';
-    case 'ADULTS_FLIRTY':
-      return 'Coqueto';
-    case 'ADULTS_CHILDHOOD':
-      return 'Infancia';
-    case 'ADULTS_POPCULTURE':
-      return 'Pop';
-    case 'ADULTS_PERSONAL':
-      return 'Crecimiento';
-    default:
-      return fallback;
+  final key = _categoryIdToKey[id];
+  if (key == null) return fallback;
+  // Use a try/catch in case the getter is missing (e.g., not yet added to ARB)
+  try {
+    switch (key) {
+      case 'categoryFunny': return loc.categoryFunny;
+      case 'categoryFamily': return loc.categoryFamily;
+      case 'categorySchool': return loc.categorySchool;
+      case 'categoryCartoons': return loc.categoryCartoons;
+      case 'categoryGames': return loc.categoryGames;
+      case 'categoryAnimals': return loc.categoryAnimals;
+      case 'categoryFood': return loc.categoryFood;
+      case 'categoryImagination': return loc.categoryImagination;
+      case 'categoryChallenges': return loc.categoryChallenges;
+      case 'categoryHobbies': return loc.categoryHobbies;
+      case 'categoryFriends': return loc.categoryFriends;
+      case 'categoryMusic': return loc.categoryMusic;
+      case 'categoryMovies': return loc.categoryMovies;
+      case 'categoryTech': return loc.categoryTech;
+      case 'categoryDreams': return loc.categoryDreams;
+      case 'categoryEmbarrassing': return loc.categoryEmbarrassing;
+      case 'categoryStyle': return loc.categoryStyle;
+      case 'categoryAdventure': return loc.categoryAdventure;
+      case 'categoryRelationships': return loc.categoryRelationships;
+      case 'categoryParty': return loc.categoryParty;
+      case 'categoryWork': return loc.categoryWork;
+      case 'categoryTravel': return loc.categoryTravel;
+      case 'categoryDeep': return loc.categoryDeep;
+      case 'categoryWild': return loc.categoryWild;
+      case 'categoryFlirty': return loc.categoryFlirty;
+      case 'categoryChildhood': return loc.categoryChildhood;
+      case 'categoryPopculture': return loc.categoryPopculture;
+      case 'categoryPersonal': return loc.categoryPersonal;
+      default:
+        return fallback;
+    }
+  } catch (_) {
+    return fallback;
   }
 }

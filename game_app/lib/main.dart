@@ -339,19 +339,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: <Widget>[
                       Center(
                         child: Text(
-                          'Confirm Age',
+                          AppLocalizations.of(context)!.confirmAge,
                           style: titleStyle,
                         ),
                       ),
                       const SizedBox(height: 15), // Spacing
                       Text(
-                        'Adult mode is not suitable for anyone under 18.',
+                        AppLocalizations.of(context)!.adultModeWarning,
                         style: contentStyle,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 5), // Spacing
                       Text(
-                        'Are you sure you want to continue?',
+                        AppLocalizations.of(context)!.areYouSure,
                         style: contentStyle,
                         textAlign: TextAlign.center,
                       ),
@@ -365,7 +365,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Colors.white70, // Lighter color for cancel
                             ),
                             child: Text(
-                              'Cancel',
+                              AppLocalizations.of(context)!.cancel,
                               style: GoogleFonts.baloo2(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
@@ -387,7 +387,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   horizontal: 20, vertical: 10),
                             ),
                             child: Text(
-                              'Continue',
+                              AppLocalizations.of(context)!.continueStr,
                               style: GoogleFonts.baloo2(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),

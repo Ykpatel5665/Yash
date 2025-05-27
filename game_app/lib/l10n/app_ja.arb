@@ -20,5 +20,9 @@
   "randomTurn": "ランダムターン",
   "cancel": "キャンセル",
   "save": "保存",
-  "useTimer": "タイマーを使う (60秒)"
+  "useTimer": "タイマーを使う (60秒)",
+  "confirmAge": "年齢を確認",
+  "adultModeWarning": "アダルトモードは18歳未満には適していません。",
+  "areYouSure": "本当に続行しますか？",
+  "continueStr": "続ける"
 }

@@ -20,5 +20,9 @@
   "randomTurn": "Turno aleatorio",
   "cancel": "Cancelar",
   "save": "Guardar",
-  "useTimer": "Usar temporizador (60s)"
+  "useTimer": "Usar temporizador (60s)",
+  "confirmAge": "Confirmar edad",
+  "adultModeWarning": "El modo adulto no es apto para menores de 18 años.",
+  "areYouSure": "¿Estás seguro de que deseas continuar?",
+  "continueStr": "Continuar"
 }

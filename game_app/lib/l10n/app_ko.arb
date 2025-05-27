@@ -20,5 +20,9 @@
   "randomTurn": "무작위 턴",
   "cancel": "취소",
   "save": "저장",
-  "useTimer": "타이머 사용 (60초)"
+  "useTimer": "타이머 사용 (60초)",
+  "confirmAge": "나이 확인",
+  "adultModeWarning": "성인 모드는 18세 미만에게 적합하지 않습니다.",
+  "areYouSure": "정말 계속하시겠습니까?",
+  "continueStr": "계속"
 }

@@ -20,5 +20,9 @@
   "randomTurn": "随机回合",
   "cancel": "取消",
   "save": "保存",
-  "useTimer": "使用计时器 (60秒)"
+  "useTimer": "使用计时器 (60秒)",
+  "confirmAge": "确认年龄",
+  "adultModeWarning": "成人模式不适合18岁以下人士。",
+  "areYouSure": "您确定要继续吗？",
+  "continueStr": "继续"
 }

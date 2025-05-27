@@ -20,5 +20,9 @@
   "randomTurn": "Random turn",
   "cancel": "Cancel",
   "save": "Save",
-  "useTimer": "Use Timer (60s)"
+  "useTimer": "Use Timer (60s)",
+  "confirmAge": "Confirm Age",
+  "adultModeWarning": "Adult mode is not suitable for anyone under 18.",
+  "areYouSure": "Are you sure you want to continue?",
+  "continueStr": "Continue"
 }

@@ -20,5 +20,9 @@
   "randomTurn": "Tour aléatoire",
   "cancel": "Annuler",
   "save": "Enregistrer",
-  "useTimer": "Utiliser le minuteur (60s)"
+  "useTimer": "Utiliser le minuteur (60s)",
+  "confirmAge": "Confirmer l'âge",
+  "adultModeWarning": "Le mode adulte ne convient pas aux moins de 18 ans.",
+  "areYouSure": "Êtes-vous sûr de vouloir continuer ?",
+  "continueStr": "Continuer"
 }

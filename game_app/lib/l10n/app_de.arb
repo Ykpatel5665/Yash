@@ -20,5 +20,9 @@
   "randomTurn": "Zufällige Runde",
   "cancel": "Abbrechen",
   "save": "Speichern",
-  "useTimer": "Timer verwenden (60s)"
+  "useTimer": "Timer verwenden (60s)",
+  "confirmAge": "Alter bestätigen",
+  "adultModeWarning": "Der Erwachsenenmodus ist für Personen unter 18 Jahren nicht geeignet.",
+  "areYouSure": "Sind Sie sicher, dass Sie fortfahren möchten?",
+  "continueStr": "Fortfahren"
 }

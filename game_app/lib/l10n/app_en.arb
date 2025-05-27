@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "appTitle": "Truth or Dare",
+  "continueBtn": "Continue!",
+  "gameSetup": "Game Setup",
+  "gameMode": "Game Mode",
+  "ageGroup": "Age Group",
+  "kids": "Kids",
+  "teen": "Teen",
+  "adult": "Adult"
+}

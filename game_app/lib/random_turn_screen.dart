@@ -196,7 +196,16 @@ class RandomTurnScreen extends StatefulWidget {
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
   final bool useTimer;
-  const RandomTurnScreen({super.key, required this.players, required this.ageGroup, required this.selectedCategoryIds, required this.useTimer});
+  final void Function(Locale) setLocale;
+
+  const RandomTurnScreen({
+    super.key,
+    required this.players,
+    required this.ageGroup,
+    required this.selectedCategoryIds,
+    required this.useTimer,
+    required this.setLocale,
+  });
 
   @override
   State<RandomTurnScreen> createState() => _RandomTurnScreenState();
@@ -837,7 +846,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               if (shouldQuit) {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  MaterialPageRoute(builder: (context) => MyHomePage(setLocale: widget.setLocale)),
                   (Route<dynamic> route) => false,
                 );
               }

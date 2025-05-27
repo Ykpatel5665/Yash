@@ -1,0 +1,11 @@
+{
+  "@@locale": "zh",
+  "appTitle": "真心话大冒险",
+  "continueBtn": "继续!",
+  "gameSetup": "游戏设置",
+  "gameMode": "游戏模式",
+  "ageGroup": "年龄组",
+  "kids": "儿童",
+  "teen": "青少年",
+  "adult": "成人"
+}

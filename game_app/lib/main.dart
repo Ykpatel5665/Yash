@@ -7,6 +7,8 @@ import 'dart:ui';
 import 'category_selection_screen.dart';
 import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
 import 'widgets/buttons/toggle_button.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -77,8 +79,20 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+
+  void setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,14 +126,44 @@ class MyApp extends StatelessWidget {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
-      home: const MyHomePage(),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('hi'),
+        Locale('es'),
+        Locale('fr'),
+        Locale('de'),
+        Locale('zh'),
+        Locale('ar'),
+        Locale('bn'),
+        Locale('pt'),
+        Locale('ru'),
+        Locale('ja'),
+        Locale('ko'),
+      ],
+      locale: _locale,
+      localeResolutionCallback: (locale, supportedLocales) {
+        for (var supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        return supportedLocales.first;
+      },
+      home: MyHomePage(setLocale: setLocale),
     );
   }
 }
 
 // Convert MyHomePage to StatefulWidget
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final void Function(Locale) setLocale;
+  const MyHomePage({super.key, required this.setLocale});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -576,7 +620,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Expanded(child: buildToggleButton(
-                                    label: "Kids",
+                                    label: AppLocalizations.of(context)!.kids,
                                     selected: currentAgeSelection == AgeGroup.kids,
                                     onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
                                     icon: Icons.child_care,
@@ -585,7 +629,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                     fontSize: fontSize + 4,
                                   )),
                                   Expanded(child: buildToggleButton(
-                                    label: "Teen",
+                                    label: AppLocalizations.of(context)!.teen,
                                     selected: currentAgeSelection == AgeGroup.teen,
                                     onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
                                     icon: Icons.school,
@@ -594,7 +638,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                     fontSize: fontSize + 4,
                                   )),
                                   Expanded(child: buildToggleButton(
-                                    label: "Adult",
+                                    label: AppLocalizations.of(context)!.adult,
                                     selected: currentAgeSelection == AgeGroup.adult,
                                     onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
                                     icon: Icons.person,
@@ -764,6 +808,48 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
   );
 }
 
+  void _showLanguagePickerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Language'),
+          content: SizedBox(
+            width: 300,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                _buildLanguageTile(context, 'en', 'English', '🇬🇧'),
+                _buildLanguageTile(context, 'hi', 'हिन्दी', '🇮🇳'),
+                _buildLanguageTile(context, 'es', 'Español', '🇪🇸'),
+                _buildLanguageTile(context, 'fr', 'Français', '🇫🇷'),
+                _buildLanguageTile(context, 'de', 'Deutsch', '🇩🇪'),
+                _buildLanguageTile(context, 'zh', '中文', '🇨🇳'),
+                _buildLanguageTile(context, 'ar', 'العربية', '🇸🇦'),
+                _buildLanguageTile(context, 'bn', 'বাংলা', '🇧🇩'),
+                _buildLanguageTile(context, 'pt', 'Português', '🇵🇹'),
+                _buildLanguageTile(context, 'ru', 'Русский', '🇷🇺'),
+                _buildLanguageTile(context, 'ja', '日本語', '🇯🇵'),
+                _buildLanguageTile(context, 'ko', '한국어', '🇰🇷'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageTile(BuildContext context, String code, String label, String flag) {
+    return ListTile(
+      leading: Text(flag, style: const TextStyle(fontSize: 24)),
+      title: Text(label),
+      onTap: () {
+        widget.setLocale(Locale(code));
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -774,6 +860,13 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language),
+            tooltip: 'Change Language',
+            onPressed: () => _showLanguagePickerDialog(context),
+          ),
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: Container(
@@ -847,6 +940,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                   gameMode: _selectedGameModeEnum!,
                                   ageGroup: _selectedAgeGroupEnum!,
                                   useTimer: _lastUseTimer, // Pass last useTimer value
+                                  setLocale: widget.setLocale, // Use widget.setLocale here
                                 ),
                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                   const begin = Offset(1.0, 0.0);

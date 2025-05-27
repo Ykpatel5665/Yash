@@ -6,6 +6,7 @@ import 'main.dart';
 import 'dart:ui';
 import 'widgets/buttons/toggle_button.dart';
 import 'custom_appbar_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Category {
   final String id;
@@ -58,7 +59,8 @@ class CategorySelectionScreen extends StatefulWidget {
   final GameMode gameMode;
   final AgeGroup ageGroup;
   final bool useTimer;
-  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup, required this.useTimer});
+  final void Function(Locale) setLocale;
+  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup, required this.useTimer, required this.setLocale});
 
   @override
   State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
@@ -419,6 +421,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                   ageGroup: widget.ageGroup,
                                                   selectedCategoryIds: _selectedCategoryIds.toList(),
                                                   useTimer: widget.useTimer,
+                                                  setLocale: widget.setLocale,
                                                 ),
                                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                                   const begin = Offset(1.0, 0.0);
@@ -461,6 +464,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               ageGroup: widget.ageGroup,
                                               selectedCategoryIds: _selectedCategoryIds.toList(),
                                               useTimer: widget.useTimer,
+                                              setLocale: widget.setLocale,
                                             ),
                                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                               const begin = Offset(1.0, 0.0);
@@ -483,11 +487,18 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                           Align(
                                             alignment: Alignment.center,
                                             child: Text(
-                                              "Continue!",
+                                              AppLocalizations.of(context)!.continueBtn,
                                               style: GoogleFonts.baloo2(
-                                                fontSize: continueFontSize, // Responsive
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: buttonFontSize,
                                                 color: Colors.white,
+                                                shadows: [
+                                                  Shadow(
+                                                    blurRadius: 8,
+                                                    color: Colors.black.withOpacity(0.25),
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),

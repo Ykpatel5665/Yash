@@ -18,6 +18,7 @@ class SpinTheBottleScreen extends StatefulWidget {
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
   final bool useTimer;
+  final void Function(Locale) setLocale;
 
   const SpinTheBottleScreen({
     super.key,
@@ -25,6 +26,7 @@ class SpinTheBottleScreen extends StatefulWidget {
     required this.ageGroup,
     required this.selectedCategoryIds,
     required this.useTimer,
+    required this.setLocale,
   });
 
   @override
@@ -866,7 +868,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               if (shouldQuit) {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  MaterialPageRoute(builder: (context) => MyHomePage(setLocale: widget.setLocale)),
                   (Route<dynamic> route) => false,
                 );
               }

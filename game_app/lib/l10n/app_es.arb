@@ -1,0 +1,11 @@
+{
+  "@@locale": "es",
+  "appTitle": "Verdad o Reto",
+  "continueBtn": "¡Continuar!",
+  "gameSetup": "Configuración del juego",
+  "gameMode": "Modo de juego",
+  "ageGroup": "Grupo de edad",
+  "kids": "Niños",
+  "teen": "Adolescentes",
+  "adult": "Adultos"
+}

@@ -19,6 +19,7 @@ class AddPlayersScreen extends StatefulWidget {
   final AgeGroup ageGroup;
   final List<String>? selectedCategoryIds;
   final bool useTimer;
+  final void Function(Locale) setLocale;
 
   const AddPlayersScreen({
     super.key,
@@ -26,6 +27,7 @@ class AddPlayersScreen extends StatefulWidget {
     required this.ageGroup,
     this.selectedCategoryIds,
     required this.useTimer,
+    required this.setLocale,
   });
 
   @override
@@ -311,6 +313,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               ageGroup: widget.ageGroup,
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
                               useTimer: widget.useTimer,
+                              setLocale: widget.setLocale,
                             );
                             break;
                           case GameMode.auto:
@@ -327,6 +330,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               ageGroup: widget.ageGroup,
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
                               useTimer: widget.useTimer,
+                              setLocale: widget.setLocale,
                             );
                             break;
                         }

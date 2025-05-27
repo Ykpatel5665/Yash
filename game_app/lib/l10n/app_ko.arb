@@ -1,0 +1,11 @@
+{
+  "@@locale": "ko",
+  "appTitle": "진실 혹은 도전",
+  "continueBtn": "계속!",
+  "gameSetup": "게임 설정",
+  "gameMode": "게임 모드",
+  "ageGroup": "연령대",
+  "kids": "어린이",
+  "teen": "청소년",
+  "adult": "성인"
+}

@@ -1,0 +1,11 @@
+{
+  "@@locale": "de",
+  "appTitle": "Wahrheit oder Pflicht",
+  "continueBtn": "Weiter!",
+  "gameSetup": "Spiel-Einrichtung",
+  "gameMode": "Spielmodus",
+  "ageGroup": "Altersgruppe",
+  "kids": "Kinder",
+  "teen": "Jugendliche",
+  "adult": "Erwachsene"
+}

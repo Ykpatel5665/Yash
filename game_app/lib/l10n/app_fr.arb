@@ -1,0 +1,11 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Action ou Vérité",
+  "continueBtn": "Continuer!",
+  "gameSetup": "Configuration du jeu",
+  "gameMode": "Mode de jeu",
+  "ageGroup": "Groupe d'âge",
+  "kids": "Enfants",
+  "teen": "Adolescents",
+  "adult": "Adultes"
+}

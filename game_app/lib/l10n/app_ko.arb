@@ -24,5 +24,19 @@
   "confirmAge": "나이 확인",
   "adultModeWarning": "성인 모드는 18세 미만에게 적합하지 않습니다.",
   "areYouSure": "정말 계속하시겠습니까?",
-  "continueStr": "계속"
+  "continueStr": "계속",
+  "selectCategory": "카테고리 선택",
+  "dareCategory": "도전",
+  "truthCategory": "진실",
+  "allCategory": "전체",
+  "next": "다음",
+  "addPlayers": "플레이어 추가",
+  "enterPlayerName": "플레이어 이름 입력",
+  "player": "플레이어",
+  "add": "추가",
+  "remove": "제거",
+  "minPlayersWarning": "최소 2명의 플레이어가 필요합니다.",
+  "maxPlayersWarning": "최대 플레이어 수에 도달했습니다.",
+  "start": "시작",
+  "alreadyAdded": "이미 추가되었습니다!"
 }

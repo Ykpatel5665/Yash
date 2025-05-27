@@ -24,5 +24,19 @@
   "confirmAge": "年齢を確認",
   "adultModeWarning": "アダルトモードは18歳未満には適していません。",
   "areYouSure": "本当に続行しますか？",
-  "continueStr": "続ける"
+  "continueStr": "続ける",
+  "selectCategory": "カテゴリを選択",
+  "dareCategory": "挑戦",
+  "truthCategory": "真実",
+  "allCategory": "すべて",
+  "next": "次へ",
+  "addPlayers": "プレイヤーを追加",
+  "enterPlayerName": "プレイヤー名を入力",
+  "player": "プレイヤー",
+  "add": "追加",
+  "remove": "削除",
+  "minPlayersWarning": "少なくとも2人のプレイヤーが必要です。",
+  "maxPlayersWarning": "最大プレイヤー数に達しました。",
+  "start": "開始",
+  "alreadyAdded": "はすでに追加されています！"
 }

@@ -24,5 +24,19 @@
   "confirmAge": "确认年龄",
   "adultModeWarning": "成人模式不适合18岁以下人士。",
   "areYouSure": "您确定要继续吗？",
-  "continueStr": "继续"
+  "continueStr": "继续",
+  "selectCategory": "选择类别",
+  "dareCategory": "大冒险",
+  "truthCategory": "真心话",
+  "allCategory": "全部",
+  "next": "下一步",
+  "addPlayers": "添加玩家",
+  "enterPlayerName": "输入玩家姓名",
+  "player": "玩家",
+  "add": "添加",
+  "remove": "移除",
+  "minPlayersWarning": "至少需要2名玩家。",
+  "maxPlayersWarning": "已达到最大玩家数。",
+  "start": "开始",
+  "alreadyAdded": "已添加！"
 }

@@ -14,6 +14,7 @@ import 'models/player.dart';
 import 'custom_appbar_button.dart';
 import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
 import 'package:auto_size_text/auto_size_text.dart'; // Import AutoSizeText
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -75,7 +76,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     if (_players.length >= 20) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Maximum 20 players allowed!', style: GoogleFonts.baloo2(color: Colors.white)),
+          content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: GoogleFonts.baloo2(color: Colors.white)),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -92,7 +93,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     } else if (name.isNotEmpty && _players.any((p) => p.name == name)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$name is already added!', style: GoogleFonts.baloo2(color: Colors.white)),
+          content: Text('$name ${AppLocalizations.of(context)!.alreadyAdded}', style: GoogleFonts.baloo2(color: Colors.white)),
           backgroundColor: Colors.orangeAccent,
         ),
       );
@@ -145,7 +146,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
 
     return Scaffold(
       appBar: AppHeader(
-        title: 'Add Players',
+        title: AppLocalizations.of(context)!.addPlayers,
         centerTitle: true,
         leading: CustomAppBarButton(
           icon: Icons.arrow_back_ios_new_rounded,
@@ -193,7 +194,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           child: CustomTextField(
                             controller: _playerNameController,
                             focusNode: _textFieldFocusNode,
-                            hintText: 'Add Player...',
+                            hintText: AppLocalizations.of(context)!.enterPlayerName,
                             onSubmitted: (_) => _addPlayer(),
                             enabled: true, // Always enabled
                           ),
@@ -217,7 +218,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                             if (_players.length >= 20) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Maximum 20 players allowed!', style: GoogleFonts.baloo2(color: Colors.white)),
+                                  content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: GoogleFonts.baloo2(color: Colors.white)),
                                   backgroundColor: Colors.redAccent,
                                 ),
                               );
@@ -351,7 +352,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                             child: Align(
                               alignment: Alignment.center,
                               child: AutoSizeText(
-                                "Let's Begin!",
+                                AppLocalizations.of(context)!.start,
                                 textAlign: TextAlign.center,
                                 minFontSize: 10,
                                 maxLines: 2,
@@ -379,7 +380,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                 padding: EdgeInsets.only(bottom: bottomPadding), // Responsive
                 child: Center(
                   child: Text(
-                    'Add at least 2 players',
+                    AppLocalizations.of(context)!.minPlayersWarning,
                     style: GoogleFonts.baloo2(fontSize: infoTextFontSize, color: Colors.white70), // Responsive
                   ),
                 ),

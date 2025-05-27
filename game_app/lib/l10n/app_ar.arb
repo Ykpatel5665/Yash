@@ -24,5 +24,19 @@
   "confirmAge": "تأكيد العمر",
   "adultModeWarning": "وضع البالغين غير مناسب لمن هم دون 18 عامًا.",
   "areYouSure": "هل أنت متأكد أنك تريد المتابعة؟",
-  "continueStr": "استمر"
+  "continueStr": "استمر",
+  "selectCategory": "اختر الفئة",
+  "dareCategory": "تحدي",
+  "truthCategory": "صراحة",
+  "allCategory": "الكل",
+  "next": "التالي",
+  "addPlayers": "إضافة لاعبين",
+  "enterPlayerName": "أدخل اسم اللاعب",
+  "player": "لاعب",
+  "add": "إضافة",
+  "remove": "إزالة",
+  "minPlayersWarning": "مطلوب لاعبين على الأقل.",
+  "maxPlayersWarning": "تم الوصول إلى الحد الأقصى للاعبين.",
+  "start": "ابدأ",
+  "alreadyAdded": "تمت الإضافة بالفعل!"
 }

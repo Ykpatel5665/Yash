@@ -24,5 +24,19 @@
   "confirmAge": "Alter bestätigen",
   "adultModeWarning": "Der Erwachsenenmodus ist für Personen unter 18 Jahren nicht geeignet.",
   "areYouSure": "Sind Sie sicher, dass Sie fortfahren möchten?",
-  "continueStr": "Fortfahren"
+  "continueStr": "Fortfahren",
+  "selectCategory": "Kategorie auswählen",
+  "dareCategory": "Pflicht",
+  "truthCategory": "Wahrheit",
+  "allCategory": "Alle",
+  "next": "Weiter",
+  "addPlayers": "Spieler hinzufügen",
+  "enterPlayerName": "Spielernamen eingeben",
+  "player": "Spieler",
+  "add": "Hinzufügen",
+  "remove": "Entfernen",
+  "minPlayersWarning": "Mindestens 2 Spieler erforderlich.",
+  "maxPlayersWarning": "Maximale Spieleranzahl erreicht.",
+  "start": "Starten",
+  "alreadyAdded": "ist bereits hinzugefügt!"
 }

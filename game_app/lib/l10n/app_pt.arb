@@ -24,5 +24,19 @@
   "confirmAge": "Confirmar idade",
   "adultModeWarning": "O modo adulto não é adequado para menores de 18 anos.",
   "areYouSure": "Tem certeza de que deseja continuar?",
-  "continueStr": "Continuar"
+  "continueStr": "Continuar",
+  "selectCategory": "Selecionar categoria",
+  "dareCategory": "Desafio",
+  "truthCategory": "Verdade",
+  "allCategory": "Todas",
+  "next": "Próximo",
+  "addPlayers": "Adicionar jogadores",
+  "enterPlayerName": "Digite o nome do jogador",
+  "player": "Jogador",
+  "add": "Adicionar",
+  "remove": "Remover",
+  "minPlayersWarning": "Pelo menos 2 jogadores são necessários.",
+  "maxPlayersWarning": "Número máximo de jogadores atingido.",
+  "start": "Iniciar",
+  "alreadyAdded": "já foi adicionado!"
 }

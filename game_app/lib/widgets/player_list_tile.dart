@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/player.dart';
 
 /// A reusable widget for displaying player information in a list.
@@ -40,7 +41,7 @@ class PlayerListTile extends StatelessWidget {
       ),
       trailing: IconButton(
         icon: const Icon(Icons.close, color: Colors.white),
-        tooltip: 'Remove ${player.name}',
+        tooltip: '${AppLocalizations.of(context)!.remove} ${player.name}',
         onPressed: onRemoveTap,
         splashRadius: splashRadius,
       ),

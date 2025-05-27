@@ -24,5 +24,19 @@
   "confirmAge": "Подтвердить возраст",
   "adultModeWarning": "Взрослый режим не подходит для лиц младше 18 лет.",
   "areYouSure": "Вы уверены, что хотите продолжить?",
-  "continueStr": "Продолжить"
+  "continueStr": "Продолжить",
+  "selectCategory": "Выбрать категорию",
+  "dareCategory": "Действие",
+  "truthCategory": "Правда",
+  "allCategory": "Все",
+  "next": "Далее",
+  "addPlayers": "Добавить игроков",
+  "enterPlayerName": "Введите имя игрока",
+  "player": "Игрок",
+  "add": "Добавить",
+  "remove": "Удалить",
+  "minPlayersWarning": "Требуется как минимум 2 игрока.",
+  "maxPlayersWarning": "Достигнуто максимальное количество игроков.",
+  "start": "Начать",
+  "alreadyAdded": "уже добавлен!"
 }

@@ -24,5 +24,19 @@
   "confirmAge": "বয়স নিশ্চিত করুন",
   "adultModeWarning": "প্রাপ্তবয়স্ক মোড ১৮ বছরের কম বয়সীদের জন্য উপযুক্ত নয়।",
   "areYouSure": "আপনি কি সত্যিই চালিয়ে যেতে চান?",
-  "continueStr": "চালিয়ে যান"
+  "continueStr": "চালিয়ে যান",
+  "selectCategory": "বিভাগ নির্বাচন করুন",
+  "dareCategory": "ডেয়ার",
+  "truthCategory": "সত্য",
+  "allCategory": "সব",
+  "next": "পরবর্তী",
+  "addPlayers": "খেলোয়াড় যোগ করুন",
+  "enterPlayerName": "খেলোয়াড়ের নাম লিখুন",
+  "player": "খেলোয়াড়",
+  "add": "যোগ করুন",
+  "remove": "অপসারণ",
+  "minPlayersWarning": "কমপক্ষে ২ জন খেলোয়াড় প্রয়োজন।",
+  "maxPlayersWarning": "সর্বাধিক খেলোয়াড় সংখ্যা পৌঁছেছে।",
+  "start": "শুরু করুন",
+  "alreadyAdded": "ইতিমধ্যে যোগ করা হয়েছে!"
 }

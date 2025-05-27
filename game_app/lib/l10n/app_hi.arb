@@ -24,5 +24,19 @@
   "confirmAge": "आयु की पुष्टि करें",
   "adultModeWarning": "एडल्ट मोड 18 वर्ष से कम के लिए उपयुक्त नहीं है।",
   "areYouSure": "क्या आप वाकई जारी रखना चाहते हैं?",
-  "continueStr": "जारी रखें"
+  "continueStr": "जारी रखें",
+  "selectCategory": "श्रेणी चुनें",
+  "dareCategory": "साहस",
+  "truthCategory": "सच",
+  "allCategory": "सभी",
+  "next": "आगे",
+  "addPlayers": "खिलाड़ी जोड़ें",
+  "enterPlayerName": "खिलाड़ी का नाम दर्ज करें",
+  "player": "खिलाड़ी",
+  "add": "जोड़ें",
+  "remove": "हटाएं",
+  "minPlayersWarning": "कम से कम 2 खिलाड़ी आवश्यक हैं।",
+  "maxPlayersWarning": "अधिकतम खिलाड़ी सीमा पहुँच गई है।",
+  "start": "शुरू करें",
+  "alreadyAdded": "पहले से जोड़ा गया है!"
 }

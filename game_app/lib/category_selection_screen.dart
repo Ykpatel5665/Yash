@@ -288,7 +288,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           tooltip: 'Back',
         ),
         title: Text(
-          'Select Categories',
+          AppLocalizations.of(context)!.selectCategory,
           style: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
             fontSize: (size.width * 0.08).clamp(24, 36), // Responsive
@@ -367,7 +367,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: baseSpacing / 2),
                               child: ToggleButton(
-                                label: cat.name,
+                                label: _localizedCategoryLabel(context, cat.id, cat.name),
                                 selected: selected,
                                 onTap: () {
                                   setState(() {
@@ -698,5 +698,74 @@ class _AnimatedButtonState extends State<_AnimatedButton> with SingleTickerProvi
         child: widget.child,
       ),
     );
+  }
+}
+
+// Add this helper function at the end of the file (or in a suitable place):
+String _localizedCategoryLabel(BuildContext context, String id, String fallback) {
+  final loc = AppLocalizations.of(context)!;
+  switch (id) {
+    case 'KIDS_FUNNY':
+      return 'Divertido';
+    case 'KIDS_FAMILY':
+      return 'Familia';
+    case 'KIDS_SCHOOL':
+      return 'Escuela';
+    case 'KIDS_CARTOONS':
+      return 'Dibujos animados';
+    case 'KIDS_GAMES':
+      return 'Juegos';
+    case 'KIDS_ANIMALS':
+      return 'Animales';
+    case 'KIDS_FOOD':
+      return 'Comida';
+    case 'KIDS_IMAGINATION':
+      return 'Sueños';
+    case 'KIDS_CHALLENGES':
+      return 'Desafíos';
+    case 'KIDS_HOBBIES':
+      return 'Pasatiempos';
+    case 'TEENS_FRIENDS':
+      return 'Amigos';
+    case 'TEENS_SCHOOL':
+      return 'Escuela';
+    case 'TEENS_MUSIC':
+      return 'Música';
+    case 'TEENS_MOVIES':
+      return 'Películas';
+    case 'TEENS_TECH':
+      return 'Tecnología';
+    case 'TEENS_HOBBIES':
+      return 'Pasatiempos';
+    case 'TEENS_DREAMS':
+      return 'Sueños';
+    case 'TEENS_EMBARRASSING':
+      return 'Vergonzoso';
+    case 'TEENS_STYLE':
+      return 'Estilo';
+    case 'TEENS_ADVENTURE':
+      return 'Viajes';
+    case 'ADULTS_RELATIONSHIPS':
+      return 'Amor';
+    case 'ADULTS_PARTY':
+      return 'Fiesta';
+    case 'ADULTS_WORK':
+      return 'Trabajo';
+    case 'ADULTS_TRAVEL':
+      return 'Viajes';
+    case 'ADULTS_DEEP':
+      return 'Profundo';
+    case 'ADULTS_WILD':
+      return 'Atrevido';
+    case 'ADULTS_FLIRTY':
+      return 'Coqueto';
+    case 'ADULTS_CHILDHOOD':
+      return 'Infancia';
+    case 'ADULTS_POPCULTURE':
+      return 'Pop';
+    case 'ADULTS_PERSONAL':
+      return 'Crecimiento';
+    default:
+      return fallback;
   }
 }

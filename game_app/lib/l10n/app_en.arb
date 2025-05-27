@@ -24,5 +24,19 @@
   "confirmAge": "Confirm Age",
   "adultModeWarning": "Adult mode is not suitable for anyone under 18.",
   "areYouSure": "Are you sure you want to continue?",
-  "continueStr": "Continue"
+  "continueStr": "Continue",
+  "selectCategory": "Select Category",
+  "dareCategory": "Dare",
+  "truthCategory": "Truth",
+  "allCategory": "All",
+  "next": "Next",
+  "addPlayers": "Add Players",
+  "enterPlayerName": "Enter player name",
+  "player": "Player",
+  "add": "Add",
+  "remove": "Remove",
+  "minPlayersWarning": "At least 2 players required.",
+  "maxPlayersWarning": "Maximum players reached.",
+  "start": "Start",
+  "alreadyAdded": "is already added!"
 }

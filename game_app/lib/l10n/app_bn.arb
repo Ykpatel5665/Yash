@@ -1,11 +1,21 @@
 {
   "@@locale": "bn",
-  "appTitle": "সত্য অথবা সাহস",
+  "appTitle": "ট্রুথ অর ডেয়ার",
   "continueBtn": "চালিয়ে যান!",
   "gameSetup": "গেম সেটআপ",
   "gameMode": "গেম মোড",
   "ageGroup": "বয়সের গ্রুপ",
   "kids": "শিশু",
   "teen": "কিশোর",
-  "adult": "প্রাপ্তবয়স্ক"
+  "adult": "প্রাপ্তবয়স্ক",
+  "startGame": "গেম শুরু করুন",
+  "addTruths": "সত্য প্রশ্ন যোগ করুন",
+  "addDares": "ডেয়ার যোগ করুন",
+  "changeLanguage": "ভাষা পরিবর্তন করুন",
+  "ratings": "রেটিংস",
+  "share": "শেয়ার করুন",
+  "settings": "সেটিংস",
+  "spinTheBottle": "বোতল ঘোরান",
+  "autoNextTurn": "পরবর্তী পালা স্বয়ংক্রিয়",
+  "randomTurn": "র্যান্ডম পালা"
 }

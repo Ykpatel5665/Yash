@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 /// A primary button with gradient/shadow support, used throughout the app.
 ///
@@ -58,7 +59,7 @@ class PrimaryButton extends StatelessWidget {
           Icon(icon, color: effectiveFg, size: responsiveFontSize + 8),
           SizedBox(width: (MediaQuery.of(context).size.width * 0.025).clamp(6, 18)),
         ],
-        Text(
+        AutoSizeText(
           label,
           style: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
@@ -68,6 +69,9 @@ class PrimaryButton extends StatelessWidget {
               const Shadow(blurRadius: 8, color: Colors.black26, offset: Offset(0, 2)),
             ],
           ),
+          minFontSize: 10,
+          maxLines: 2,
+          wrapWords: true,
         ),
       ],
     );

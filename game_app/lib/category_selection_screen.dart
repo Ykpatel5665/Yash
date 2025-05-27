@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'add_players_screen.dart';
 import 'main.dart';
 import 'dart:ui';
@@ -229,7 +230,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             Icon(icon, color: iconColor, size: effectiveIconSize),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(
+              child: AutoSizeText(
                 label,
                 style: GoogleFonts.baloo2(
                   fontSize: effectiveFontSize,
@@ -237,8 +238,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   color: textColor,
                   letterSpacing: 0.5,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+                minFontSize: 8,
+                maxLines: 2,
+                overflow: TextOverflow.visible,
+                stepGranularity: 0.5,
+                wrapWords: true,
               ),
             ),
             AnimatedSwitcher(
@@ -625,7 +629,7 @@ class _AnimatedCategoryCardState extends State<_AnimatedCategoryCard> with Singl
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Text(
+                child: AutoSizeText(
                   widget.category.name,
                   style: GoogleFonts.baloo2(
                     fontSize: fontSize,
@@ -633,8 +637,11 @@ class _AnimatedCategoryCardState extends State<_AnimatedCategoryCard> with Singl
                     color: selected ? Colors.white : Colors.black,
                     letterSpacing: 0.5,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  minFontSize: 8,
+                  maxLines: 2,
+                  overflow: TextOverflow.visible,
+                  stepGranularity: 0.5,
+                  wrapWords: true,
                 ),
               ),
               AnimatedSwitcher(

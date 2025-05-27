@@ -9,6 +9,7 @@ import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
 import 'widgets/buttons/toggle_button.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -25,27 +26,27 @@ enum AgeGroup {
 
 // Helper to get display text for enums
 extension GameModeExtension on GameMode {
-  String get displayText {
+  String displayText(BuildContext context) {
     switch (this) {
       case GameMode.spin:
-        return 'Spin the bottle';
+        return AppLocalizations.of(context)!.spinTheBottle;
       case GameMode.auto:
-        return 'Auto next turn';
+        return AppLocalizations.of(context)!.autoNextTurn;
       case GameMode.random:
-        return 'Random turn';
+        return AppLocalizations.of(context)!.randomTurn;
     }
   }
 }
 
 extension AgeGroupExtension on AgeGroup {
-  String get displayText {
+  String displayText(BuildContext context) {
     switch (this) {
       case AgeGroup.kids:
-        return 'KIDS';
+        return AppLocalizations.of(context)!.kids;
       case AgeGroup.teen:
-        return 'TEEN';
+        return AppLocalizations.of(context)!.teen;
       case AgeGroup.adult:
-        return 'ADULT';
+        return AppLocalizations.of(context)!.adult;
     }
   }
 
@@ -856,14 +857,33 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
     // ...existing code...
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Truth or Dare'),
+        title: AutoSizeText(
+          AppLocalizations.of(context)!.appTitle,
+          style: GoogleFonts.baloo2(
+            fontWeight: FontWeight.bold,
+            fontSize: (MediaQuery.of(context).size.width * 0.08).clamp(22, 36),
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                blurRadius: 4.0,
+                color: Colors.black.withAlpha((0.5 * 255).round()),
+                offset: const Offset(1.0, 1.0),
+              ),
+            ],
+          ),
+          minFontSize: 8,
+          maxLines: 2,
+          overflow: TextOverflow.visible,
+          stepGranularity: 0.5,
+          wrapWords: true,
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.language),
-            tooltip: 'Change Language',
+            tooltip: AppLocalizations.of(context)!.changeLanguage,
             onPressed: () => _showLanguagePickerDialog(context),
           ),
         ],
@@ -917,7 +937,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                       SizedBox(height: screenHeight * 0.06),
 
                       _buildStyledButton(
-                        'Start Game',
+                        AppLocalizations.of(context)!.startGame,
                         Icons.play_arrow,
                         () async {
                           bool proceed = true;
@@ -960,12 +980,12 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                         },
                       ),
                       SizedBox(height: screenHeight * 0.05),
-                      _buildStyledButton('Add Truths', Icons.add, () {
+                      _buildStyledButton(AppLocalizations.of(context)!.addTruths, Icons.add, () {
                         print("Add Truths pressed");
                         // TODO: Navigate to Add Truths screen
                       }),
                       SizedBox(height: screenHeight * 0.05),
-                      _buildStyledButton('Add Dares', Icons.add, () {
+                      _buildStyledButton(AppLocalizations.of(context)!.addDares, Icons.add, () {
                         print("Add Dares pressed");
                         // TODO: Navigate to Add Dares screen
                       }),
@@ -979,15 +999,14 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             _buildBottomBarButton(Icons.star, () {
-                              print("Ratings pressed");
-                            }),
+                              // TODO: Ratings pressed
+                            }, tooltip: AppLocalizations.of(context)!.ratings),
                             _buildBottomBarButton(Icons.share, () {
-                              print("Share pressed");
-                            }),
+                              // TODO: Share pressed
+                            }, tooltip: AppLocalizations.of(context)!.share),
                             _buildBottomBarButton(Icons.settings, () {
-                              // Open Game Setup dialog from settings
                               _showModernGameSetupDialog(context);
-                            }),
+                            }, tooltip: AppLocalizations.of(context)!.settings),
                           ],
                         ),
                       ),
@@ -1012,7 +1031,9 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
     final double fontSize = (screenSize.width * 0.05).clamp(16, 24); // Responsive font size
     final double iconSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive icon size
 
-    final bool isStartGame = (text == 'Start Game');
+    // Use the localized 'Start Game' for comparison in all languages
+    final String localizedStartGame = AppLocalizations.of(context)!.startGame.trim().toLowerCase();
+    final bool isStartGame = (text.trim().toLowerCase() == localizedStartGame);
     final Color bgColor = isStartGame ? Colors.white : Colors.black;
     final Color fgColor = isStartGame ? Colors.black : Colors.white;
 
@@ -1067,8 +1088,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
   }
 
   // Keep _buildBottomBarButton
-  Widget _buildBottomBarButton(IconData icon, VoidCallback onPressed) {
-    // ... (existing implementation remains unchanged) ...
+  Widget _buildBottomBarButton(IconData icon, VoidCallback onPressed, {String? tooltip}) {
     final Color shadowColor =
         Colors.black.withAlpha((0.3 * 255).round()); // Consistent shadow
 
@@ -1084,23 +1104,26 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
           ),
         ],
       ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+      child: Tooltip(
+        message: tooltip ?? '',
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(15),
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            minimumSize: const Size(60, 60),
           ),
-          padding: const EdgeInsets.all(15),
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          minimumSize: const Size(60, 60),
-        ),
-        onPressed: onPressed,
-        child: Icon(
-          icon,
-          color: Colors.black,
-          size: 30.0,
+          onPressed: onPressed,
+          child: Icon(
+            icon,
+            color: Colors.black,
+            size: 30.0,
+          ),
         ),
       ),
     );

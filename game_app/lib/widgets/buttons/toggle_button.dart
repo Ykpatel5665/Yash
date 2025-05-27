@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 /// A reusable toggle/category button for selections.
 ///
@@ -83,7 +84,7 @@ class ToggleButton extends StatelessWidget {
                 SizedBox(width: horizontalPadding),
               ],
               Expanded(
-                child: Text(
+                child: AutoSizeText(
                   label,
                   style: GoogleFonts.baloo2(
                     color: Colors.white,
@@ -100,8 +101,9 @@ class ToggleButton extends StatelessWidget {
                         : [],
                   ),
                   textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  minFontSize: 10,
+                  maxLines: 2,
+                  wrapWords: true,
                 ),
               ),
             ],

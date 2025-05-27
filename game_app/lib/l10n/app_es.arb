@@ -7,5 +7,15 @@
   "ageGroup": "Grupo de edad",
   "kids": "Niños",
   "teen": "Adolescentes",
-  "adult": "Adultos"
+  "adult": "Adultos",
+  "startGame": "Comenzar juego",
+  "addTruths": "Agregar verdades",
+  "addDares": "Agregar retos",
+  "changeLanguage": "Cambiar idioma",
+  "ratings": "Calificaciones",
+  "share": "Compartir",
+  "settings": "Configuraciones",
+  "spinTheBottle": "Girar la botella",
+  "autoNextTurn": "Siguiente turno automático",
+  "randomTurn": "Turno aleatorio"
 }

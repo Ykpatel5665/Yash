@@ -2,10 +2,20 @@
   "@@locale": "de",
   "appTitle": "Wahrheit oder Pflicht",
   "continueBtn": "Weiter!",
-  "gameSetup": "Spiel-Einrichtung",
+  "gameSetup": "Spiel einrichten",
   "gameMode": "Spielmodus",
   "ageGroup": "Altersgruppe",
   "kids": "Kinder",
-  "teen": "Jugendliche",
-  "adult": "Erwachsene"
+  "teen": "Teenager",
+  "adult": "Erwachsene",
+  "startGame": "Spiel starten",
+  "addTruths": "Wahrheiten hinzufügen",
+  "addDares": "Pflichten hinzufügen",
+  "changeLanguage": "Sprache ändern",
+  "ratings": "Bewertungen",
+  "share": "Teilen",
+  "settings": "Einstellungen",
+  "spinTheBottle": "Flasche drehen",
+  "autoNextTurn": "Nächste Runde automatisch",
+  "randomTurn": "Zufällige Runde"
 }

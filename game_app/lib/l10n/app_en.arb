@@ -7,5 +7,15 @@
   "ageGroup": "Age Group",
   "kids": "Kids",
   "teen": "Teen",
-  "adult": "Adult"
+  "adult": "Adult",
+  "startGame": "Start Game",
+  "addTruths": "Add Truths",
+  "addDares": "Add Dares",
+  "changeLanguage": "Change Language",
+  "ratings": "Ratings",
+  "share": "Share",
+  "settings": "Settings",
+  "spinTheBottle": "Spin the bottle",
+  "autoNextTurn": "Auto next turn",
+  "randomTurn": "Random turn"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 /// A reusable app header for consistent AppBar styling.
 ///
@@ -35,7 +36,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
     final double responsiveFontSize = (MediaQuery.of(context).size.width * 0.08).clamp(22, 36); // Responsive
     return AppBar(
-      title: Text(
+      title: AutoSizeText(
         title,
         style: (appBarTheme.titleTextStyle ?? GoogleFonts.baloo2(
           fontWeight: FontWeight.bold,
@@ -50,6 +51,11 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         )),
+        minFontSize: 8,
+        maxLines: 2,
+        overflow: TextOverflow.visible,
+        stepGranularity: 0.5,
+        wrapWords: true,
       ),
       centerTitle: centerTitle,
       backgroundColor: backgroundColor ?? Colors.transparent,

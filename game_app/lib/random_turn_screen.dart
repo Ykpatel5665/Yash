@@ -9,6 +9,7 @@ import 'widgets/cards/game_card.dart';
 import 'widgets/buttons/neumorphic_icon_button.dart';
 import 'custom_appbar_button.dart';
 import 'player_circle_painter.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 // --- Add the Whoopsie! _TruthDareDialog widget (copied and adapted from AutoNextTurnScreen) ---
 class _TruthDareDialog extends StatelessWidget {
@@ -104,7 +105,7 @@ class _TruthDareDialog extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  AutoSizeText(
                     'Whoopsie!',
                     style: GoogleFonts.baloo2(
                       fontSize: 32,
@@ -117,6 +118,9 @@ class _TruthDareDialog extends StatelessWidget {
                         ),
                       ],
                     ),
+                    minFontSize: 12,
+                    maxLines: 2,
+                    wrapWords: true,
                   ),
                   SizedBox(height: 28),
                   Icon(
@@ -132,7 +136,7 @@ class _TruthDareDialog extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 28),
-                  Text(
+                  AutoSizeText(
                     "It's $playerName's turn",
                     style: GoogleFonts.baloo2(
                       fontSize: 24,
@@ -140,6 +144,9 @@ class _TruthDareDialog extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
+                    minFontSize: 10,
+                    maxLines: 2,
+                    wrapWords: true,
                   ),
                   SizedBox(height: 32),
                   Row(
@@ -153,9 +160,12 @@ class _TruthDareDialog extends StatelessWidget {
                             },
                             style: buttonStyle,
                             child: Center(
-                              child: Text(
+                              child: AutoSizeText(
                                 "Truth!",
                                 style: buttonTextStyle,
+                                minFontSize: 10,
+                                maxLines: 2,
+                                wrapWords: true,
                               ),
                             ),
                           ),
@@ -171,9 +181,12 @@ class _TruthDareDialog extends StatelessWidget {
                             },
                             style: buttonStyle,
                             child: Center(
-                              child: Text(
+                              child: AutoSizeText(
                                 "Dare!",
                                 style: buttonTextStyle,
+                                minFontSize: 10,
+                                maxLines: 2,
+                                wrapWords: true,
                               ),
                             ),
                           ),

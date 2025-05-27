@@ -7,5 +7,15 @@
   "ageGroup": "年齢層",
   "kids": "子供",
   "teen": "ティーン",
-  "adult": "大人"
+  "adult": "大人",
+  "startGame": "ゲーム開始",
+  "addTruths": "真実を追加",
+  "addDares": "挑戦を追加",
+  "changeLanguage": "言語を変更",
+  "ratings": "評価",
+  "share": "共有",
+  "settings": "設定",
+  "spinTheBottle": "ボトルを回す",
+  "autoNextTurn": "自動で次のターン",
+  "randomTurn": "ランダムターン"
 }

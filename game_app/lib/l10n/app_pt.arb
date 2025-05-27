@@ -4,8 +4,18 @@
   "continueBtn": "Continuar!",
   "gameSetup": "Configuração do jogo",
   "gameMode": "Modo de jogo",
-  "ageGroup": "Grupo etário",
+  "ageGroup": "Faixa etária",
   "kids": "Crianças",
   "teen": "Adolescentes",
-  "adult": "Adultos"
+  "adult": "Adultos",
+  "startGame": "Iniciar jogo",
+  "addTruths": "Adicionar verdades",
+  "addDares": "Adicionar desafios",
+  "changeLanguage": "Mudar idioma",
+  "ratings": "Avaliações",
+  "share": "Compartilhar",
+  "settings": "Configurações",
+  "spinTheBottle": "Girar a garrafa",
+  "autoNextTurn": "Próxima rodada automática",
+  "randomTurn": "Rodada aleatória"
 }

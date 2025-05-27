@@ -128,8 +128,7 @@ class PlayerCirclePainter extends CustomPainter {
         text: span,
         textAlign: TextAlign.left,
         textDirection: TextDirection.ltr,
-        maxLines: 1,
-        ellipsis: '…',
+        // Removed maxLines and ellipsis to allow full text rendering
       );
       tp.layout(minWidth: 0, maxWidth: maxTextWidth);
       canvas.save();

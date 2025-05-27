@@ -1,11 +1,21 @@
 {
   "@@locale": "ar",
-  "appTitle": "الصراحة أو التحدي",
+  "appTitle": "لعبة الصراحة أو التحدي",
   "continueBtn": "استمر!",
   "gameSetup": "إعداد اللعبة",
   "gameMode": "وضع اللعبة",
   "ageGroup": "الفئة العمرية",
   "kids": "أطفال",
   "teen": "مراهقون",
-  "adult": "بالغون"
+  "adult": "بالغون",
+  "startGame": "ابدأ اللعبة",
+  "addTruths": "أضف أسئلة الصراحة",
+  "addDares": "أضف تحديات",
+  "changeLanguage": "تغيير اللغة",
+  "ratings": "التقييمات",
+  "share": "مشاركة",
+  "settings": "الإعدادات",
+  "spinTheBottle": "تدوير الزجاجة",
+  "autoNextTurn": "الدور التالي تلقائيًا",
+  "randomTurn": "دور عشوائي"
 }

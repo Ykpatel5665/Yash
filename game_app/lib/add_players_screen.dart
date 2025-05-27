@@ -13,6 +13,7 @@ import 'widgets/player_list_tile.dart'; // Import PlayerListTile
 import 'models/player.dart';
 import 'custom_appbar_button.dart';
 import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
+import 'package:auto_size_text/auto_size_text.dart'; // Import AutoSizeText
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -349,11 +350,12 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           Expanded(
                             child: Align(
                               alignment: Alignment.center,
-                              child: Text(
+                              child: AutoSizeText(
                                 "Let's Begin!",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
                                 textAlign: TextAlign.center,
+                                minFontSize: 10,
+                                maxLines: 2,
+                                wrapWords: true,
                               ),
                             ),
                           ),

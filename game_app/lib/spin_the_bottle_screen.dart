@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart'; // Import for question logic
 import 'truth_dare_question_screen.dart';
 import 'custom_appbar_button.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -507,7 +508,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        AutoSizeText(
                           'Scoreboard',
                           style: GoogleFonts.baloo2(
                             fontSize: 32,
@@ -521,6 +522,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                             ],
                           ),
                           textAlign: TextAlign.center,
+                          minFontSize: 12,
+                          maxLines: 2,
+                          wrapWords: true,
                         ),
                         SizedBox(height: 28),
                         Icon(
@@ -543,13 +547,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  AutoSizeText(
                                     player,
                                     style: GoogleFonts.baloo2(
                                       fontSize: fontSize,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
+                                    minFontSize: 10,
+                                    maxLines: 2,
+                                    wrapWords: true,
                                   ),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -557,13 +564,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                       color: Colors.white.withOpacity(0.13),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: Text(
+                                    child: AutoSizeText(
                                       _playerScores[player]?.toString() ?? '0',
                                       style: GoogleFonts.baloo2(
                                         fontSize: fontSize,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                       ),
+                                      minFontSize: 10,
+                                      maxLines: 1,
+                                      wrapWords: true,
                                     ),
                                   ),
                                 ],

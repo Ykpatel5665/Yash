@@ -7,5 +7,15 @@
   "ageGroup": "आयु वर्ग",
   "kids": "बच्चे",
   "teen": "किशोर",
-  "adult": "वयस्क"
+  "adult": "वयस्क",
+  "startGame": "खेल शुरू करें",
+  "addTruths": "सच जोड़ें",
+  "addDares": "साहस जोड़ें",
+  "changeLanguage": "भाषा बदलें",
+  "ratings": "रेटिंग्स",
+  "share": "साझा करें",
+  "settings": "सेटिंग्स",
+  "spinTheBottle": "बोतल घुमाएं",
+  "autoNextTurn": "अगला टर्न स्वचालित",
+  "randomTurn": "रैंडम टर्न"
 }

@@ -7,5 +7,15 @@
   "ageGroup": "年龄组",
   "kids": "儿童",
   "teen": "青少年",
-  "adult": "成人"
+  "adult": "成人",
+  "startGame": "开始游戏",
+  "addTruths": "添加真心话",
+  "addDares": "添加大冒险",
+  "changeLanguage": "更改语言",
+  "ratings": "评分",
+  "share": "分享",
+  "settings": "设置",
+  "spinTheBottle": "转瓶子",
+  "autoNextTurn": "自动下一个回合",
+  "randomTurn": "随机回合"
 }

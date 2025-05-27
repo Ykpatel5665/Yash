@@ -17,5 +17,8 @@
   "settings": "Settings",
   "spinTheBottle": "Spin the bottle",
   "autoNextTurn": "Auto next turn",
-  "randomTurn": "Random turn"
+  "randomTurn": "Random turn",
+  "cancel": "Cancel",
+  "save": "Save",
+  "useTimer": "Use Timer (60s)"
 }

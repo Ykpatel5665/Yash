@@ -546,7 +546,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                             padding: EdgeInsets.zero,
                             children: [
                               Text(
-                                "Game Setup",
+                                AppLocalizations.of(context)!.gameSetup,
                                 style: GoogleFonts.baloo2(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
@@ -563,7 +563,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "Game Mode",
+                                  AppLocalizations.of(context)!.gameMode,
                                   style: GoogleFonts.baloo2(
                                     color: Colors.white.withOpacity(0.92),
                                     fontWeight: FontWeight.w700,
@@ -576,7 +576,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Expanded(child: buildToggleButton(
-                                    label: "Spin",
+                                    label: AppLocalizations.of(context)!.spinTheBottle,
                                     selected: currentModeSelection == GameMode.spin,
                                     onTap: () => setDialogState(() => currentModeSelection = GameMode.spin),
                                     icon: Icons.casino,
@@ -585,7 +585,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                     fontSize: fontSize + 4,
                                   )),
                                   Expanded(child: buildToggleButton(
-                                    label: "Auto",
+                                    label: AppLocalizations.of(context)!.autoNextTurn,
                                     selected: currentModeSelection == GameMode.auto,
                                     onTap: () => setDialogState(() => currentModeSelection = GameMode.auto),
                                     icon: Icons.autorenew,
@@ -594,7 +594,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                     fontSize: fontSize + 4,
                                   )),
                                   Expanded(child: buildToggleButton(
-                                    label: "Random",
+                                    label: AppLocalizations.of(context)!.randomTurn,
                                     selected: currentModeSelection == GameMode.random,
                                     onTap: () => setDialogState(() => currentModeSelection = GameMode.random),
                                     icon: Icons.shuffle,
@@ -608,7 +608,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "Age Group",
+                                  AppLocalizations.of(context)!.ageGroup,
                                   style: GoogleFonts.baloo2(
                                     color: Colors.white.withOpacity(0.92),
                                     fontWeight: FontWeight.w700,
@@ -673,7 +673,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        'Use Timer (60s)',
+                                        AppLocalizations.of(context)!.useTimer,
                                         style: GoogleFonts.baloo2(
                                           color: Colors.white.withOpacity(0.92),
                                           fontWeight: FontWeight.w700,
@@ -700,7 +700,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                           fontSize: 17,
                                         ),
                                       ),
-                                      child: const Text("Cancel"),
+                                      child: Text(AppLocalizations.of(context)!.cancel),
                                     ),
                                   ),
                                   const SizedBox(width: 18),
@@ -762,7 +762,7 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            "Save",
+                                            AppLocalizations.of(context)!.save,
                                             style: GoogleFonts.baloo2(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 22,

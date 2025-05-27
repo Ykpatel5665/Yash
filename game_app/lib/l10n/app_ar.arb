@@ -17,5 +17,8 @@
   "settings": "الإعدادات",
   "spinTheBottle": "تدوير الزجاجة",
   "autoNextTurn": "الدور التالي تلقائيًا",
-  "randomTurn": "دور عشوائي"
+  "randomTurn": "دور عشوائي",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "useTimer": "استخدم المؤقت (60 ثانية)"
 }

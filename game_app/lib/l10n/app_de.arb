@@ -17,5 +17,8 @@
   "settings": "Einstellungen",
   "spinTheBottle": "Flasche drehen",
   "autoNextTurn": "Nächste Runde automatisch",
-  "randomTurn": "Zufällige Runde"
+  "randomTurn": "Zufällige Runde",
+  "cancel": "Abbrechen",
+  "save": "Speichern",
+  "useTimer": "Timer verwenden (60s)"
 }

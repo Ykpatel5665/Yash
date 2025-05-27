@@ -17,5 +17,8 @@
   "settings": "設定",
   "spinTheBottle": "ボトルを回す",
   "autoNextTurn": "自動で次のターン",
-  "randomTurn": "ランダムターン"
+  "randomTurn": "ランダムターン",
+  "cancel": "キャンセル",
+  "save": "保存",
+  "useTimer": "タイマーを使う (60秒)"
 }

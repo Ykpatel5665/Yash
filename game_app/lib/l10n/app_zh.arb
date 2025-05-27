@@ -17,5 +17,8 @@
   "settings": "设置",
   "spinTheBottle": "转瓶子",
   "autoNextTurn": "自动下一个回合",
-  "randomTurn": "随机回合"
+  "randomTurn": "随机回合",
+  "cancel": "取消",
+  "save": "保存",
+  "useTimer": "使用计时器 (60秒)"
 }

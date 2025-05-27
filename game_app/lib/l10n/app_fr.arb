@@ -17,5 +17,8 @@
   "settings": "Paramètres",
   "spinTheBottle": "Tourner la bouteille",
   "autoNextTurn": "Tour suivant automatique",
-  "randomTurn": "Tour aléatoire"
+  "randomTurn": "Tour aléatoire",
+  "cancel": "Annuler",
+  "save": "Enregistrer",
+  "useTimer": "Utiliser le minuteur (60s)"
 }

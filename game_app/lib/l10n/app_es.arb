@@ -17,5 +17,8 @@
   "settings": "Configuraciones",
   "spinTheBottle": "Girar la botella",
   "autoNextTurn": "Siguiente turno automático",
-  "randomTurn": "Turno aleatorio"
+  "randomTurn": "Turno aleatorio",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "useTimer": "Usar temporizador (60s)"
 }

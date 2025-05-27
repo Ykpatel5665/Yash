@@ -17,5 +17,8 @@
   "settings": "설정",
   "spinTheBottle": "병 돌리기",
   "autoNextTurn": "자동 다음 턴",
-  "randomTurn": "무작위 턴"
+  "randomTurn": "무작위 턴",
+  "cancel": "취소",
+  "save": "저장",
+  "useTimer": "타이머 사용 (60초)"
 }

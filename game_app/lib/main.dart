@@ -841,13 +841,25 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
   }
 
   Widget _buildLanguageTile(BuildContext context, String code, String label, String flag) {
-    return ListTile(
-      leading: Text(flag, style: const TextStyle(fontSize: 24)),
-      title: Text(label),
-      onTap: () {
-        widget.setLocale(Locale(code));
-        Navigator.of(context).pop();
-      },
+    final bool isSelected = Localizations.localeOf(context).languageCode == code;
+    return Container(
+      decoration: isSelected
+          ? BoxDecoration(
+              border: Border.all(color: Colors.deepOrange, width: 2.5),
+              borderRadius: BorderRadius.circular(8),
+            )
+          : null,
+      child: ListTile(
+        leading: Text(flag, style: const TextStyle(fontSize: 24)),
+        title: Text(label),
+        onTap: () {
+          widget.setLocale(Locale(code));
+          Navigator.of(context).pop();
+        },
+        selected: isSelected,
+        selectedTileColor: Colors.deepOrange.withOpacity(0.08),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
     );
   }
 

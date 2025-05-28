@@ -9,26 +9,26 @@ class PlayerCirclePainter extends CustomPainter {
 
   // LOCKED: 20 high-saturation, punchy colors for the wheel (reordered and tweaked for maximum contrast between neighbors)
   static const List<Color> _basePlayerColors = [
-    Color(0xFF2B183A), // deep purple
-    Color(0xFFFFF200), // yellow
-    Color(0xFF5575C7), // blue
-    Color(0xFFFF3B3B), // red
-    Color(0xFF00FFD0), // aqua
-    Color(0xFFFFA14A), // orange
-    Color(0xFF8A2FA6), // purple
-    Color(0xFF67D758), // green
-    Color(0xFFFF2E8A), // magenta
-    Color(0xFFB04CFF), // vibrant purple
-    Color(0xFF4A7CFF), // blue
-    Color(0xFFE955AE), // pink
-    Color(0xFF1DBB8B), // teal
-    Color(0xFFFFED6B), // light yellow
-    Color(0xFFB12B5A), // wine
-    Color(0xFF6ED6E8), // cyan
-    Color(0xFF943C59), // dark pink
-    Color(0xFF7AFFB2), // mint
-    Color(0xFF4A3571), // dark purple
-    Color(0xFFFFFFFF), // white
+Color(0xFFFF3D00), // Blaze Orange
+  Color(0xFF00B0FF), // Electric Sky Blue
+  Color(0xFFFFEA00), // Danger Yellow
+  Color(0xFF00E676), // Toxic Green
+  Color(0xFFD500F9), // Neon Violet
+  Color(0xFFFF1744), // Intense Red
+  Color(0xFF00E5FF), // Aqua Shock
+  Color(0xFFFF6D00), // Punch Orange
+  Color(0xFF69F0AE), // Mint Flash
+  Color(0xFF651FFF), // Vivid Indigo
+  Color(0xFFFF4081), // Arcade Pink
+  Color(0xFF00C853), // Game Green
+  Color(0xFF6200EA), // Power Purple
+  Color(0xFFFFAB00), // Citrus Amber
+  Color(0xFF2979FF), // Bold Blue
+  Color(0xFFF50057), // Flash Pink
+  Color(0xFF76FF03), // Bright Lime
+  Color(0xFFDD2C00), // Fire Red
+  Color(0xFF00B8D4), // Game Cyan
+  Color(0xFF304FFE), // Hardcore Blue
   ];
 
   // Returns a shuffled copy of the color palette
@@ -87,6 +87,21 @@ class PlayerCirclePainter extends CustomPainter {
       canvas.drawCircle(center, radius, sectionPaint);
       canvas.restore();
       if (highlightedIndex != null && i == highlightedIndex) {
+        // Add a subtle white radial glow fill for the highlighted slice
+        final Paint glowFill = Paint()
+          ..shader = RadialGradient(
+            colors: [
+              Colors.white.withOpacity(0.22),
+              Colors.transparent,
+            ],
+            stops: [0.0, 1.0],
+          ).createShader(arcRect)
+          ..style = PaintingStyle.fill;
+        canvas.save();
+        canvas.clipPath(slicePath);
+        canvas.drawCircle(center, radius, glowFill);
+        canvas.restore();
+        // Existing highlight stroke
         final Paint highlightPaint = Paint()
           ..color = Colors.white.withOpacity(0.45)
           ..style = PaintingStyle.stroke

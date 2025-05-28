@@ -10,6 +10,7 @@ import 'widgets/buttons/neumorphic_icon_button.dart';
 import 'custom_appbar_button.dart';
 import 'player_circle_painter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // --- Add the Whoopsie! _TruthDareDialog widget (copied and adapted from AutoNextTurnScreen) ---
 class _TruthDareDialog extends StatelessWidget {
@@ -200,7 +201,7 @@ class _TruthDareDialog extends StatelessWidget {
           ),
         ),
       ),
-    );
+      );
   }
 }
 
@@ -627,7 +628,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Quit Game?',
+                        AppLocalizations.of(context)!.quitGameTitle,
                         style: GoogleFonts.baloo2(
                           fontSize: titleFontSize, // Responsive
                           fontWeight: FontWeight.bold,
@@ -656,7 +657,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       ),
                       SizedBox(height: sectionSpacing), // Responsive
                       Text(
-                        'Are you sure you want to quit the game?',
+                        AppLocalizations.of(context)!.quitGameMessage,
                         style: GoogleFonts.baloo2(
                           fontSize: messageFontSize, // Responsive
                           color: Colors.white.withOpacity(0.92),
@@ -706,7 +707,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "No",
+                                    AppLocalizations.of(context)!.no,
                                     style: GoogleFonts.baloo2(
                                       fontWeight: FontWeight.bold,
                                       fontSize: buttonFontSize, // Responsive
@@ -738,7 +739,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                   fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
                                 ),
                               ),
-                              child: const Text("Yes"),
+                              child: Text(AppLocalizations.of(context)!.yes),
                             ),
                           ),
                         ],

@@ -695,7 +695,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Quit Game?',
+                        AppLocalizations.of(context)!.quitGameTitle,
                         style: GoogleFonts.baloo2(
                           fontSize: titleFontSize, // Responsive
                           fontWeight: FontWeight.bold,
@@ -724,7 +724,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       ),
                       SizedBox(height: sectionSpacing), // Responsive
                       Text(
-                        'Are you sure you want to quit the game?',
+                        AppLocalizations.of(context)!.quitGameMessage,
                         style: GoogleFonts.baloo2(
                           fontSize: messageFontSize, // Responsive
                           color: Colors.white.withOpacity(0.92),
@@ -774,7 +774,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "No",
+                                    AppLocalizations.of(context)!.no,
                                     style: GoogleFonts.baloo2(
                                       fontWeight: FontWeight.bold,
                                       fontSize: buttonFontSize, // Responsive
@@ -806,7 +806,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                   fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
                                 ),
                               ),
-                              child: const Text("Yes"),
+                              child: Text(AppLocalizations.of(context)!.yes),
                             ),
                           ),
                         ],
@@ -884,7 +884,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                 );
               }
             },
-            tooltip: 'Home',
+            tooltip: AppLocalizations.of(context)!.homeTooltip,
           ),
           // ...rest of AppBar properties...
           title: AutoSizeText(

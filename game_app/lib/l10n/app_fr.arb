@@ -69,5 +69,9 @@
   "categoryPersonal": "Personnel",
   "spinTitle": "Tourner la bouteille",
   "scoreboard": "Tableau des scores",
-  "close": "Fermer"
+  "close": "Fermer",
+  "quitGameTitle": "Quitter le jeu ?",
+  "quitGameMessage": "Êtes-vous sûr de vouloir quitter le jeu ?",
+  "yes": "Oui",
+  "no": "Non"
 }

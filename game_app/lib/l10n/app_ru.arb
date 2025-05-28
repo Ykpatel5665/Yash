@@ -69,5 +69,9 @@
   "categoryPopculture": "Поп-культура",
   "categoryPersonal": "Личное",
   "scoreboard": "Таблица результатов",
-  "close": "Закрыть"
+  "close": "Закрыть",
+  "quitGameTitle": "Выйти из игры?",
+  "quitGameMessage": "Вы уверены, что хотите выйти из игры?",
+  "yes": "Да",
+  "no": "Нет"
 }

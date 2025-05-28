@@ -10,6 +10,7 @@ import 'widgets/buttons/neumorphic_icon_button.dart';
 import 'widgets/dialog_action_row.dart';
 import 'custom_appbar_button.dart';
 import 'player_circle_painter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
@@ -360,7 +361,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Quit Game?',
+                        AppLocalizations.of(context)!.quitGameTitle,
                         style: GoogleFonts.baloo2(
                           fontSize: titleFontSize, // Responsive
                           fontWeight: FontWeight.bold,
@@ -389,7 +390,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                       ),
                       SizedBox(height: sectionSpacing), // Responsive
                       Text(
-                        'Are you sure you want to quit the game?',
+                        AppLocalizations.of(context)!.quitGameMessage,
                         style: GoogleFonts.baloo2(
                           fontSize: messageFontSize, // Responsive
                           color: Colors.white.withOpacity(0.92),
@@ -439,7 +440,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "No",
+                                    AppLocalizations.of(context)!.no,
                                     style: GoogleFonts.baloo2(
                                       fontWeight: FontWeight.bold,
                                       fontSize: buttonFontSize, // Responsive
@@ -471,7 +472,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
                                 ),
                               ),
-                              child: const Text("Yes"),
+                              child: Text(AppLocalizations.of(context)!.yes),
                             ),
                           ),
                         ],

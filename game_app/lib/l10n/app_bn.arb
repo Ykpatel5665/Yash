@@ -69,5 +69,9 @@
   "categoryPopculture": "পপ সংস্কৃতি",
   "categoryPersonal": "ব্যক্তিগত",
   "scoreboard": "স্কোরবোর্ড",
-  "close": "বন্ধ করুন"
+  "close": "বন্ধ করুন",
+  "quitGameTitle": "গেম ছেড়ে যাবেন?",
+  "quitGameMessage": "আপনি কি সত্যিই গেম ছেড়ে যেতে চান?",
+  "yes": "হ্যাঁ",
+  "no": "না"
 }

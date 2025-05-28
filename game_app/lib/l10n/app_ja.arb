@@ -69,5 +69,9 @@
   "categoryPopculture": "ポップカルチャー",
   "categoryPersonal": "個人的",
   "scoreboard": "スコアボード",
-  "close": "閉じる"
+  "close": "閉じる",
+  "quitGameTitle": "ゲームを終了しますか？",
+  "quitGameMessage": "本当にゲームを終了しますか？",
+  "yes": "はい",
+  "no": "いいえ"
 }

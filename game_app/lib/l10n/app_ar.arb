@@ -69,5 +69,9 @@
   "categoryPopculture": "ثقافة شعبية",
   "categoryPersonal": "شخصي",
   "scoreboard": "لوحة النتائج",
-  "close": "إغلاق"
+  "close": "إغلاق",
+  "quitGameTitle": "هل تريد الخروج من اللعبة؟",
+  "quitGameMessage": "هل أنت متأكد أنك تريد الخروج من اللعبة؟",
+  "yes": "نعم",
+  "no": "لا"
 }

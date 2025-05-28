@@ -69,5 +69,9 @@
   "categoryPopculture": "Popkultur",
   "categoryPersonal": "Persönlich",
   "scoreboard": "Punktestand",
-  "close": "Schließen"
+  "close": "Schließen",
+  "quitGameTitle": "Spiel beenden?",
+  "quitGameMessage": "Möchten Sie das Spiel wirklich beenden?",
+  "yes": "Ja",
+  "no": "Nein"
 }

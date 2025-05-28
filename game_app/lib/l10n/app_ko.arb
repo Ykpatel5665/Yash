@@ -69,5 +69,9 @@
   "categoryPopculture": "대중문화",
   "categoryPersonal": "개인적인",
   "scoreboard": "점수판",
-  "close": "닫기"
+  "close": "닫기",
+  "quitGameTitle": "게임을 종료하시겠습니까?",
+  "quitGameMessage": "정말로 게임을 종료하시겠습니까?",
+  "yes": "예",
+  "no": "아니요"
 }

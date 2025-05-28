@@ -69,5 +69,10 @@
   "categoryPersonal": "Personal",
   "spinTitle": "Spin the Bottle",
   "scoreboard": "Scoreboard",
-  "close": "Close"
+  "close": "Close",
+  "homeTooltip": "Home",
+  "quitGameTitle": "Quit Game?",
+  "quitGameMessage": "Are you sure you want to quit the game?",
+  "yes": "Yes",
+  "no": "No"
 }

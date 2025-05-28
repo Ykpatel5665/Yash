@@ -69,5 +69,9 @@
   "categoryPopculture": "Cultura pop",
   "categoryPersonal": "Personal",
   "scoreboard": "Marcador",
-  "close": "Cerrar"
+  "close": "Cerrar",
+  "quitGameTitle": "¿Salir del juego?",
+  "quitGameMessage": "¿Estás seguro de que quieres salir del juego?",
+  "yes": "Sí",
+  "no": "No"
 }

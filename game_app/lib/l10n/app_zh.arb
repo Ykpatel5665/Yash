@@ -69,5 +69,9 @@
   "categoryPopculture": "流行文化",
   "categoryPersonal": "个人",
   "scoreboard": "记分牌",
-  "close": "关闭"
+  "close": "关闭",
+  "quitGameTitle": "退出游戏？",
+  "quitGameMessage": "您确定要退出游戏吗？",
+  "yes": "是",
+  "no": "否"
 }

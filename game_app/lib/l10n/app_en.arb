@@ -66,5 +66,8 @@
   "categoryFlirty": "Flirty",
   "categoryChildhood": "Childhood",
   "categoryPopculture": "Pop Culture",
-  "categoryPersonal": "Personal"
+  "categoryPersonal": "Personal",
+  "spinTitle": "Spin the Bottle",
+  "scoreboard": "Scoreboard",
+  "close": "Close"
 }

@@ -66,5 +66,8 @@
   "categoryFlirty": "Séduisant",
   "categoryChildhood": "Enfance",
   "categoryPopculture": "Pop culture",
-  "categoryPersonal": "Personnel"
+  "categoryPersonal": "Personnel",
+  "spinTitle": "Tourner la bouteille",
+  "scoreboard": "Tableau des scores",
+  "close": "Fermer"
 }

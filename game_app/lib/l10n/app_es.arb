@@ -16,6 +16,7 @@
   "share": "Compartir",
   "settings": "Configuraciones",
   "spinTheBottle": "Girar la botella",
+  "spinTitle": "Girar la botella",
   "autoNextTurn": "Siguiente turno automático",
   "randomTurn": "Turno aleatorio",
   "cancel": "Cancelar",
@@ -66,5 +67,7 @@
   "categoryFlirty": "Coqueto",
   "categoryChildhood": "Infancia",
   "categoryPopculture": "Cultura pop",
-  "categoryPersonal": "Personal"
+  "categoryPersonal": "Personal",
+  "scoreboard": "Marcador",
+  "close": "Cerrar"
 }

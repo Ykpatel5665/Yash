@@ -16,6 +16,7 @@
   "share": "Compartilhar",
   "settings": "Configurações",
   "spinTheBottle": "Girar a garrafa",
+  "spinTitle": "Girar a garrafa",
   "autoNextTurn": "Próxima rodada automática",
   "randomTurn": "Rodada aleatória",
   "cancel": "Cancelar",
@@ -66,5 +67,7 @@
   "categoryFlirty": "Paquerador",
   "categoryChildhood": "Infância",
   "categoryPopculture": "Cultura pop",
-  "categoryPersonal": "Pessoal"
+  "categoryPersonal": "Pessoal",
+  "scoreboard": "Placar",
+  "close": "Fechar"
 }

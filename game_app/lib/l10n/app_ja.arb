@@ -16,6 +16,7 @@
   "share": "共有",
   "settings": "設定",
   "spinTheBottle": "ボトルを回す",
+  "spinTitle": "ボトルを回す",
   "autoNextTurn": "自動で次のターン",
   "randomTurn": "ランダムターン",
   "cancel": "キャンセル",
@@ -66,5 +67,7 @@
   "categoryFlirty": "フラーティー",
   "categoryChildhood": "子供時代",
   "categoryPopculture": "ポップカルチャー",
-  "categoryPersonal": "個人的"
+  "categoryPersonal": "個人的",
+  "scoreboard": "スコアボード",
+  "close": "閉じる"
 }

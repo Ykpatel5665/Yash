@@ -16,6 +16,7 @@
   "share": "Поделиться",
   "settings": "Настройки",
   "spinTheBottle": "Крутить бутылку",
+  "spinTitle": "Крутить бутылку",
   "autoNextTurn": "Следующий ход автоматически",
   "randomTurn": "Случайный ход",
   "cancel": "Отмена",
@@ -66,5 +67,7 @@
   "categoryFlirty": "Флиртующий",
   "categoryChildhood": "Детство",
   "categoryPopculture": "Поп-культура",
-  "categoryPersonal": "Личное"
+  "categoryPersonal": "Личное",
+  "scoreboard": "Таблица результатов",
+  "close": "Закрыть"
 }

@@ -16,6 +16,7 @@
   "share": "分享",
   "settings": "设置",
   "spinTheBottle": "转瓶子",
+  "spinTitle": "转瓶子",
   "autoNextTurn": "自动下一个回合",
   "randomTurn": "随机回合",
   "cancel": "取消",
@@ -66,5 +67,7 @@
   "categoryFlirty": "调情",
   "categoryChildhood": "童年",
   "categoryPopculture": "流行文化",
-  "categoryPersonal": "个人"
+  "categoryPersonal": "个人",
+  "scoreboard": "记分牌",
+  "close": "关闭"
 }

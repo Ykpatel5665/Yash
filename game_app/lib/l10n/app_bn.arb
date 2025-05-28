@@ -16,6 +16,7 @@
   "share": "শেয়ার করুন",
   "settings": "সেটিংস",
   "spinTheBottle": "বোতল ঘোরান",
+  "spinTitle": "বোতল ঘোরান",
   "autoNextTurn": "পরবর্তী পালা স্বয়ংক্রিয়",
   "randomTurn": "র্যান্ডম পালা",
   "cancel": "বাতিল করুন",
@@ -66,5 +67,7 @@
   "categoryFlirty": "ফ্লার্টি",
   "categoryChildhood": "শৈশব",
   "categoryPopculture": "পপ সংস্কৃতি",
-  "categoryPersonal": "ব্যক্তিগত"
+  "categoryPersonal": "ব্যক্তিগত",
+  "scoreboard": "স্কোরবোর্ড",
+  "close": "বন্ধ করুন"
 }

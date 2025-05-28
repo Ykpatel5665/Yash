@@ -9,6 +9,7 @@ import 'truth_dare_data.dart'; // Import for question logic
 import 'truth_dare_question_screen.dart';
 import 'custom_appbar_button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -509,7 +510,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         AutoSizeText(
-                          'Scoreboard',
+                          AppLocalizations.of(context)!.scoreboard,
                           style: GoogleFonts.baloo2(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -598,7 +599,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                             ),
                             child: Center(
                               child: Text(
-                                'Close',
+                                AppLocalizations.of(context)!.close,
                                 style: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.bold,
                                   fontSize: buttonFontSize,
@@ -886,7 +887,13 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             tooltip: 'Home',
           ),
           // ...rest of AppBar properties...
-          title: Text('Spin the Bottle', style: appBarTheme.titleTextStyle),
+          title: AutoSizeText(
+            AppLocalizations.of(context)!.spinTitle,
+            style: appBarTheme.titleTextStyle,
+            maxLines: 1,
+            minFontSize: 14,
+            overflow: TextOverflow.ellipsis,
+          ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,

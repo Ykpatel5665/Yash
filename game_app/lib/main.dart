@@ -77,6 +77,7 @@ extension AgeGroupExtension on AgeGroup {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
   runApp(const MyApp());
 }
 

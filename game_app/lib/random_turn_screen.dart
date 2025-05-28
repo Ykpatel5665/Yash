@@ -437,8 +437,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Scoreboard',
+                  AutoSizeText(
+                    AppLocalizations.of(context)!.scoreboard,
                     style: GoogleFonts.baloo2(
                       fontSize: (screenSize.width * 0.08).clamp(24, 36), // Responsive
                       fontWeight: FontWeight.bold,
@@ -451,6 +451,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       ],
                     ),
                     textAlign: TextAlign.center,
+                    minFontSize: 12,
+                    maxLines: 2,
+                    wrapWords: true,
                   ),
                   SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)), // Responsive
                   Icon(
@@ -473,13 +476,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            AutoSizeText(
                               player,
                               style: GoogleFonts.baloo2(
                                 fontSize: fontSize,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
+                              minFontSize: 10,
+                              maxLines: 2,
+                              wrapWords: true,
                             ),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -490,13 +496,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                 color: Colors.white.withOpacity(0.13),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Text(
+                              child: AutoSizeText(
                                 _playerScores[player]?.toString() ?? '0',
                                 style: GoogleFonts.baloo2(
                                   fontSize: fontSize,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                minFontSize: 10,
+                                maxLines: 1,
+                                wrapWords: true,
                               ),
                             ),
                           ],
@@ -538,7 +547,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          'Close',
+                          AppLocalizations.of(context)!.close,
                           style: GoogleFonts.baloo2(
                             fontWeight: FontWeight.bold,
                             fontSize: buttonFontSize,

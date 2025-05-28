@@ -85,5 +85,9 @@
   "done": "Done",
   "playerTask": "{playerName}, your task:",
   "congratsTitle": "Congrats!",
-  "challengeCompleted": "You completed the challenge!"
+  "challengeCompleted": "You completed the challenge!",
+  "oopsTitle": "Oops! You lost this round.",
+  "lostRound": "You forfeited this round.",
+  "timesUpTitle": "Time’s up!",
+  "ranOutOfTime": "You ran out of time."
 }

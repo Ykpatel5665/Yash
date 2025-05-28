@@ -85,5 +85,9 @@
   "homeTooltip": "Home",
   "playerTask": "{playerName}님의 미션:",
   "congratsTitle": "축하합니다!",
-  "challengeCompleted": "도전을 완료했습니다!"
+  "challengeCompleted": "도전을 완료했습니다!",
+  "oopsTitle": "이런! 이번 라운드에서 졌어요.",
+  "lostRound": "이번 라운드를 포기했습니다.",
+  "timesUpTitle": "시간 종료!",
+  "ranOutOfTime": "시간이 다 됐어요."
 }

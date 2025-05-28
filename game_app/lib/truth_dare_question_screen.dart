@@ -233,8 +233,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
     _timer?.cancel();
     _progressController.stop();
     await _showResultDialog(
-      title: isTimeout ? 'Time’s up!' : 'Oops! You lost this round.',
-      message: isTimeout ? 'You ran out of time.' : 'You forfeited this round.',
+      title: isTimeout ? AppLocalizations.of(context)!.timesUpTitle : AppLocalizations.of(context)!.oopsTitle,
+      message: isTimeout ? AppLocalizations.of(context)!.ranOutOfTime : AppLocalizations.of(context)!.lostRound,
       icon: isTimeout ? Icons.timer_off_rounded : Icons.sentiment_dissatisfied,
       iconColor: Colors.white,
     );

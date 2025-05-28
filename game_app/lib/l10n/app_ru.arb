@@ -85,5 +85,9 @@
   "homeTooltip": "Home",
   "playerTask": "{playerName}, ваше задание:",
   "congratsTitle": "Поздравляем!",
-  "challengeCompleted": "Вы выполнили задание!"
+  "challengeCompleted": "Вы выполнили задание!",
+  "oopsTitle": "Упс! Вы проиграли этот раунд.",
+  "lostRound": "Вы сдались в этом раунде.",
+  "timesUpTitle": "Время вышло!",
+  "ranOutOfTime": "У вас закончилось время."
 }

@@ -85,5 +85,9 @@
   "done": "पूर्ण",
   "playerTask": "{playerName}, आपका कार्य:",
   "congratsTitle": "बधाई हो!",
-  "challengeCompleted": "आपने चुनौती पूरी कर ली है!"
+  "challengeCompleted": "आपने चुनौती पूरी कर ली है!",
+  "oopsTitle": "अरे! आप यह राउंड हार गए।",
+  "lostRound": "आपने यह राउंड छोड़ दिया।",
+  "timesUpTitle": "समय समाप्त!",
+  "ranOutOfTime": "आपका समय समाप्त हो गया।"
 }

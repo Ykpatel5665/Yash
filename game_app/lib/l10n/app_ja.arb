@@ -85,5 +85,9 @@
   "homeTooltip": "Home",
   "playerTask": "{playerName}さん、あなたの課題：",
   "congratsTitle": "おめでとう！",
-  "challengeCompleted": "チャレンジを達成しました！"
+  "challengeCompleted": "チャレンジを達成しました！",
+  "oopsTitle": "残念！このラウンドは失敗しました。",
+  "lostRound": "このラウンドを棄権しました。",
+  "timesUpTitle": "時間切れ！",
+  "ranOutOfTime": "時間がなくなりました。"
 }

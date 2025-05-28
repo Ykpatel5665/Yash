@@ -85,5 +85,9 @@
   "homeTooltip": "Home",
   "playerTask": "{playerName}, তোমার কাজ:",
   "congratsTitle": "অভিনন্দন!",
-  "challengeCompleted": "তুমি চ্যালেঞ্জটি সম্পন্ন করেছ!"
+  "challengeCompleted": "তুমি চ্যালেঞ্জটি সম্পন্ন করেছ!",
+  "oopsTitle": "উফ! তুমি এই রাউন্ডে হেরে গেছো।",
+  "lostRound": "তুমি এই রাউন্ডটি পরিত্যাগ করেছো।",
+  "timesUpTitle": "সময় শেষ!",
+  "ranOutOfTime": "তোমার সময় শেষ হয়ে গেছে।"
 }

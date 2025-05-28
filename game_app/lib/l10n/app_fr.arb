@@ -85,5 +85,9 @@
   "homeTooltip": "Home",
   "playerTask": "{playerName}, votre tâche :",
   "congratsTitle": "Félicitations !",
-  "challengeCompleted": "Vous avez relevé le défi !"
+  "challengeCompleted": "Vous avez relevé le défi !",
+  "oopsTitle": "Oups ! Vous avez perdu cette manche.",
+  "lostRound": "Vous avez abandonné cette manche.",
+  "timesUpTitle": "Temps écoulé !",
+  "ranOutOfTime": "Vous avez manqué de temps."
 }

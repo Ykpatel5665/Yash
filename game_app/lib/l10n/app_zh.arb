@@ -84,5 +84,9 @@
   "done": "完成",
   "playerTask": "{playerName}，你的任务：",
   "congratsTitle": "恭喜！",
-  "challengeCompleted": "你完成了挑战！"
+  "challengeCompleted": "你完成了挑战！",
+  "oopsTitle": "哎呀！你输了这一轮。",
+  "lostRound": "你放弃了这一轮。",
+  "timesUpTitle": "时间到！",
+  "ranOutOfTime": "你的时间用完了。"
 }

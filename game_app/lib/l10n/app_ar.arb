@@ -85,5 +85,9 @@
   "homeTooltip": "Home",
   "playerTask": "{playerName}، مهمتك:",
   "congratsTitle": "تهانينا!",
-  "challengeCompleted": "لقد أكملت التحدي!"
+  "challengeCompleted": "لقد أكملت التحدي!",
+  "oopsTitle": "عفوًا! لقد خسرت هذه الجولة.",
+  "lostRound": "لقد انسحبت من هذه الجولة.",
+  "timesUpTitle": "انتهى الوقت!",
+  "ranOutOfTime": "لقد نفد وقتك."
 }

@@ -150,6 +150,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
         final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
+        final localizations = AppLocalizations.of(context)!;
         return Dialog(
           backgroundColor: Colors.transparent,
           child: GameCard(
@@ -160,7 +161,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AutoSizeText(
-                    'Scoreboard',
+                    localizations.scoreboard,
                     style: GoogleFonts.baloo2(
                       fontSize: (screenSize.width * 0.08).clamp(24, 36), // Responsive
                       fontWeight: FontWeight.bold,
@@ -269,7 +270,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          'Close',
+                          localizations.close,
                           style: GoogleFonts.baloo2(
                             fontWeight: FontWeight.bold,
                             fontSize: buttonFontSize,

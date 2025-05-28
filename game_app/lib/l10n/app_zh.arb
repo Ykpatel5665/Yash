@@ -73,5 +73,9 @@
   "quitGameTitle": "退出游戏？",
   "quitGameMessage": "您确定要退出游戏吗？",
   "yes": "是",
-  "no": "否"
+  "no": "否",
+  "whoopsieTitle": "哎呀！",
+  "itsTurn": "轮到{playerName}了",
+  "truthBtn": "真心话！",
+  "dareBtn": "大冒险！"
 }

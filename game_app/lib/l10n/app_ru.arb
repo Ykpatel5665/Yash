@@ -73,5 +73,9 @@
   "quitGameTitle": "Выйти из игры?",
   "quitGameMessage": "Вы уверены, что хотите выйти из игры?",
   "yes": "Да",
-  "no": "Нет"
+  "no": "Нет",
+  "whoopsieTitle": "Упс!",
+  "itsTurn": "Ход игрока {playerName}",
+  "truthBtn": "Правда!",
+  "dareBtn": "Действие!"
 }

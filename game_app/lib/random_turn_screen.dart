@@ -23,6 +23,7 @@ class _TruthDareDialog extends StatelessWidget {
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
     final double cardPadding = 24.0;
+    final localizations = AppLocalizations.of(context)!;
     BoxDecoration truthButtonDecoration = BoxDecoration(
       gradient: const LinearGradient(
         colors: [Color(0xFF4DD0E1), Color(0xFF1976D2)],
@@ -107,7 +108,7 @@ class _TruthDareDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AutoSizeText(
-                    'Whoopsie!',
+                    localizations.whoopsieTitle,
                     style: GoogleFonts.baloo2(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -138,7 +139,7 @@ class _TruthDareDialog extends StatelessWidget {
                   ),
                   SizedBox(height: 28),
                   AutoSizeText(
-                    "It's $playerName's turn",
+                    localizations.itsTurn(playerName),
                     style: GoogleFonts.baloo2(
                       fontSize: 24,
                       color: Colors.white,
@@ -162,7 +163,7 @@ class _TruthDareDialog extends StatelessWidget {
                             style: buttonStyle,
                             child: Center(
                               child: AutoSizeText(
-                                "Truth!",
+                                localizations.truthBtn,
                                 style: buttonTextStyle,
                                 minFontSize: 10,
                                 maxLines: 2,
@@ -183,7 +184,7 @@ class _TruthDareDialog extends StatelessWidget {
                             style: buttonStyle,
                             child: Center(
                               child: AutoSizeText(
-                                "Dare!",
+                                localizations.dareBtn,
                                 style: buttonTextStyle,
                                 minFontSize: 10,
                                 maxLines: 2,

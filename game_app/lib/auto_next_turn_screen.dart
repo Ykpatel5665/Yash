@@ -764,6 +764,7 @@ class _TruthDareDialog extends StatelessWidget {
     final double cardPadding = 24.0;
     final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
     final double fontSize = (screenSize.width * 0.035).clamp(13, 18);
+    final localizations = AppLocalizations.of(context)!;
     BoxDecoration truthButtonDecoration = BoxDecoration(
       gradient: const LinearGradient(
         colors: [Color(0xFF4DD0E1), Color(0xFF1976D2)],
@@ -848,7 +849,7 @@ class _TruthDareDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Whoopsie!',
+                    localizations.whoopsieTitle,
                     style: GoogleFonts.baloo2(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -876,7 +877,7 @@ class _TruthDareDialog extends StatelessWidget {
                   ),
                   SizedBox(height: 28),
                   Text(
-                    "It's $playerName's turn",
+                    localizations.itsTurn(playerName),
                     style: GoogleFonts.baloo2(
                       fontSize: 24,
                       color: Colors.white,
@@ -897,7 +898,7 @@ class _TruthDareDialog extends StatelessWidget {
                             style: buttonStyle,
                             child: Center(
                               child: Text(
-                                "Truth!",
+                                localizations.truthBtn,
                                 style: buttonTextStyle,
                               ),
                             ),
@@ -915,7 +916,7 @@ class _TruthDareDialog extends StatelessWidget {
                             style: buttonStyle,
                             child: Center(
                               child: Text(
-                                "Dare!",
+                                localizations.dareBtn,
                                 style: buttonTextStyle,
                               ),
                             ),

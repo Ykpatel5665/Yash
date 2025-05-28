@@ -73,5 +73,9 @@
   "quitGameTitle": "Spiel beenden?",
   "quitGameMessage": "Möchten Sie das Spiel wirklich beenden?",
   "yes": "Ja",
-  "no": "Nein"
+  "no": "Nein",
+  "whoopsieTitle": "Hoppla!",
+  "itsTurn": "{playerName} ist dran",
+  "truthBtn": "Wahrheit!",
+  "dareBtn": "Pflicht!"
 }

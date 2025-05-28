@@ -73,5 +73,9 @@
   "quitGameTitle": "게임을 종료하시겠습니까?",
   "quitGameMessage": "정말로 게임을 종료하시겠습니까?",
   "yes": "예",
-  "no": "아니요"
+  "no": "아니요",
+  "whoopsieTitle": "이런!",
+  "itsTurn": "{playerName}의 차례입니다",
+  "truthBtn": "진실!",
+  "dareBtn": "도전!"
 }

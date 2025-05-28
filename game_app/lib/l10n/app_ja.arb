@@ -73,5 +73,9 @@
   "quitGameTitle": "ゲームを終了しますか？",
   "quitGameMessage": "本当にゲームを終了しますか？",
   "yes": "はい",
-  "no": "いいえ"
+  "no": "いいえ",
+  "whoopsieTitle": "おっと!",
+  "itsTurn": "{playerName}の番です",
+  "truthBtn": "真実!",
+  "dareBtn": "挑戦!"
 }

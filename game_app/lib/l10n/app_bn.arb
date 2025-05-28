@@ -73,5 +73,9 @@
   "quitGameTitle": "গেম ছেড়ে যাবেন?",
   "quitGameMessage": "আপনি কি সত্যিই গেম ছেড়ে যেতে চান?",
   "yes": "হ্যাঁ",
-  "no": "না"
+  "no": "না",
+  "whoopsieTitle": "উফ!",
+  "itsTurn": "এখন {playerName}-এর পালা",
+  "truthBtn": "সত্য!",
+  "dareBtn": "ডেয়ার!"
 }

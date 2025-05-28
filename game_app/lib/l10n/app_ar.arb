@@ -73,5 +73,9 @@
   "quitGameTitle": "هل تريد الخروج من اللعبة؟",
   "quitGameMessage": "هل أنت متأكد أنك تريد الخروج من اللعبة؟",
   "yes": "نعم",
-  "no": "لا"
+  "no": "لا",
+  "whoopsieTitle": "عفوًا!",
+  "itsTurn": "إنه دور {playerName}",
+  "truthBtn": "صراحة!",
+  "dareBtn": "تحدي!"
 }

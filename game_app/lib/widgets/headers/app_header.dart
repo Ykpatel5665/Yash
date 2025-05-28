@@ -51,11 +51,11 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         )),
-        minFontSize: 10,
-        maxLines: 1, // Force single line
-        overflow: TextOverflow.ellipsis, // Ellipsis if too long
-        wrapWords: false,
-        textAlign: TextAlign.center,
+        minFontSize: 8,
+        maxLines: 2,
+        overflow: TextOverflow.visible,
+        stepGranularity: 0.5,
+        wrapWords: true,
       ),
       centerTitle: centerTitle,
       backgroundColor: backgroundColor ?? Colors.transparent,

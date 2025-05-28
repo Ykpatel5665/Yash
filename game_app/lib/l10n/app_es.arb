@@ -73,5 +73,9 @@
   "quitGameTitle": "¿Salir del juego?",
   "quitGameMessage": "¿Estás seguro de que quieres salir del juego?",
   "yes": "Sí",
-  "no": "No"
+  "no": "No",
+  "whoopsieTitle": "¡Ups!",
+  "itsTurn": "Es el turno de {playerName}",
+  "truthBtn": "¡Verdad!",
+  "dareBtn": "¡Reto!"
 }

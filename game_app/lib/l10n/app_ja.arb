@@ -77,5 +77,7 @@
   "whoopsieTitle": "おっと!",
   "itsTurn": "{playerName}の番です",
   "truthBtn": "真実!",
-  "dareBtn": "挑戦!"
+  "dareBtn": "挑戦!",
+  "restart": "リスタート",
+  "allPlayersHadTurn": "全員の順番が終わりました！"
 }

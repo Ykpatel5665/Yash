@@ -78,5 +78,7 @@
   "whoopsieTitle": "अरे!",
   "itsTurn": "अब {playerName} की बारी है",
   "truthBtn": "सच!",
-  "dareBtn": "साहस!"
+  "dareBtn": "साहस!",
+  "restart": "फिर से शुरू करें",
+  "allPlayersHadTurn": "सभी खिलाड़ियों की बारी हो गई!"
 }

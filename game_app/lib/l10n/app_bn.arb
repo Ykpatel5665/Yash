@@ -77,5 +77,7 @@
   "whoopsieTitle": "উফ!",
   "itsTurn": "এখন {playerName}-এর পালা",
   "truthBtn": "সত্য!",
-  "dareBtn": "ডেয়ার!"
+  "dareBtn": "ডেয়ার!",
+  "restart": "পুনরায় শুরু করুন",
+  "allPlayersHadTurn": "সব খেলোয়াড় তাদের পালা শেষ করেছে!"
 }

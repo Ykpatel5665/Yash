@@ -78,5 +78,7 @@
   "whoopsieTitle": "Whoopsie!",
   "itsTurn": "It's {playerName}'s turn",
   "truthBtn": "Truth!",
-  "dareBtn": "Dare!"
+  "dareBtn": "Dare!",
+  "restart": "Restart",
+  "allPlayersHadTurn": "All players had their turn!"
 }

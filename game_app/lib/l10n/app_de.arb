@@ -77,5 +77,7 @@
   "whoopsieTitle": "Hoppla!",
   "itsTurn": "{playerName} ist dran",
   "truthBtn": "Wahrheit!",
-  "dareBtn": "Pflicht!"
+  "dareBtn": "Pflicht!",
+  "restart": "Neustart",
+  "allPlayersHadTurn": "Alle Spieler hatten ihren Zug!"
 }

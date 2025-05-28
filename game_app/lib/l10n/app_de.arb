@@ -81,5 +81,6 @@
   "restart": "Neustart",
   "allPlayersHadTurn": "Alle Spieler hatten ihren Zug!",
   "forfeit": "Aufgeben",
-  "done": "Fertig"
+  "done": "Fertig",
+  "homeTooltip": "Home"
 }

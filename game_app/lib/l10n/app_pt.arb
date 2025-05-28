@@ -81,5 +81,6 @@
   "restart": "Reiniciar",
   "allPlayersHadTurn": "Todos os jogadores tiveram sua vez!",
   "forfeit": "Desistir",
-  "done": "Concluído"
+  "done": "Concluído",
+  "homeTooltip": "Home"
 }

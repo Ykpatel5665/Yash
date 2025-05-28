@@ -81,5 +81,6 @@
   "restart": "Reiniciar",
   "allPlayersHadTurn": "¡Todos los jugadores han tenido su turno!",
   "forfeit": "Rendirse",
-  "done": "Hecho"
+  "done": "Hecho",
+  "homeTooltip": "Home"
 }

@@ -81,5 +81,6 @@
   "restart": "পুনরায় শুরু করুন",
   "allPlayersHadTurn": "সব খেলোয়াড় তাদের পালা শেষ করেছে!",
   "forfeit": "পরিত্যাগ",
-  "done": "সম্পন্ন"
+  "done": "সম্পন্ন",
+  "homeTooltip": "Home"
 }

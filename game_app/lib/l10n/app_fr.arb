@@ -81,5 +81,6 @@
   "restart": "Redémarrer",
   "allPlayersHadTurn": "Tous les joueurs ont eu leur tour!",
   "forfeit": "Abandonner",
-  "done": "Terminé"
+  "done": "Terminé",
+  "homeTooltip": "Home"
 }

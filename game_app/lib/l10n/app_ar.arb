@@ -81,5 +81,6 @@
   "restart": "إعادة البدء",
   "allPlayersHadTurn": "جميع اللاعبين أنهوا دورهم!",
   "forfeit": "انسحب",
-  "done": "تم"
+  "done": "تم",
+  "homeTooltip": "Home"
 }

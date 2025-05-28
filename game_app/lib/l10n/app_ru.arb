@@ -81,5 +81,6 @@
   "restart": "Сначала",
   "allPlayersHadTurn": "Все игроки сделали свой ход!",
   "forfeit": "Сдаться",
-  "done": "Готово"
+  "done": "Готово",
+  "homeTooltip": "Home"
 }

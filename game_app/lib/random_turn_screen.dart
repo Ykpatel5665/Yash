@@ -868,11 +868,31 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             },
             tooltip: 'Home',
           ),
-          title: Text('Truth or Dare!', style: Theme.of(context).appBarTheme.titleTextStyle),
+          title: AutoSizeText(
+            AppLocalizations.of(context)!.randomTurn,
+            style: GoogleFonts.baloo2(
+              fontWeight: FontWeight.bold,
+              fontSize: (MediaQuery.of(context).size.width * 0.08).clamp(22, 36),
+              color: Colors.white,
+              decoration: TextDecoration.none,
+              shadows: [
+                Shadow(
+                  blurRadius: 4.0,
+                  color: Colors.black.withAlpha((0.5 * 255).round()),
+                  offset: const Offset(1.0, 1.0),
+                ),
+              ],
+            ),
+            minFontSize: 14,
+            maxLines: 1, // Force single line
+            overflow: TextOverflow.visible, // Never ellipsis
+            wrapWords: false,
+            textAlign: TextAlign.center,
+          ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          toolbarHeight: Theme.of(context).appBarTheme.toolbarHeight,
+          toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
           titleSpacing: Theme.of(context).appBarTheme.titleSpacing,
         ),
         extendBodyBehindAppBar: true,

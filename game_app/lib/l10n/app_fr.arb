@@ -89,5 +89,6 @@
   "oopsTitle": "Oups ! Vous avez perdu cette manche.",
   "lostRound": "Vous avez abandonné cette manche.",
   "timesUpTitle": "Temps écoulé !",
-  "ranOutOfTime": "Vous avez manqué de temps."
+  "ranOutOfTime": "Vous avez manqué de temps.",
+  "dontShowAgain": "Ne plus demander"
 }

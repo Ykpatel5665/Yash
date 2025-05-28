@@ -89,5 +89,6 @@
   "oopsTitle": "Ups! Du hast diese Runde verloren.",
   "lostRound": "Du hast diese Runde aufgegeben.",
   "timesUpTitle": "Zeit ist um!",
-  "ranOutOfTime": "Deine Zeit ist abgelaufen."
+  "ranOutOfTime": "Deine Zeit ist abgelaufen.",
+  "dontShowAgain": "Nicht mehr fragen"
 }

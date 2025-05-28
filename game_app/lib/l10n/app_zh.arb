@@ -88,5 +88,6 @@
   "oopsTitle": "哎呀！你输了这一轮。",
   "lostRound": "你放弃了这一轮。",
   "timesUpTitle": "时间到！",
-  "ranOutOfTime": "你的时间用完了。"
+  "ranOutOfTime": "你的时间用完了。",
+  "dontShowAgain": "不再询问"
 }

@@ -89,5 +89,6 @@
   "oopsTitle": "이런! 이번 라운드에서 졌어요.",
   "lostRound": "이번 라운드를 포기했습니다.",
   "timesUpTitle": "시간 종료!",
-  "ranOutOfTime": "시간이 다 됐어요."
+  "ranOutOfTime": "시간이 다 됐어요.",
+  "dontShowAgain": "다시 묻지 않기"
 }

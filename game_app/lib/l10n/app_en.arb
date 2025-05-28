@@ -89,5 +89,6 @@
   "oopsTitle": "Oops! You lost this round.",
   "lostRound": "You forfeited this round.",
   "timesUpTitle": "Time’s up!",
-  "ranOutOfTime": "You ran out of time."
+  "ranOutOfTime": "You ran out of time.",
+  "dontShowAgain": "Don't ask again"
 }

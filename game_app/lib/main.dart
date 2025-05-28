@@ -754,7 +754,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
-                                          "Don't show again",
+                                          AppLocalizations.of(context)!.dontShowAgain,
                                           style: GoogleFonts.baloo2(
                                             color: Colors.white.withOpacity(0.92),
                                             fontWeight: FontWeight.w700,

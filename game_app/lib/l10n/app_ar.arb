@@ -89,5 +89,6 @@
   "oopsTitle": "عفوًا! لقد خسرت هذه الجولة.",
   "lostRound": "لقد انسحبت من هذه الجولة.",
   "timesUpTitle": "انتهى الوقت!",
-  "ranOutOfTime": "لقد نفد وقتك."
+  "ranOutOfTime": "لقد نفد وقتك.",
+  "dontShowAgain": "لا تسأل مرة أخرى"
 }

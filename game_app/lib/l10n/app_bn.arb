@@ -83,5 +83,7 @@
   "forfeit": "পরিত্যাগ",
   "done": "সম্পন্ন",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}, তোমার কাজ:"
+  "playerTask": "{playerName}, তোমার কাজ:",
+  "congratsTitle": "অভিনন্দন!",
+  "challengeCompleted": "তুমি চ্যালেঞ্জটি সম্পন্ন করেছ!"
 }

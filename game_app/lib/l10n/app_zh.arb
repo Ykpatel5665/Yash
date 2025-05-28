@@ -82,5 +82,7 @@
   "allPlayersHadTurn": "所有玩家都已轮流！",
   "forfeit": "放弃",
   "done": "完成",
-  "playerTask": "{playerName}，你的任务："
+  "playerTask": "{playerName}，你的任务：",
+  "congratsTitle": "恭喜！",
+  "challengeCompleted": "你完成了挑战！"
 }

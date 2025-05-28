@@ -83,5 +83,7 @@
   "forfeit": "Rendirse",
   "done": "Hecho",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}, tu tarea:"
+  "playerTask": "{playerName}, tu tarea:",
+  "congratsTitle": "¡Felicidades!",
+  "challengeCompleted": "¡Completaste el desafío!"
 }

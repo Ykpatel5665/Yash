@@ -189,7 +189,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                             ),
                             child: Center(
                               child: Text(
-                                'Continue',
+                                AppLocalizations.of(context)!.continueStr,
                                 style: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.bold,
                                   fontSize: buttonFontSize,
@@ -245,8 +245,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
     _timer?.cancel();
     _progressController.stop();
     await _showResultDialog(
-      title: 'Congrats!',
-      message: 'You completed the challenge!',
+      title: AppLocalizations.of(context)!.congratsTitle,
+      message: AppLocalizations.of(context)!.challengeCompleted,
       icon: Icons.celebration_rounded, // Changed from trophy to celebration
       iconColor: Colors.white,
     );

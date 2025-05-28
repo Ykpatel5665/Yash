@@ -83,5 +83,7 @@
   "forfeit": "انسحب",
   "done": "تم",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}، مهمتك:"
+  "playerTask": "{playerName}، مهمتك:",
+  "congratsTitle": "تهانينا!",
+  "challengeCompleted": "لقد أكملت التحدي!"
 }

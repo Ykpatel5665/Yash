@@ -83,5 +83,7 @@
   "forfeit": "Aufgeben",
   "done": "Fertig",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}, deine Aufgabe:"
+  "playerTask": "{playerName}, deine Aufgabe:",
+  "congratsTitle": "Glückwunsch!",
+  "challengeCompleted": "Du hast die Herausforderung geschafft!"
 }

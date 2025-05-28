@@ -83,5 +83,7 @@
   "forfeit": "포기",
   "done": "완료",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}님의 미션:"
+  "playerTask": "{playerName}님의 미션:",
+  "congratsTitle": "축하합니다!",
+  "challengeCompleted": "도전을 완료했습니다!"
 }

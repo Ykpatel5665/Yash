@@ -83,5 +83,7 @@
   "forfeit": "Сдаться",
   "done": "Готово",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}, ваше задание:"
+  "playerTask": "{playerName}, ваше задание:",
+  "congratsTitle": "Поздравляем!",
+  "challengeCompleted": "Вы выполнили задание!"
 }

@@ -83,5 +83,7 @@
   "forfeit": "ギブアップ",
   "done": "完了",
   "homeTooltip": "Home",
-  "playerTask": "{playerName}さん、あなたの課題："
+  "playerTask": "{playerName}さん、あなたの課題：",
+  "congratsTitle": "おめでとう！",
+  "challengeCompleted": "チャレンジを達成しました！"
 }

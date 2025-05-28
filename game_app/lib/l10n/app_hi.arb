@@ -80,5 +80,7 @@
   "truthBtn": "सच!",
   "dareBtn": "साहस!",
   "restart": "फिर से शुरू करें",
-  "allPlayersHadTurn": "सभी खिलाड़ियों की बारी हो गई!"
+  "allPlayersHadTurn": "सभी खिलाड़ियों की बारी हो गई!",
+  "forfeit": "हार मानना",
+  "done": "पूर्ण"
 }

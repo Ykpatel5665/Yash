@@ -79,5 +79,7 @@
   "truthBtn": "Vérité!",
   "dareBtn": "Défi!",
   "restart": "Redémarrer",
-  "allPlayersHadTurn": "Tous les joueurs ont eu leur tour!"
+  "allPlayersHadTurn": "Tous les joueurs ont eu leur tour!",
+  "forfeit": "Abandonner",
+  "done": "Terminé"
 }

@@ -79,5 +79,7 @@
   "truthBtn": "Правда!",
   "dareBtn": "Действие!",
   "restart": "Сначала",
-  "allPlayersHadTurn": "Все игроки сделали свой ход!"
+  "allPlayersHadTurn": "Все игроки сделали свой ход!",
+  "forfeit": "Сдаться",
+  "done": "Готово"
 }

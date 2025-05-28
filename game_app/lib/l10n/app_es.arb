@@ -79,5 +79,7 @@
   "truthBtn": "¡Verdad!",
   "dareBtn": "¡Reto!",
   "restart": "Reiniciar",
-  "allPlayersHadTurn": "¡Todos los jugadores han tenido su turno!"
+  "allPlayersHadTurn": "¡Todos los jugadores han tenido su turno!",
+  "forfeit": "Rendirse",
+  "done": "Hecho"
 }

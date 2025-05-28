@@ -79,5 +79,7 @@
   "truthBtn": "真実!",
   "dareBtn": "挑戦!",
   "restart": "リスタート",
-  "allPlayersHadTurn": "全員の順番が終わりました！"
+  "allPlayersHadTurn": "全員の順番が終わりました！",
+  "forfeit": "ギブアップ",
+  "done": "完了"
 }

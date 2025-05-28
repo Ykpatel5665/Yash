@@ -79,5 +79,7 @@
   "truthBtn": "Wahrheit!",
   "dareBtn": "Pflicht!",
   "restart": "Neustart",
-  "allPlayersHadTurn": "Alle Spieler hatten ihren Zug!"
+  "allPlayersHadTurn": "Alle Spieler hatten ihren Zug!",
+  "forfeit": "Aufgeben",
+  "done": "Fertig"
 }

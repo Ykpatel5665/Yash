@@ -79,5 +79,7 @@
   "truthBtn": "صراحة!",
   "dareBtn": "تحدي!",
   "restart": "إعادة البدء",
-  "allPlayersHadTurn": "جميع اللاعبين أنهوا دورهم!"
+  "allPlayersHadTurn": "جميع اللاعبين أنهوا دورهم!",
+  "forfeit": "انسحب",
+  "done": "تم"
 }

@@ -79,5 +79,7 @@
   "truthBtn": "진실!",
   "dareBtn": "도전!",
   "restart": "다시 시작",
-  "allPlayersHadTurn": "모든 플레이어가 차례를 마쳤습니다!"
+  "allPlayersHadTurn": "모든 플레이어가 차례를 마쳤습니다!",
+  "forfeit": "포기",
+  "done": "완료"
 }

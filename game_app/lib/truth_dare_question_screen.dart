@@ -544,7 +544,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                           children: [
                             Icon(Icons.flag_rounded, color: Colors.white, size: buttonIconSize),
                             SizedBox(width: buttonSpacing / 2),
-                            Text('Forfeit', style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
+                            Text(AppLocalizations.of(context)!.forfeit, style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
                           ],
                         ),
                       ),
@@ -564,7 +564,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                           children: [
                             Icon(Icons.check_circle_rounded, color: Colors.white, size: buttonIconSize),
                             SizedBox(width: buttonSpacing / 2),
-                            Text('Done', style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
+                            Text(AppLocalizations.of(context)!.done, style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
                           ],
                         ),
                       ),

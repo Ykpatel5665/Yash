@@ -80,5 +80,7 @@
   "truthBtn": "Truth!",
   "dareBtn": "Dare!",
   "restart": "Restart",
-  "allPlayersHadTurn": "All players had their turn!"
+  "allPlayersHadTurn": "All players had their turn!",
+  "forfeit": "Forfeit",
+  "done": "Done"
 }

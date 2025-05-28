@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'truth_dare_data.dart';
 
 class TruthDareQuestionScreen extends StatefulWidget {
@@ -445,7 +446,9 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                     ),
                     Expanded(
                       child: Text(
-                        widget.isTruth ? "It's a Truth!" : "It's a Dare!",
+                        widget.isTruth
+                            ? AppLocalizations.of(context)!.truthBtn
+                            : AppLocalizations.of(context)!.dareBtn,
                         style: GoogleFonts.baloo2(
                           fontSize: headerFontSize,
                           fontWeight: FontWeight.bold,

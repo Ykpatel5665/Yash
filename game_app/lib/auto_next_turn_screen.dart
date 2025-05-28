@@ -11,6 +11,7 @@ import 'widgets/dialog_action_row.dart';
 import 'custom_appbar_button.dart';
 import 'player_circle_painter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'widgets/headers/app_header.dart';
 
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
@@ -624,12 +625,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         final shouldQuit = await _showQuitConfirmation();
         return shouldQuit;
       },
-      child: Scaffold(
-        appBar: AppBar(
+      child: Scaffold(        appBar: AppHeader(
+          title: AppLocalizations.of(context)!.autoNextTurn,
           centerTitle: true,
-          title: Text('Truth or Dare', style: appBarTheme.titleTextStyle),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
           leading: CustomAppBarButton(
             icon: Icons.home_rounded,
             onPressed: () async {
@@ -640,6 +638,12 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
             },
             tooltip: 'Home',
           ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
+          actions: null,
+          // Force single line, ellipsis, and responsive font size
+          // This is handled by AppHeader's AutoSizeText, but we ensure maxLines: 1 and overflow: ellipsis
         ),
         extendBodyBehindAppBar: true,
         body: Container(

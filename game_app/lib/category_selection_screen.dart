@@ -291,7 +291,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           AppLocalizations.of(context)!.selectCategory,
           style: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
-            fontSize: (size.width * 0.08).clamp(24, 36), // Responsive
+            fontSize: (size.width * 0.08).clamp(20, 32), // Slightly smaller max for single line
             color: Colors.white,
             shadows: [
               Shadow(
@@ -302,8 +302,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             ],
           ),
           minFontSize: 14,
-          maxLines: 2,
-          wrapWords: true,
+          maxLines: 1, // Force single line
+          overflow: TextOverflow.ellipsis, // Ellipsis if too long
+          wrapWords: false,
           textAlign: TextAlign.center,
         ),
         centerTitle: true,

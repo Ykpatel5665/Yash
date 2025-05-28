@@ -155,7 +155,9 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: appBarTheme.toolbarHeight,
+        toolbarHeight: (screenSize.height * 0.12).clamp(64, 120), // Responsive height
+        // Pass a custom title builder to force single line with ellipsis
+        actions: null,
       ),
       extendBodyBehindAppBar: true,
       body: Stack(

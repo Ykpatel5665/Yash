@@ -486,7 +486,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "${widget.playerName}, your task:",
+                        AppLocalizations.of(context)!.playerTask(widget.playerName),
                         style: GoogleFonts.baloo2(
                           fontSize: fontSize,
                           color: Colors.white,

@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "¡Todos los jugadores han tenido su turno!",
   "forfeit": "Rendirse",
   "done": "Hecho",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}, tu tarea:"
 }

@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "全員の順番が終わりました！",
   "forfeit": "ギブアップ",
   "done": "完了",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}さん、あなたの課題："
 }

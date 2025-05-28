@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "جميع اللاعبين أنهوا دورهم!",
   "forfeit": "انسحب",
   "done": "تم",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}، مهمتك:"
 }

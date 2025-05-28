@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "Все игроки сделали свой ход!",
   "forfeit": "Сдаться",
   "done": "Готово",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}, ваше задание:"
 }

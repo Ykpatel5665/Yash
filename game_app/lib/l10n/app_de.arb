@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "Alle Spieler hatten ihren Zug!",
   "forfeit": "Aufgeben",
   "done": "Fertig",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}, deine Aufgabe:"
 }

@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "모든 플레이어가 차례를 마쳤습니다!",
   "forfeit": "포기",
   "done": "완료",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}님의 미션:"
 }

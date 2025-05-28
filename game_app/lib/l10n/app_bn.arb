@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "সব খেলোয়াড় তাদের পালা শেষ করেছে!",
   "forfeit": "পরিত্যাগ",
   "done": "সম্পন্ন",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}, তোমার কাজ:"
 }

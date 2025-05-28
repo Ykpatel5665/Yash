@@ -82,5 +82,6 @@
   "restart": "Restart",
   "allPlayersHadTurn": "All players had their turn!",
   "forfeit": "Forfeit",
-  "done": "Done"
+  "done": "Done",
+  "playerTask": "{playerName}, your task:"
 }

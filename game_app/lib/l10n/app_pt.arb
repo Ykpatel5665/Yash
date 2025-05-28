@@ -82,5 +82,6 @@
   "allPlayersHadTurn": "Todos os jogadores tiveram sua vez!",
   "forfeit": "Desistir",
   "done": "Concluído",
-  "homeTooltip": "Home"
+  "homeTooltip": "Home",
+  "playerTask": "{playerName}, sua tarefa:"
 }

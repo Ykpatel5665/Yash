@@ -287,7 +287,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           onPressed: () => Navigator.of(context).pop(),
           tooltip: 'Back',
         ),
-        title: Text(
+        title: AutoSizeText(
           AppLocalizations.of(context)!.selectCategory,
           style: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
@@ -301,6 +301,10 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
               ),
             ],
           ),
+          minFontSize: 14,
+          maxLines: 2,
+          wrapWords: true,
+          textAlign: TextAlign.center,
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,

@@ -442,74 +442,86 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
             double? iconSize,
             double? fontSize,
           }) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: selected
-                    ? (selectedColor ?? Colors.white.withOpacity(0.15))
-                    : (unselectedColor ?? Colors.white.withOpacity(0.05)),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: selected ? Colors.white : Colors.white24,
-                  width: selected ? 2.5 : 1.0,
+            return SizedBox(
+              width: 110, // Fixed width for all screens
+              height: 110, // Fixed height for all screens
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? (selectedColor ?? Colors.white.withOpacity(0.15))
+                      : (unselectedColor ?? Colors.white.withOpacity(0.05)),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: selected ? Colors.white : Colors.white24,
+                    width: selected ? 2.5 : 1.0,
+                  ),
+                  boxShadow: selected
+                      ? [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.15),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          )
+                        ]
+                      : [],
                 ),
-                boxShadow: selected
-                    ? [
-                        BoxShadow(
-                          color: Colors.white.withOpacity(0.15),
-                          blurRadius: 6,
-                          spreadRadius: 1,
-                        )
-                      ]
-                    : [],
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final double adjustedIconSize = (constraints.maxWidth * 0.3).clamp(20, 36);
-                  final double adjustedFontSize = (constraints.maxWidth * 0.15).clamp(12, 16);
-
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: onTap,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (icon != null)
-                            Icon(icon, color: Colors.white, size: adjustedIconSize),
-                          if (icon != null) const SizedBox(height: 6),
-                          Text(
-                            label,
-                            style: GoogleFonts.baloo2(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: adjustedFontSize,
-                              height: 1.1,
-                              shadows: selected
-                                  ? [
-                                      Shadow(
-                                        blurRadius: 2,
-                                        color: Colors.white.withOpacity(0.3),
-                                      )
-                                    ]
-                                  : [],
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: onTap,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final double iconSz = constraints.maxWidth * 0.38;
+                      final double txtSz = (constraints.maxWidth * 0.15).clamp(12, 16);
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (icon != null)
+                              Icon(icon, color: Colors.white, size: iconSz),
+                            if (icon != null) const SizedBox(height: 6),
+                            Expanded(
+                              child: Center(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    label,
+                                    style: GoogleFonts.baloo2(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: txtSz,
+                                      height: 1.1,
+                                      shadows: selected
+                                          ? [
+                                              Shadow(
+                                                blurRadius: 2,
+                                                color: Colors.white.withOpacity(0.3),
+                                              )
+                                            ]
+                                          : [],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             );
           }
 
-          final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
-          final double fontSize = (screenSize.width * 0.035).clamp(13, 18);
+          final double iconSize = 32; // Fixed icon size
+          final double fontSize = 14; // Fixed font size
 
           return Center(
             child: Material(
@@ -576,33 +588,39 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Expanded(child: buildToggleButton(
-                                    label: AppLocalizations.of(context)!.spinTheBottle,
-                                    selected: currentModeSelection == GameMode.spin,
-                                    onTap: () => setDialogState(() => currentModeSelection = GameMode.spin),
-                                    icon: Icons.casino,
-                                    selectedColor: const Color(0xFF5B86E5).withOpacity(0.25),
-                                    iconSize: iconSize + 2,
-                                    fontSize: fontSize + 4,
-                                  )),
-                                  Expanded(child: buildToggleButton(
-                                    label: AppLocalizations.of(context)!.autoNextTurn,
-                                    selected: currentModeSelection == GameMode.auto,
-                                    onTap: () => setDialogState(() => currentModeSelection = GameMode.auto),
-                                    icon: Icons.autorenew,
-                                    selectedColor: const Color(0xFF8F6ED5).withOpacity(0.25),
-                                    iconSize: iconSize + 2,
-                                    fontSize: fontSize + 4,
-                                  )),
-                                  Expanded(child: buildToggleButton(
-                                    label: AppLocalizations.of(context)!.randomTurn,
-                                    selected: currentModeSelection == GameMode.random,
-                                    onTap: () => setDialogState(() => currentModeSelection = GameMode.random),
-                                    icon: Icons.shuffle,
-                                    selectedColor: const Color(0xFFB388FF).withOpacity(0.25),
-                                    iconSize: iconSize + 2,
-                                    fontSize: fontSize + 4,
-                                  )),
+                                  Flexible(
+                                    child: buildToggleButton(
+                                      label: AppLocalizations.of(context)!.spinTheBottle,
+                                      selected: currentModeSelection == GameMode.spin,
+                                      onTap: () => setDialogState(() => currentModeSelection = GameMode.spin),
+                                      icon: Icons.casino,
+                                      selectedColor: const Color(0xFF5B86E5).withOpacity(0.25),
+                                      iconSize: iconSize,
+                                      fontSize: fontSize,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: buildToggleButton(
+                                      label: AppLocalizations.of(context)!.autoNextTurn,
+                                      selected: currentModeSelection == GameMode.auto,
+                                      onTap: () => setDialogState(() => currentModeSelection = GameMode.auto),
+                                      icon: Icons.autorenew,
+                                      selectedColor: const Color(0xFF8F6ED5).withOpacity(0.25),
+                                      iconSize: iconSize,
+                                      fontSize: fontSize,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: buildToggleButton(
+                                      label: AppLocalizations.of(context)!.randomTurn,
+                                      selected: currentModeSelection == GameMode.random,
+                                      onTap: () => setDialogState(() => currentModeSelection = GameMode.random),
+                                      icon: Icons.shuffle,
+                                      selectedColor: const Color(0xFFB388FF).withOpacity(0.25),
+                                      iconSize: iconSize,
+                                      fontSize: fontSize,
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 28),
@@ -621,33 +639,39 @@ Future<void> _showModernGameSetupDialog(BuildContext context) async {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Expanded(child: buildToggleButton(
-                                    label: AppLocalizations.of(context)!.kids,
-                                    selected: currentAgeSelection == AgeGroup.kids,
-                                    onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
-                                    icon: Icons.child_care,
-                                    selectedColor: const Color(0xFF4DD0E1).withOpacity(0.25),
-                                    iconSize: iconSize + 2,
-                                    fontSize: fontSize + 4,
-                                  )),
-                                  Expanded(child: buildToggleButton(
-                                    label: AppLocalizations.of(context)!.teen,
-                                    selected: currentAgeSelection == AgeGroup.teen,
-                                    onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
-                                    icon: Icons.school,
-                                    selectedColor: const Color(0xFF9575CD).withOpacity(0.25),
-                                    iconSize: iconSize + 2,
-                                    fontSize: fontSize + 4,
-                                  )),
-                                  Expanded(child: buildToggleButton(
-                                    label: AppLocalizations.of(context)!.adult,
-                                    selected: currentAgeSelection == AgeGroup.adult,
-                                    onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
-                                    icon: Icons.person,
-                                    selectedColor: const Color(0xFFBA68C8).withOpacity(0.25),
-                                    iconSize: iconSize + 2,
-                                    fontSize: fontSize + 4,
-                                  )),
+                                  Flexible(
+                                    child: buildToggleButton(
+                                      label: AppLocalizations.of(context)!.kids,
+                                      selected: currentAgeSelection == AgeGroup.kids,
+                                      onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
+                                      icon: Icons.child_care,
+                                      selectedColor: const Color(0xFF4DD0E1).withOpacity(0.25),
+                                      iconSize: iconSize,
+                                      fontSize: fontSize,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: buildToggleButton(
+                                      label: AppLocalizations.of(context)!.teen,
+                                      selected: currentAgeSelection == AgeGroup.teen,
+                                      onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
+                                      icon: Icons.school,
+                                      selectedColor: const Color(0xFF9575CD).withOpacity(0.25),
+                                      iconSize: iconSize,
+                                      fontSize: fontSize,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: buildToggleButton(
+                                      label: AppLocalizations.of(context)!.adult,
+                                      selected: currentAgeSelection == AgeGroup.adult,
+                                      onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
+                                      icon: Icons.person,
+                                      selectedColor: const Color(0xFFBA68C8).withOpacity(0.25),
+                                      iconSize: iconSize,
+                                      fontSize: fontSize,
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 28),

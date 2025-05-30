@@ -800,45 +800,62 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     ),
                                     const SizedBox(width: 18),
                                     Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            _selectedGameModeEnum = currentModeSelection;
-                                            _selectedAgeGroupEnum = currentAgeSelection;
-                                            _lastUseTimer = useTimer;
-                                            _saveSelection = true;
-                                          });
-                                          await _savePreferences(currentModeSelection, currentAgeSelection, useTimer: useTimer);
-                                          await _saveDontShowGameSetupDialogPref(dontShowAgain);
-                                          Navigator.of(dialogPageContext).pop(true); // Return true on save
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          backgroundColor: const Color(0xFF6C7BFF), // Blue/Purple for Save
-                                          shadowColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(16),
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
                                           ),
-                                          padding: const EdgeInsets.symmetric(vertical: 16),
-                                          minimumSize: const Size(0, 48),
-                                          textStyle: GoogleFonts.baloo2(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                          borderRadius: BorderRadius.circular(16),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.white.withOpacity(0.18),
+                                              blurRadius: 16,
+                                              spreadRadius: 1,
+                                            ),
+                                          ],
                                         ),
-                                        child: Text(
-                                          AppLocalizations.of(context)!.save,
-                                          style: GoogleFonts.baloo2(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18,
-                                            shadows: [
-                                              Shadow(
-                                                blurRadius: 8,
-                                                color: Colors.black.withOpacity(0.18),
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            setState(() {
+                                              _selectedGameModeEnum = currentModeSelection;
+                                              _selectedAgeGroupEnum = currentAgeSelection;
+                                              _lastUseTimer = useTimer;
+                                              _saveSelection = true;
+                                            });
+                                            await _savePreferences(currentModeSelection, currentAgeSelection, useTimer: useTimer);
+                                            await _saveDontShowGameSetupDialogPref(dontShowAgain);
+                                            Navigator.of(dialogPageContext).pop(true); // Return true on save
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: Colors.transparent,
+                                            shadowColor: Colors.transparent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(vertical: 16),
+                                            minimumSize: const Size(0, 48),
+                                            textStyle: GoogleFonts.baloo2(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            AppLocalizations.of(context)!.save,
+                                            style: GoogleFonts.baloo2(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18,
+                                              shadows: [
+                                                Shadow(
+                                                  blurRadius: 8,
+                                                  color: Colors.black.withOpacity(0.18),
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

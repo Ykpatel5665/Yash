@@ -317,15 +317,15 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
     final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
-    final double titleFontSize = (screenSize.width * 0.07).clamp(22, 36);
-    final double messageFontSize = (screenSize.width * 0.045).clamp(14, 24);
-    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Match spin_the_bottle_screen
-    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Match spin_the_bottle_screen
-    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Match spin_the_bottle_screen
+    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
     final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double sectionSpacing = (screenSize.height * 0.02).clamp(10, 20);
-    final double buttonSpacing = (screenSize.width * 0.05).clamp(8, 16);
-    final double buttonRowSpacing = (screenSize.height * 0.02).clamp(10, 20); // Responsive
+    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
+    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
+    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
+    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
+    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
     // ...existing code...
     final result = await showGeneralDialog<bool>(
       context: context,
@@ -343,7 +343,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
                   width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding), // Responsive
+                  padding: EdgeInsets.symmetric(horizontal: cardPadding, vertical: cardPadding), // Responsive
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
                     borderRadius: BorderRadius.circular(32),
@@ -361,6 +361,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         AppLocalizations.of(context)!.quitGameTitle,
@@ -407,10 +408,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF5B86E5),
-                                    Color(0xFF8F6ED5),
-                                  ],
+                                  colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
@@ -434,27 +432,19 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                  minimumSize: const Size(0, 48),
                                   textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: buttonFontSize, // Responsive
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: buttonFontSize,
                                   ),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.no,
-                                    style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: buttonFontSize, // Responsive
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 8,
-                                          color: Colors.black.withOpacity(0.25),
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.no,
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
                                   ),
                                 ),
                               ),
@@ -467,14 +457,22 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                 Navigator.of(dialogContext).pop(true);
                               },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                minimumSize: const Size(0, 48),
                                 textStyle: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
+                                  fontSize: buttonFontSize,
                                 ),
                               ),
-                              child: Text(AppLocalizations.of(context)!.yes),
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                                style: GoogleFonts.baloo2(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
                             ),
                           ),
                         ],

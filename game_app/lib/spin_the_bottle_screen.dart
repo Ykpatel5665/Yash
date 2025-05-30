@@ -693,6 +693,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         AppLocalizations.of(context)!.quitGameTitle,
@@ -739,10 +740,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF5B86E5),
-                                    Color(0xFF8F6ED5),
-                                  ],
+                                  colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
@@ -766,27 +764,19 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                  minimumSize: const Size(0, 48),
                                   textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: buttonFontSize, // Responsive
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
                                   ),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.no,
-                                    style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: buttonFontSize, // Responsive
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 8,
-                                          color: Colors.black.withOpacity(0.25),
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.no,
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
                                   ),
                                 ),
                               ),
@@ -799,14 +789,22 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                 Navigator.of(dialogContext).pop(true);
                               },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                minimumSize: const Size(0, 48),
                                 textStyle: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
+                                  fontSize: buttonFontSize,
                                 ),
                               ),
-                              child: Text(AppLocalizations.of(context)!.yes),
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                                style: GoogleFonts.baloo2(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
                             ),
                           ),
                         ],

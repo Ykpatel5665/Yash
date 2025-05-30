@@ -618,7 +618,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
                   width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding), // Responsive
+                  padding: EdgeInsets.symmetric(horizontal: cardPadding, vertical: cardPadding), // Responsive
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
                     borderRadius: BorderRadius.circular(32),
@@ -636,6 +636,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         AppLocalizations.of(context)!.quitGameTitle,
@@ -682,10 +683,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF5B86E5),
-                                    Color(0xFF8F6ED5),
-                                  ],
+                                  colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
@@ -709,27 +707,19 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding), // Responsive
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                  minimumSize: const Size(0, 48),
                                   textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: buttonFontSize, // Responsive
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: buttonFontSize,
                                   ),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.no,
-                                    style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: buttonFontSize, // Responsive
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 8,
-                                          color: Colors.black.withOpacity(0.25),
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.no,
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
                                   ),
                                 ),
                               ),
@@ -742,14 +732,22 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                 Navigator.of(dialogContext).pop(true);
                               },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                padding: EdgeInsets.symmetric(vertical: textButtonVerticalPadding), // Responsive
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                minimumSize: const Size(0, 48),
                                 textStyle: GoogleFonts.baloo2(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: (screenSize.width * 0.045).clamp(14, 18), // Responsive
+                                  fontSize: buttonFontSize,
                                 ),
                               ),
-                              child: Text(AppLocalizations.of(context)!.yes),
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                                style: GoogleFonts.baloo2(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
                             ),
                           ),
                         ],

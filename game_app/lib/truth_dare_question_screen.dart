@@ -293,10 +293,10 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
     final double width = screenSize.width;
     final double height = screenSize.height;
 
-    final double fontSize = (width * 0.045).clamp(14, 28);
+    final double fontSize = (width * 0.055).clamp(18, 32); // Increased from 0.045
     final double questionFontSize = (width * 0.055).clamp(16, 32);
     final double timerFontSize = (width * 0.07).clamp(20, 36);
-    final double headerFontSize = (width * 0.09).clamp(24, 44);
+    final double headerFontSize = (width * 0.11).clamp(28, 52); // Increased from 0.09
     final double buttonFontSize = (width * 0.058).clamp(18, 36);
     final double iconSize = (width * 0.18).clamp(48, 120);
     final double buttonIconSize = (buttonFontSize * 1.28).clamp(24, 48);

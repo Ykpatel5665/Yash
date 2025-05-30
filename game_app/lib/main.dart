@@ -539,9 +539,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                   ),
                 ),
               ),
-            );
-          }
-
+              );
+            }
             final double iconSize = 32; // Fixed icon size
             final double fontSize = 14; // Fixed font size
 
@@ -769,79 +768,75 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: TextButton(
+                                      child: ElevatedButton(
                                         onPressed: () {
                                           Navigator.of(dialogPageContext).pop(false); // Return false on cancel
                                         },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.white70,
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: const Color(0xFF7B4444), // Muted red/brown for Cancel
+                                          shadowColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
                                           padding: const EdgeInsets.symmetric(vertical: 16),
+                                          minimumSize: const Size(0, 48),
                                           textStyle: GoogleFonts.baloo2(
-                                            fontSize: 17,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        child: Text(AppLocalizations.of(context)!.cancel),
+                                        child: Text(
+                                          AppLocalizations.of(context)!.cancel,
+                                          style: GoogleFonts.baloo2(
+                                            color: Colors.white.withOpacity(0.7),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 18),
                                     Expanded(
-                                      child: DecoratedBox(
-                                        decoration: BoxDecoration(
-                                          gradient: const LinearGradient(
-                                            colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          setState(() {
+                                            _selectedGameModeEnum = currentModeSelection;
+                                            _selectedAgeGroupEnum = currentAgeSelection;
+                                            _lastUseTimer = useTimer;
+                                            _saveSelection = true;
+                                          });
+                                          await _savePreferences(currentModeSelection, currentAgeSelection, useTimer: useTimer);
+                                          await _saveDontShowGameSetupDialogPref(dontShowAgain);
+                                          Navigator.of(dialogPageContext).pop(true); // Return true on save
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: const Color(0xFF6C7BFF), // Blue/Purple for Save
+                                          shadowColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
                                           ),
-                                          borderRadius: BorderRadius.circular(16),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.white.withOpacity(0.18),
-                                              blurRadius: 16,
-                                              spreadRadius: 1,
-                                            ),
-                                          ],
+                                          padding: const EdgeInsets.symmetric(vertical: 16),
+                                          minimumSize: const Size(0, 48),
+                                          textStyle: GoogleFonts.baloo2(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            // Save preferences and close dialog
-                                            setState(() {
-                                              _selectedGameModeEnum = currentModeSelection;
-                                              _selectedAgeGroupEnum = currentAgeSelection;
-                                              _lastUseTimer = useTimer;
-                                              _saveSelection = true;
-                                            });
-                                            await _savePreferences(currentModeSelection, currentAgeSelection, useTimer: useTimer);
-                                            await _saveDontShowGameSetupDialogPref(dontShowAgain);
-                                            Navigator.of(dialogPageContext).pop(true); // Return true on save
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            shadowColor: Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(vertical: 18),
-                                            textStyle: GoogleFonts.baloo2(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              AppLocalizations.of(context)!.save,
-                                              style: GoogleFonts.baloo2(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 22,
-                                                color: Colors.white,
-                                                shadows: [
-                                                  Shadow(
-                                                    blurRadius: 8,
-                                                    color: Colors.black.withOpacity(0.25),
-                                                    offset: const Offset(0, 2),
-                                                  ),
-                                                ],
+                                        child: Text(
+                                          AppLocalizations.of(context)!.save,
+                                          style: GoogleFonts.baloo2(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                            shadows: [
+                                              Shadow(
+                                                blurRadius: 8,
+                                                color: Colors.black.withOpacity(0.18),
+                                                offset: const Offset(0, 2),
                                               ),
-                                            ),
+                                            ],
                                           ),
                                         ),
                                       ),

@@ -468,15 +468,12 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.transparent, // Removed white background
                         borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.3), offset: Offset(3, 3), blurRadius: 6),
-                          BoxShadow(color: Colors.white.withOpacity(0.4), offset: Offset(-3, -3), blurRadius: 6),
-                        ],
+                        // Removed boxShadow for a flat look
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.close_rounded, color: Colors.black, size: buttonIconSize),
+                        icon: Icon(Icons.close_rounded, color: Colors.white, size: buttonIconSize), // Changed to white
                         onPressed: () => _handleForfeit(isTimeout: false),
                       ),
                     ),

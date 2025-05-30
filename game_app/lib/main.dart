@@ -730,6 +730,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     ],
                                   ),
                                 ),
+                                // Responsive space between checkboxes
+                                SizedBox(height: (screenSize.height * 0.010).clamp(12, 24)),
                                 // Add Don't show again checkbox
                                 InkWell(
                                   onTap: () {

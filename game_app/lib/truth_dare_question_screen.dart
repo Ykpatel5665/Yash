@@ -447,8 +447,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                     Expanded(
                       child: Text(
                         widget.isTruth
-                            ? AppLocalizations.of(context)!.truthBtn
-                            : AppLocalizations.of(context)!.dareBtn,
+                            ? "It's " + AppLocalizations.of(context)!.truthBtn
+                            : "It's " + AppLocalizations.of(context)!.dareBtn,
                         style: GoogleFonts.baloo2(
                           fontSize: headerFontSize,
                           fontWeight: FontWeight.bold,

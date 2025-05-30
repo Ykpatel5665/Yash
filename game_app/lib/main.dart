@@ -776,7 +776,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           elevation: 0,
-                                          backgroundColor: const Color(0xFF7B4444), // Muted red/brown for Cancel
+                                          backgroundColor: Colors.transparent, // No background color
                                           shadowColor: Colors.transparent,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(16),

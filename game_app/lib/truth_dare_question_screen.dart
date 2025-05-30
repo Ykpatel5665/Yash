@@ -34,6 +34,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
   late int _secondsLeft;
   Timer? _timer;
   late AnimationController _progressController;
+  bool _isPaused = false;
 
   // Color combos for vibrant gradient screens
   static final List<List<Color>> colorCombos = [
@@ -69,14 +70,40 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_secondsLeft > 1) {
-        setState(() {
-          _secondsLeft--;
-        });
-      } else {
-        _handleForfeit(isTimeout: true);
+      if (!_isPaused) {
+        if (_secondsLeft > 1) {
+          setState(() {
+            _secondsLeft--;
+          });
+        } else {
+          _handleForfeit(isTimeout: true);
+        }
       }
     });
+  }
+
+  void _pauseTimer() {
+    setState(() {
+      _isPaused = true;
+    });
+    _timer?.cancel();
+    _progressController.stop();
+  }
+
+  void _resumeTimer() {
+    setState(() {
+      _isPaused = false;
+    });
+    _progressController.forward();
+    _startTimer();
+  }
+
+  void _toggleTimerPause() {
+    if (_isPaused) {
+      _resumeTimer();
+    } else {
+      _pauseTimer();
+    }
   }
 
   Future<void> _showResultDialog({
@@ -334,71 +361,80 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
       timerSection = Padding(
         padding: EdgeInsets.only(bottom: (height * 0.06).clamp(18, 48)),
         child: Center(
-          child: AnimatedBuilder(
-            animation: _progressController,
-            builder: (context, child) {
-              double progress = 1.0 - _progressController.value;
-              final double ringDiameter = timerFontSize * 3.2;
+          child: GestureDetector(
+            onTap: _toggleTimerPause,
+            child: AnimatedBuilder(
+              animation: _progressController,
+              builder: (context, child) {
+                double progress = 1.0 - _progressController.value;
+                final double ringDiameter = timerFontSize * 3.2;
 
-              // Optional Pulse Effect Near End
-              double scale = 1.0;
-              if (_secondsLeft <= 5) {
-                scale += sin(_secondsLeft * 2 * 3.14 / 1.5) * 0.08;
-              }
+                // Optional Pulse Effect Near End
+                double scale = 1.0;
+                if (_secondsLeft <= 5) {
+                  scale += sin(_secondsLeft * 2 * 3.14 / 1.5) * 0.08;
+                }
 
-              return Transform.scale(
-                scale: scale,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: mainColor.withOpacity(0.4),
-                            blurRadius: 20,
-                            spreadRadius: 4,
-                          )
-                        ],
-                      ),
-                      child: SizedBox(
-                        width: ringDiameter,
-                        height: ringDiameter,
-                        child: CustomPaint(
-                          painter: _TimerRingPainter(
-                            progress: progress,
-                            mainColor: mainColor,
-                            secondaryColor: secondaryColor,
-                            smooth: true,
+                return Transform.scale(
+                  scale: scale,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: mainColor.withOpacity(0.4),
+                              blurRadius: 20,
+                              spreadRadius: 4,
+                            )
+                          ],
+                        ),
+                        child: SizedBox(
+                          width: ringDiameter,
+                          height: ringDiameter,
+                          child: CustomPaint(
+                            painter: _TimerRingPainter(
+                              progress: progress,
+                              mainColor: mainColor,
+                              secondaryColor: secondaryColor,
+                              smooth: true,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Text(
-                      '$_secondsLeft',
-                      style: GoogleFonts.baloo2(
-                        fontWeight: FontWeight.bold,
-                        fontSize: timerFontSize,
-                        color: Colors.white,
-                        decoration: TextDecoration.none,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 8,
-                            color: Colors.black.withOpacity(0.25),
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                      Text(
+                        '$_secondsLeft',
+                        style: GoogleFonts.baloo2(
+                          fontWeight: FontWeight.bold,
+                          fontSize: timerFontSize,
+                          color: Colors.white,
+                          decoration: TextDecoration.none,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 8,
+                              color: Colors.black.withOpacity(0.25),
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
-            },
+                      if (_isPaused)
+                        Positioned(
+                          bottom: 8,
+                          right: 8,
+                          child: Icon(Icons.pause_circle_filled, color: Colors.white.withOpacity(0.7), size: 28),
+                        ),
+                    ],
+                  ),
+                  );
+                },
+              ),
+            ),
           ),
-        ),
       );
     }
 

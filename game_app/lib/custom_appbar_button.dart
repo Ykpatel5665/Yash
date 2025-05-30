@@ -31,15 +31,12 @@ class CustomAppBarButton extends StatelessWidget {
         width: size ?? buttonSize,
         height: size ?? buttonSize,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.transparent, // Changed from white.withOpacity(0.8)
           borderRadius: BorderRadius.circular(10), // Square look
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.3), offset: Offset(3, 3), blurRadius: 6),
-            BoxShadow(color: Colors.white.withOpacity(0.4), offset: Offset(-3, -3), blurRadius: 6),
-          ],
+          // Removed boxShadow for a flat look
         ),
         child: IconButton(
-          icon: Icon(icon, color: Colors.black, size: iconSize ?? iconSizeValue),
+          icon: Icon(icon, color: Colors.white, size: iconSize ?? iconSizeValue), // Changed to white
           tooltip: tooltip,
           onPressed: onPressed,
         ),

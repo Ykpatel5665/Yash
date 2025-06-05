@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Player {
   String name;
   Player({required this.name});

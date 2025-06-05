@@ -8,13 +8,11 @@ import 'random_turn_screen.dart'; // Import Random Turn screen
 import 'dart:convert';
 import 'widgets/inputs/custom_text_field.dart'; // Import CustomTextField
 import 'widgets/headers/app_header.dart'; // Import AppHeader
-import 'widgets/buttons/neumorphic_icon_button.dart'; // Import NeumorphicIconButton
 import 'widgets/player_list_tile.dart'; // Import PlayerListTile
 import 'models/player.dart';
 import 'custom_appbar_button.dart';
-import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
 import 'package:auto_size_text/auto_size_text.dart'; // Import AutoSizeText
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -61,7 +59,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
 
   Future<void> _savePlayers() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> playerJsons = _players.map((p) => jsonEncode(p.toJson()) as String).toList();
+    final List<String> playerJsons = _players.map((p) => jsonEncode(p.toJson())).toList();
     await prefs.setStringList(_playersPrefsKey, playerJsons);
   }
 
@@ -119,13 +117,6 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
-
-    // Use the same AppBar style from MyApp theme, but allow customization if needed
-    final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
-    // Define neumorphic colors based on the gradient
-    const Color baseColor = Color.fromARGB(255, 255, 255, 255);
-    final Color shadowDark = Colors.black.withOpacity(0.3);
-    final Color shadowLight = Colors.white.withOpacity(0.4);
 
     final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;

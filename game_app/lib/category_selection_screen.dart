@@ -7,7 +7,7 @@ import 'main.dart';
 import 'dart:ui';
 import 'widgets/buttons/toggle_button.dart';
 import 'custom_appbar_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 class Category {
   final String id;
@@ -262,19 +262,6 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final size = MediaQuery.of(context).size;
     final double appBarHeight = (size.height * 0.12).clamp(64, 120); // Responsive
     final double continueBtnHeight = (size.height * 0.08).clamp(48, 70); // Responsive
-    final double safePadding = MediaQuery.of(context).padding.top;
-    final int categoryCount = _categories.length;
-    // Responsive chip/card sizes
-    final double minCardHeight = (size.height * 0.045).clamp(24, 36);
-    final double maxCardHeight = (size.height * 0.09).clamp(48, 80);
-    final double minSpacing = (size.height * 0.005).clamp(2, 8);
-    final double maxSpacing = (size.height * 0.015).clamp(8, 24);
-    final double baseSpacing = (size.height * 0.012).clamp(4, 16);
-    final double buttonFontSize = (size.width * 0.045).clamp(14, 20);
-    final double cardFont = (size.width * 0.06).clamp(16, 26);
-    final double iconSize = (size.width * 0.08).clamp(26, 36);
-    final double cardRadius = (size.width * 0.045).clamp(12, 22);
-    final double horizontalChipPadding = (size.width * 0.07).clamp(18, 36);
     final double bottomPadding = (size.height * 0.09).clamp(48, 90); // replaces 69
     final double continueFontSize = (size.width * 0.06).clamp(18, 28);
 
@@ -348,14 +335,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 child: SafeArea(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final isWide = constraints.maxWidth > 600;
-                      final double baseSpacing = (MediaQuery.of(context).size.height * 0.012).clamp(4, 16);
-                      final double horizontalChipPadding = (MediaQuery.of(context).size.width * 0.07).clamp(18, 36);
                       Widget categoryList = Padding(
                         padding: EdgeInsets.only(
-                          top: baseSpacing,
-                          left: horizontalChipPadding,
-                          right: horizontalChipPadding,
+                          top: (MediaQuery.of(context).size.height * 0.012).clamp(4, 16),
+                          left: (MediaQuery.of(context).size.width * 0.07).clamp(18, 36),
+                          right: (MediaQuery.of(context).size.width * 0.07).clamp(18, 36),
                           // Only a little extra space so last item is visible above the button
                           bottom: bottomPadding + continueBtnHeight * 0.5,
                         ),
@@ -370,7 +354,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                             final bool selected = _selectedCategoryIds.contains(cat.id);
                             final iconData = getCategoryIcon(cat.id);
                             return Padding(
-                              padding: EdgeInsets.symmetric(vertical: baseSpacing / 2),
+                              padding: EdgeInsets.symmetric(vertical: (MediaQuery.of(context).size.height * 0.012).clamp(4, 16) / 2),
                               child: ToggleButton(
                                 label: _localizedCategoryLabel(context, cat.id, cat.name),
                                 selected: selected,
@@ -384,8 +368,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                   });
                                 },
                                 icon: iconData,
-                                iconSize: iconSize,
-                                fontSize: cardFont,
+                                iconSize: (MediaQuery.of(context).size.width * 0.08).clamp(26, 36),
+                                fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
                               ),
                             );
                           },
@@ -499,7 +483,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               AppLocalizations.of(context)!.continueBtn,
                                               style: GoogleFonts.baloo2(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: buttonFontSize,
+                                                fontSize: continueFontSize,
                                                 color: Colors.white,
                                                 shadows: [
                                                   Shadow(

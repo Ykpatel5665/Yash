@@ -6,11 +6,9 @@ import 'truth_dare_data.dart';
 import 'truth_dare_question_screen.dart';
 import 'main.dart'; // For AgeGroup enum
 import 'widgets/cards/game_card.dart';
-import 'widgets/buttons/neumorphic_icon_button.dart';
-import 'widgets/dialog_action_row.dart';
 import 'custom_appbar_button.dart';
 import 'player_circle_painter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 
 // Convert to StatefulWidget for turn management
@@ -27,20 +25,12 @@ class AutoNextTurnScreen extends StatefulWidget {
 
 class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   int _currentIndex = 0;
-  bool _showTruthDare = false;
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
   bool _isMuted = false; // State for volume button
   bool _scoreboardOpen = false;
   bool _pendingShowTruthDare = false; // Track if dialog should show after scoreboard
   bool _quitDialogOpen = false; // Track if quit confirmation dialog is open
-
-  // For demo, use all categories (or pass selectedCategoryIds if you want to filter)
-  List<String> get _allCategoryIds => [
-    'KIDS_FUNNY','KIDS_FAMILY','KIDS_SCHOOL','KIDS_CARTOONS','KIDS_GAMES','KIDS_ANIMALS','KIDS_FOOD','KIDS_IMAGINATION','KIDS_CHALLENGES','KIDS_HOBBIES',
-    'TEENS_FRIENDS','TEENS_SCHOOL','TEENS_MUSIC','TEENS_MOVIES','TEENS_TECH','TEENS_HOBBIES','TEENS_DREAMS','TEENS_EMBARRASSING','TEENS_STYLE','TEENS_ADVENTURE',
-    'ADULTS_RELATIONSHIPS','ADULTS_PARTY','ADULTS_WORK','ADULTS_TRAVEL','ADULTS_DEEP','ADULTS_WILD','ADULTS_FLIRTY','ADULTS_CHILDHOOD','ADULTS_POPCULTURE','ADULTS_PERSONAL',
-  ];
 
   int _pendingHighlightIndex = -1; // For transition animation
   bool _isAnimatingHighlight = false;
@@ -65,7 +55,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   void _nextTurn() {
     if (_currentIndex == widget.players.length - 1) {
       setState(() {
-        _showTruthDare = false;
         _lastPlayerFinished = true;
       });
     } else {
@@ -86,12 +75,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         }
       });
     }
-  }
-
-  void _showTruthOrDare() {
-    setState(() {
-      _showTruthDare = true;
-    });
   }
 
   Future<Question?> _getRandomQuestionFromJson({required String type}) async {
@@ -119,14 +102,12 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
             Navigator.of(context).pop();
             setState(() {
-              _showTruthDare = false;
               _nextTurn();
             });
           },
           onForfeit: () {
             Navigator.of(context).pop();
             setState(() {
-              _showTruthDare = false;
               _nextTurn();
             });
           },
@@ -144,7 +125,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       context: context,
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
-        final double cardWidth = screenSize.width * 0.92;
         final double maxCardWidth = 420;
         final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
@@ -298,10 +278,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       _scoreboardOpen = false;
     });
     // Only show dialog if we are still on this screen and not in the process of popping
-    if (mounted && ModalRoute.of(context)?.isCurrent == true && (_pendingShowTruthDare || (!_lastPlayerFinished && !_showTruthDare))) {
+    if (mounted && ModalRoute.of(context)?.isCurrent == true && (_pendingShowTruthDare || (!_lastPlayerFinished && !_pendingShowTruthDare))) {
       _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_lastPlayerFinished && !_showTruthDare && ModalRoute.of(context)?.isCurrent == true && !_quitDialogOpen) {
+        if (mounted && !_lastPlayerFinished && !_pendingShowTruthDare && ModalRoute.of(context)?.isCurrent == true && !_quitDialogOpen) {
           _showTruthOrDareDialog();
         }
       });
@@ -310,23 +290,16 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   Future<bool> _showQuitConfirmation() async {
     // Track if the Truth/Dare dialog should resume after closing
-    final bool shouldResumeTruthDare = !_lastPlayerFinished && !_showTruthDare && !_scoreboardOpen && !_quitDialogOpen;
+    final bool shouldResumeTruthDare = !_lastPlayerFinished && !_pendingShowTruthDare && !_scoreboardOpen && !_quitDialogOpen;
     _pendingShowTruthDare = false; // Block dialog while quit dialog is open
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
-    final double cardWidth = screenSize.width * 0.92;
-    final double maxCardWidth = 420;
-    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
-    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
-    final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
     final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
     final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
     final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
     final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
     final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
-    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
-    // ...existing code...
+    // Define cardPadding, titleFontSize, iconSize, and messageFontSize at the start of the pageBuilder
     final result = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -334,6 +307,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        final double cardPadding = (screenSize.width * 0.06).clamp(16, 32);
+        final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36);
+        final double iconSize = (screenSize.width * 0.14).clamp(36, 60);
+        final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22);
         return Center(
           child: Material(
             type: MaterialType.transparency,
@@ -342,7 +319,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
-                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
                   padding: EdgeInsets.symmetric(horizontal: cardPadding, vertical: cardPadding), // Responsive
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
@@ -483,25 +459,25 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               ),
             ),
           ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 3);
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    ) ?? false;
+          );
+        },
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 3);
+          const end = Offset.zero;
+          const curve = Curves.easeOutCubic;
+          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final offsetAnimation = animation.drive(tween);
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+      ) ?? false;
     _quitDialogOpen = false;
     // Resume Truth/Dare dialog if it was supposed to show and user said No
     if (!result && mounted && shouldResumeTruthDare) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_lastPlayerFinished && !_showTruthDare && ModalRoute.of(context)?.isCurrent == true) {
+        if (mounted && !_lastPlayerFinished && !_pendingShowTruthDare && ModalRoute.of(context)?.isCurrent == true) {
           _showTruthOrDareDialog();
         }
       });
@@ -593,32 +569,13 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Use the same AppBar style from MyApp theme, but allow customization if needed
-    final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
-
-    final playerName = widget.players[_currentIndex];
-    final Color textColor = Colors.white;
     final size = MediaQuery.of(context).size;
     final double screenWidth = size.width;
     final double screenHeight = size.height;
-    final double emojiSize = (screenWidth * 0.18).clamp(48, 120);
-    final double circleSize = emojiSize + 32;
-    final double titleFontSize = (screenWidth * 0.07).clamp(22, 36);
-    final double turnFontSize = (screenWidth * 0.055).clamp(18, 28);
     final double buttonFontSize = (screenWidth * 0.045).clamp(15, 22);
     final double buttonPaddingV = (screenHeight * 0.018).clamp(10, 22);
     final double buttonPaddingH = (screenWidth * 0.08).clamp(24, 40);
     final double spacingLarge = (screenHeight * 0.06).clamp(24, 60);
-    final double spacingMed = (screenHeight * 0.035).clamp(14, 32);
-    final double spacingSmall = (screenHeight * 0.018).clamp(7, 18);
-    const LinearGradient backgroundGradient = LinearGradient(
-      colors: [
-        Color.fromARGB(255, 50, 196, 255),
-        Color.fromARGB(255, 27, 123, 212),
-      ],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    );
     return WillPopScope(
       onWillPop: () async {
         final shouldQuit = await _showQuitConfirmation();
@@ -685,7 +642,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               onPressed: () {
                                 setState(() {
                                   _currentIndex = 0;
-                                  _showTruthDare = false;
                                   _lastPlayerFinished = false;
                                   // --- ADDED: Shuffle the color palette on restart ---
                                   _playerColors = PlayerCirclePainter.shuffleColors();
@@ -781,9 +737,6 @@ class _TruthDareDialog extends StatelessWidget {
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
     final double cardPadding = 24.0;
-    final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
-    final double fontSize = (screenSize.width * 0.035).clamp(13, 18);
-    final localizations = AppLocalizations.of(context)!;
     BoxDecoration truthButtonDecoration = BoxDecoration(
       gradient: const LinearGradient(
         colors: [Color(0xFF4DD0E1), Color(0xFF1976D2)],
@@ -868,7 +821,7 @@ class _TruthDareDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    localizations.whoopsieTitle,
+                    AppLocalizations.of(context)!.whoopsieTitle,
                     style: GoogleFonts.baloo2(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -896,7 +849,7 @@ class _TruthDareDialog extends StatelessWidget {
                   ),
                   SizedBox(height: 28),
                   Text(
-                    localizations.itsTurn(playerName),
+                    AppLocalizations.of(context)!.itsTurn(playerName),
                     style: GoogleFonts.baloo2(
                       fontSize: 24,
                       color: Colors.white,
@@ -917,7 +870,7 @@ class _TruthDareDialog extends StatelessWidget {
                             style: buttonStyle,
                             child: Center(
                               child: Text(
-                                localizations.truthBtn,
+                                AppLocalizations.of(context)!.truthBtn,
                                 style: buttonTextStyle,
                               ),
                             ),
@@ -935,7 +888,7 @@ class _TruthDareDialog extends StatelessWidget {
                             style: buttonStyle,
                             child: Center(
                               child: Text(
-                                localizations.dareBtn,
+                                AppLocalizations.of(context)!.dareBtn,
                                 style: buttonTextStyle,
                               ),
                             ),
@@ -953,4 +906,3 @@ class _TruthDareDialog extends StatelessWidget {
     );
   }
 }
-

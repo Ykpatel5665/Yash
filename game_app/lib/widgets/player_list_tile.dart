@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../../models/player.dart';
 
 /// A reusable widget for displaying player information in a list.
@@ -20,9 +20,6 @@ class PlayerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double avatarSize = (MediaQuery.of(context).size.width * 0.09).clamp(28, 48); // Responsive
-    final double borderRadius = (MediaQuery.of(context).size.width * 0.025).clamp(6, 16); // Responsive
-    final double borderWidth = (MediaQuery.of(context).size.width * 0.011).clamp(2, 6); // Responsive
     final double fontSize = (MediaQuery.of(context).size.width * 0.045).clamp(14, 22); // Responsive
     final double splashRadius = (MediaQuery.of(context).size.width * 0.06).clamp(18, 32); // Responsive
     final double contentPaddingH = (MediaQuery.of(context).size.width * 0.02).clamp(4, 16);

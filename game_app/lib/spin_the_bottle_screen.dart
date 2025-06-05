@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math; // Import math for rotation
-import 'package:flutter/physics.dart'; // Import for physics simulation
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
 import 'dart:ui';
@@ -9,7 +8,7 @@ import 'truth_dare_data.dart'; // Import for question logic
 import 'truth_dare_question_screen.dart';
 import 'custom_appbar_button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -379,7 +378,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final Size screenSize = MediaQuery.of(context).size;
     final double minBtn = 44, maxBtn = 70;
     final double btnSize = (screenSize.width * 0.13).clamp(minBtn, maxBtn);
-    final double iconSize = (screenSize.width * 0.07).clamp(22, 36);
     const Color baseColor = Color.fromARGB(255, 255, 255, 255);
     final Color shadowDark = Colors.black.withOpacity(0.3);
     final Color shadowLight = Colors.white.withOpacity(0.4);
@@ -407,7 +405,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         onPressed: onPressed,
         child: Icon(
           icon,
-          size: iconSize,
+          size: btnSize * 0.4, // Adjusted icon size based on button size
         ),
       ),
     );
@@ -428,7 +426,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         final double cardPadding = 24.0;
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
-        final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
 
         // Gradient for the Close button (similar to Truth/Dare dialog)
         BoxDecoration closeButtonDecoration = BoxDecoration(
@@ -446,33 +443,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               color: Colors.white.withOpacity(0.18),
               blurRadius: 16,
               spreadRadius: 1,
-            ),
-          ],
-        );
-
-        ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          textStyle: GoogleFonts.baloo2(
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        );
-
-        TextStyle buttonTextStyle = GoogleFonts.baloo2(
-          fontWeight: FontWeight.bold,
-          fontSize: 22,
-          color: Colors.white,
-          shadows: [
-            Shadow(
-              blurRadius: 8,
-              color: Colors.black.withOpacity(0.25),
-              offset: const Offset(0, 2),
             ),
           ],
         );
@@ -657,7 +627,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
     final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
     final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
-    final double textButtonVerticalPadding = (screenSize.height * 0.016).clamp(8, 22); // Responsive
 
     final result = await showGeneralDialog<bool>(
       context: context,
@@ -847,9 +816,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   Widget build(BuildContext context) {
     // ... existing AppBar and background setup ...
     final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
-    const Color baseColor = Color.fromARGB(255, 255, 255, 255);
-    final Color shadowDark = Colors.black.withOpacity(0.3);
-    final Color shadowLight = Colors.white.withOpacity(0.4);
     const LinearGradient backgroundGradient = LinearGradient(
       colors: [
         Color.fromARGB(255, 252, 118, 84),
@@ -858,8 +824,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
-    final double circleSize = MediaQuery.of(context).size.width * 0.8;
-    final double bottleHeight = circleSize * 0.6; // Example bottle size relative to circle
 
     return WillPopScope(
       onWillPop: () async {
@@ -927,7 +891,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
                       // Adjust circle size based on available space
                       final double circleDiameter = math.min(availableWidth * 0.8, wheelMaxHeight);
-                      final double bottleHeight = circleDiameter * 0.7; // Increased multiplier from 0.6
 
                       // Calculate spacing in pixels
                       final double topSpacing = availableHeight * topSpacingPercent;
@@ -935,13 +898,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       final double buttonBottomPadding = availableHeight * buttonBottomPaddingPercent;
                       final double buttonRowHorizontalPadding = availableWidth * 0.05;
 
-                      // Determine selected player name for display
-                      String selectedPlayerName = "";
-                      if (_gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null && _selectedPlayerIndex! < widget.players.length) {
-                        selectedPlayerName = widget.players[_selectedPlayerIndex!];
-                      }
-
-                      // Use Column for vertical spacing control
                       return SingleChildScrollView(
                         physics: const ClampingScrollPhysics(),
                         child: ConstrainedBox(
@@ -981,10 +937,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                           angle: _currentAngle,
                                           child: Image.asset(
                                             'assets/bottle.png',
-                                            height: bottleHeight,
+                                            height: circleDiameter * 0.6,
                                             errorBuilder: (context, error, stackTrace) {
                                               return Container(
-                                                height: bottleHeight,
+                                                height: circleDiameter * 0.6,
                                                 color: Colors.red.withOpacity(0.5),
                                                 child: const Center(child: Text('Add bottle.png to assets!', style: TextStyle(color: Colors.white)))
                                               );
@@ -1063,8 +1019,6 @@ class _TruthDareDialog extends StatelessWidget {
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
     final double cardPadding = 24.0;
-    final double iconSize = (screenSize.width * 0.08).clamp(22, 36);
-    final double fontSize = (screenSize.width * 0.035).clamp(13, 18);
     final localizations = AppLocalizations.of(context)!;
 
     // Truth: Blue/Cyan, Dare: Pink/Red

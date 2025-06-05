@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'add_players_screen.dart'; // Import the new screen
 import 'dart:ui';
 import 'category_selection_screen.dart';
-import 'widgets/buttons/primary_button.dart'; // Import PrimaryButton
-import 'widgets/buttons/toggle_button.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -159,8 +156,8 @@ class _MyAppState extends State<MyApp> {
         return supportedLocales.first;
       },
       home: MyHomePage(setLocale: setLocale),
-    );
-  }
+    ); // <-- Properly close MaterialApp
+  } // <-- Properly close build
 }
 
 // Convert MyHomePage to StatefulWidget
@@ -291,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // --- Function to show the ADULT confirmation dialog ---
   Future<bool> _showAdultConfirmationDialog(BuildContext context) async {
     // Use a different context name to avoid conflict with the outer dialog context
-    return await showDialog<bool>(
+    final result = await showDialog<bool>(
           context: context,
           barrierDismissible: false, // User must tap button!
           barrierColor: Colors.black54, // Dim the background
@@ -347,16 +344,13 @@ class _MyHomePageState extends State<MyHomePage> {
             );
 
             return AlertDialog(
-              backgroundColor:
-                  Colors.transparent, // Make AlertDialog background transparent
-              contentPadding: EdgeInsets.zero, // Remove default padding
+              backgroundColor: Colors.transparent,
+              contentPadding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(15.0)), // Match container shape
+                  borderRadius: BorderRadius.circular(15.0)),
               content: Container(
-                padding: EdgeInsets.all(
-                    dialogPadding), // Apply padding inside the container
-                decoration: dialogDecoration, // Apply the custom decoration
+                padding: EdgeInsets.all(dialogPadding),
+                decoration: dialogDecoration,
                 child: SingleChildScrollView(
                   child: ListBody(
                     children: <Widget>[
@@ -366,26 +360,25 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: titleStyle,
                         ),
                       ),
-                      const SizedBox(height: 15), // Spacing
+                      const SizedBox(height: 15),
                       Text(
                         AppLocalizations.of(context)!.adultModeWarning,
                         style: contentStyle,
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 5), // Spacing
+                      const SizedBox(height: 5),
                       Text(
                         AppLocalizations.of(context)!.areYouSure,
                         style: contentStyle,
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 25), // Spacing before buttons
+                      const SizedBox(height: 25),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           TextButton(
                             style: TextButton.styleFrom(
-                              foregroundColor:
-                                  Colors.white70, // Lighter color for cancel
+                              foregroundColor: Colors.white70,
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.cancel,
@@ -393,30 +386,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             onPressed: () {
-                              Navigator.of(confirmDialogContext)
-                                  .pop(false); // Return false
+                              Navigator.of(confirmDialogContext).pop(false);
                             },
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.white, // White background for confirm
-                              foregroundColor: const Color.fromARGB(255, 103,
-                                  58, 183), // Use a gradient color for text
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color.fromARGB(255, 103, 58, 183),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.continueStr,
-                              style: GoogleFonts.baloo2(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.baloo2(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
-                              Navigator.of(confirmDialogContext)
-                                  .pop(true); // Return true
+                              Navigator.of(confirmDialogContext).pop(true);
                             },
                           ),
                         ],
@@ -425,12 +412,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              // Remove original actions, they are now inside the Container
-              // actions: <Widget>[ ... ],
-            );
-          },
-        ) ??
-        false; // Return false if dialog is dismissed otherwise
+            ); // <-- Properly close AlertDialog
+          }, // <-- End of builder
+        ); // <-- End of showDialog
+    return result ?? false;
   }
   // --- End ADULT confirmation dialog ---
 
@@ -548,8 +533,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                   ),
                 ),
               ),
-            );
-          }
+              );
+            }
           final double iconSize = 32; // Fixed icon size
           final double fontSize = 14; // Fixed font size
 
@@ -873,14 +858,14 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                               ),
                             ],
                           ),
-                          );
-                        },
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ),
+                ),
               ),
-            );
+          );
         },
       );
     },
@@ -955,8 +940,6 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    // ...existing code...
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(

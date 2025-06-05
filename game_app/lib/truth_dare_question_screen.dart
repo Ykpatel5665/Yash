@@ -3,8 +3,7 @@ import 'dart:ui';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'truth_dare_data.dart';
+import 'l10n/app_localizations.dart';
 
 class TruthDareQuestionScreen extends StatefulWidget {
   final String playerName;
@@ -309,29 +308,6 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
     final double betweenHeaderAndIcon = (height * 0.02).clamp(8, 28);
     final double betweenIconAndQuestion = (height * 0.01).clamp(4, 18);
     final double afterButtons = (height * 0.01).clamp(8, 24);
-
-    // Gradient for Done button
-    final ButtonStyle doneButtonStyle = ElevatedButton.styleFrom(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      padding: const EdgeInsets.symmetric(vertical: 26),
-      textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-    );
-
-    final TextStyle doneButtonTextStyle = GoogleFonts.baloo2(
-      fontWeight: FontWeight.bold,
-      fontSize: buttonFontSize,
-      color: Colors.white,
-      shadows: [
-        Shadow(
-          blurRadius: 8,
-          color: Colors.black.withOpacity(0.25),
-          offset: const Offset(0, 2),
-        ),
-      ],
-    );
 
     final ButtonStyle forfeitButtonStyle = ElevatedButton.styleFrom(
       elevation: 0,

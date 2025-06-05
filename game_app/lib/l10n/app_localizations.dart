@@ -616,7 +616,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerTask.
   ///
   /// In en, this message translates to:
-  /// **'{playerName}, your task:'**
+  /// **'{playerName}, your challenge:'**
   String playerTask(Object playerName);
 
   /// No description provided for @congratsTitle.

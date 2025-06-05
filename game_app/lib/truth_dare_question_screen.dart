@@ -478,7 +478,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: betweenHeaderAndIcon, bottom: betweenIconAndQuestion),
+                padding: EdgeInsets.only(top: betweenHeaderAndIcon, bottom: betweenIconAndQuestion * 0.18), // Add a little gap below icon
                 child: Icon(
                   widget.isTruth ? Icons.lightbulb_rounded : Icons.whatshot_rounded,
                   color: widget.isTruth ? mainColor : secondaryColor,
@@ -491,43 +491,55 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Stack(
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.playerTask(widget.playerName),
-                        style: GoogleFonts.baloo2(
-                          fontSize: fontSize,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black.withAlpha((0.5 * 255).round()),
-                              offset: Offset(1.0, 1.0),
-                            ),
-                          ],
+                      // Center the question in the available space
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.questionText,
+                          style: GoogleFonts.baloo2(
+                            fontSize: questionFontSize * 1.18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.none,
+                            height: 1.1,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4.0,
+                                color: Colors.black.withAlpha((0.5 * 255).round()),
+                                offset: Offset(1.0, 1.0),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: betweenHeaderAndIcon * 0.7),
-                      Text(
-                        widget.questionText,
-                        style: GoogleFonts.baloo2(
-                          fontSize: questionFontSize * 1.18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black.withAlpha((0.5 * 255).round()),
-                              offset: Offset(1.0, 1.0),
+                      // Keep the label near the top
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: betweenHeaderAndIcon * 0.22),
+                          child: Text(
+                            AppLocalizations.of(context)!.playerTask(widget.playerName),
+                            style: GoogleFonts.baloo2(
+                              fontSize: fontSize,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.none,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4.0,
+                                  color: Colors.black.withAlpha((0.5 * 255).round()),
+                                  offset: Offset(1.0, 1.0),
+                                ),
+                              ],
                             ),
-                          ],
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),

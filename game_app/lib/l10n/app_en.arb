@@ -83,7 +83,7 @@
   "allPlayersHadTurn": "All players had their turn!",
   "forfeit": "Forfeit",
   "done": "Done",
-  "playerTask": "{playerName}, your task:",
+  "playerTask": "{playerName}, your challenge",
   "congratsTitle": "Congrats!",
   "challengeCompleted": "You completed the challenge!",
   "oopsTitle": "Oops! You lost this round.",

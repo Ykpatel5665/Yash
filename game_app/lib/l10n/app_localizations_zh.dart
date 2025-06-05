@@ -261,7 +261,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String playerTask(Object playerName) {
-    return '$playerName，你的任务：';
+    return '$playerName，你的挑战：';
   }
 
   @override

@@ -261,7 +261,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String playerTask(Object playerName) {
-    return '$playerName, your task:';
+    return '$playerName, your challenge:';
   }
 
   @override

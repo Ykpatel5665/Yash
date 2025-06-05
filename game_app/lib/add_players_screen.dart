@@ -126,7 +126,6 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     final double verticalPadding = (screenHeight * 0.012).clamp(6, 20); // replaces 10.0
     final double inputRowSpacing = (screenHeight * 0.018).clamp(10, 28); // replaces 15
     final double inputButtonSpacing = (screenWidth * 0.025).clamp(6, 18); // replaces 10
-    final double addIconSize = (screenWidth * 0.08).clamp(26, 40); // replaces 32
     final double listTopSpacing = (screenHeight * 0.04).clamp(18, 40); // replaces 30
     final double bottomButtonWidth = (screenWidth * 0.75).clamp(220, 420);
     final double bottomButtonMinHeight = (screenHeight * 0.08).clamp(48, 70); // replaces 62
@@ -172,15 +171,17 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                     children: [
                       Expanded(
                         child: Container(
+                          height: 56, // Explicit height for perfect match
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
+                            border: Border.all(color: Color(0xFFB3B3B3), width: 2.0),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withAlpha(80),
+                                color: Colors.black.withOpacity(0.13),
                                 blurRadius: 8.0,
                                 spreadRadius: 1.0,
-                                offset: const Offset(0, 4),
+                                offset: Offset(0, 4),
                               ),
                             ],
                           ),
@@ -195,41 +196,42 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                       ),
                       SizedBox(width: inputButtonSpacing), // Responsive
                       Container(
+                        height: 56,
+                        width: 56,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          border: Border.all(color: Color(0xFFB3B3B3), width: 2.0),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withAlpha(80),
+                              color: Colors.black.withOpacity(0.13),
                               blurRadius: 8.0,
                               spreadRadius: 1.0,
-                              offset: const Offset(0, 4),
+                              offset: Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_players.length >= 20) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: GoogleFonts.baloo2(color: Colors.white)),
-                                  backgroundColor: Colors.redAccent,
-                                ),
-                              );
-                            } else {
-                              _addPlayer();
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.all((screenWidth * 0.04).clamp(10, 20)), // Responsive
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () {
+                              if (_players.length >= 20) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: GoogleFonts.baloo2(color: Colors.white)),
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                );
+                              } else {
+                                _addPlayer();
+                              }
+                            },
+                            child: Center(
+                              child: Icon(Icons.add, size: 28, color: Colors.black),
                             ),
-                            elevation: 0,
-                            shadowColor: Colors.transparent,
                           ),
-                          child: Icon(Icons.add, size: addIconSize), // Responsive
                         ),
                       ),
                     ],

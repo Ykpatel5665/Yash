@@ -266,6 +266,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   int? _highlightedIndex;
   int? _previousIndex;
 
+  // --- ADDED: Game start state ---
+  bool _gameStarted = false;
+
   @override
   void initState() {
     super.initState();
@@ -275,6 +278,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     }
     // --- ADDED: Shuffle the color palette at the start of the game ---
     _playerColors = PlayerCirclePainter.shuffleColors();
+    // --- REMOVED: Auto start spin on init ---
+    // (Do not call _pickRandomPlayerWithSpin here)
   }
 
   void _resetTurns() {
@@ -284,8 +289,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
       _currentIndex = null;
       _highlightedIndex = null;
       _lastPlayerFinished = false;
-      // Immediately pick the first player after reset
-      Future.delayed(Duration.zero, _pickRandomPlayerWithSpin);
+      _gameStarted = false; // Wait for user to press Start
+      // --- REMOVED: Auto start spin on reset ---
+      // (Do not call _pickRandomPlayerWithSpin here)
       // --- ADDED: Shuffle the color palette on new game/restart ---
       _playerColors = PlayerCirclePainter.shuffleColors();
     });
@@ -352,7 +358,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               if (_remainingIndices.isEmpty) {
                 _lastPlayerFinished = true;
               } else {
-                _pickRandomPlayerWithSpin();
+                _gameStarted = false; // Wait for user to press Start for next turn
               }
             });
           },
@@ -363,7 +369,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               if (_remainingIndices.isEmpty) {
                 _lastPlayerFinished = true;
               } else {
-                _pickRandomPlayerWithSpin();
+                _gameStarted = false; // Wait for user to press Start for next turn
               }
             });
           },
@@ -898,15 +904,54 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(height: spacingLarge),
-                        if (_currentIndex != null || _isSpinning)
+                        if (!_gameStarted && !_lastPlayerFinished)
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _gameStarted = true;
+                              });
+                              _pickRandomPlayerWithSpin();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: (screenWidth * 0.18).clamp(32, 60),
+                                vertical: (constraints.maxHeight * 0.025)
+                                    .clamp(14, 28),
+                              ),
+                              textStyle: GoogleFonts.baloo2(
+                                fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                fontWeight: FontWeight.bold,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              elevation: 3,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: AutoSizeText(
+                              'Start',
+                              minFontSize: 10,
+                              maxLines: 1,
+                              overflow: TextOverflow.visible,
+                              wrapWords: false,
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.bold,
+                                fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        if (_gameStarted && (_currentIndex != null || _isSpinning))
                           PlayerCircle(
                             players: widget.players,
-                            size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55), // Responsive: min 220, max 55% of height
+                            size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
                             highlightedIndex: _isSpinning ? _highlightedIndex : _currentIndex,
                             animated: _isSpinning,
                             animationDuration: const Duration(milliseconds: 1800),
                             previousIndex: _isSpinning ? _previousIndex : null,
-                            colors: _playerColors, // Pass the shuffled palette
+                            colors: _playerColors,
                           ),
                         SizedBox(height: spacingLarge),
                         if (_lastPlayerFinished) ...[

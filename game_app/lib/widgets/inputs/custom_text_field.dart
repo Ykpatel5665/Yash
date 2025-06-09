@@ -58,14 +58,7 @@ class CustomTextField extends StatelessWidget {
       decoration: BoxDecoration(
         color: effectiveBg,
         borderRadius: BorderRadius.circular(effectiveRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(80),
-            blurRadius: 8.0,
-            spreadRadius: 1.0,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // Remove boxShadow for a flat look
       ),
       padding: effectivePadding,
       child: TextField(

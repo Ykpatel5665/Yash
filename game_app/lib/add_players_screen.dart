@@ -175,15 +175,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
-                            border: Border.all(color: Color(0xFFB3B3B3), width: 2.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.13),
-                                blurRadius: 8.0,
-                                spreadRadius: 1.0,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
+                            border: Border.all(color: Color(0xFFE0E0E0), width: 1.2), // Subtle, light border
+                            // No boxShadow for a flat look
                           ),
                           child: CustomTextField(
                             controller: _playerNameController,
@@ -201,15 +194,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.white,
-                          border: Border.all(color: Color(0xFFB3B3B3), width: 2.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.13),
-                              blurRadius: 8.0,
-                              spreadRadius: 1.0,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
+                          border: Border.all(color: Color(0xFFE0E0E0), width: 1.2), // Subtle, light border
+                          // No boxShadow for a flat look
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -238,25 +224,28 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                   ),
                   SizedBox(height: listTopSpacing), // Responsive
                   Expanded(
-                    child: _players.isEmpty
-                        ? const SizedBox.shrink()
-                        : ListView.separated(
-                            itemCount: _players.length,
-                            padding: EdgeInsets.only(top: 5, bottom: bottomPadding), // Responsive
-                            itemBuilder: (context, index) {
-                              return PlayerListTile(
-                                player: _players[index],
-                                onRemoveTap: () => _removePlayer(index),
-                              );
-                            },
-                            separatorBuilder: (context, index) => Divider(
-                              color: Colors.white.withOpacity(0.3),
-                              height: 1,
-                              thickness: 1,
-                              indent: 16,
-                              endIndent: 16,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: bottomButtonMinHeight + (screenHeight * 0.04).clamp(18, 40)), // Add enough bottom padding for the button
+                      child: _players.isEmpty
+                          ? const SizedBox.shrink()
+                          : ListView.separated(
+                              itemCount: _players.length + 1, // Add one for extra space
+                              padding: EdgeInsets.only(top: 5),
+                              itemBuilder: (context, index) {
+                                if (index == _players.length) {
+                                  // Extra space at the end (reduced)
+                                  return SizedBox(height: bottomButtonMinHeight + (screenHeight * 0.02).clamp(8, 18));
+                                }
+                                return PlayerListTile(
+                                  player: _players[index],
+                                  onRemoveTap: () => _removePlayer(index),
+                                );
+                              },
+                              separatorBuilder: (context, index) => SizedBox(
+                                height: (screenHeight * 0.012).clamp(6, 18), // Responsive vertical space between tiles
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 ],
               ),

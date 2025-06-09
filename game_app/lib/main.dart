@@ -6,8 +6,8 @@ import 'dart:ui';
 import 'category_selection_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'widgets/headers/app_header.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -941,30 +941,12 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: AutoSizeText(
-          AppLocalizations.of(context)!.appTitle,
-          style: GoogleFonts.baloo2(
-            fontWeight: FontWeight.bold,
-            fontSize: (MediaQuery.of(context).size.width * 0.08).clamp(22, 36),
-            color: Colors.white,
-            shadows: [
-              Shadow(
-                blurRadius: 4.0,
-                color: Colors.black.withAlpha((0.5 * 255).round()),
-                offset: const Offset(1.0, 1.0),
-              ),
-            ],
-          ),
-          minFontSize: 8,
-          maxLines: 2,
-          overflow: TextOverflow.visible,
-          stepGranularity: 0.5,
-          wrapWords: true,
-        ),
+      appBar: AppHeader(
+        title: AppLocalizations.of(context)!.appTitle,
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
         actions: [
           IconButton(
             icon: const Icon(Icons.language),

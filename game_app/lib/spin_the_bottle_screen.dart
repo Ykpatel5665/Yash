@@ -9,6 +9,7 @@ import 'truth_dare_question_screen.dart';
 import 'custom_appbar_button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'l10n/app_localizations.dart';
+import 'widgets/headers/app_header.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -815,7 +816,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   @override
   Widget build(BuildContext context) {
     // ... existing AppBar and background setup ...
-    final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
     const LinearGradient backgroundGradient = LinearGradient(
       colors: [
         Color.fromARGB(255, 252, 118, 84),
@@ -831,9 +831,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         return shouldQuit;
       },
       child: Scaffold(
-        // ... existing AppBar ...
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
+        appBar: AppHeader(
+          title: AppLocalizations.of(context)!.spinTitle,
+          centerTitle: true,
           leading: CustomAppBarButton(
             icon: Icons.home_rounded,
             onPressed: () async {
@@ -848,19 +848,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             },
             tooltip: AppLocalizations.of(context)!.homeTooltip,
           ),
-          // ...rest of AppBar properties...
-          title: AutoSizeText(
-            AppLocalizations.of(context)!.spinTitle,
-            style: appBarTheme.titleTextStyle,
-            maxLines: 1,
-            minFontSize: 14,
-            overflow: TextOverflow.ellipsis,
-          ),
-          centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          toolbarHeight: appBarTheme.toolbarHeight,
-          titleSpacing: appBarTheme.titleSpacing,
+          toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
         ),
         extendBodyBehindAppBar: true,
         body: Column(
@@ -1001,7 +991,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
           ],
         ),
       ),
-    );
+    ); // Close Scaffold, WillPopScope, and build
   }
 }
 

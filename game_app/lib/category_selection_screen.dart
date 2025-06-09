@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'widgets/buttons/toggle_button.dart';
 import 'custom_appbar_button.dart';
 import 'l10n/app_localizations.dart';
+import 'widgets/headers/app_header.dart';
 
 class Category {
   final String id;
@@ -267,38 +268,17 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
+      appBar: AppHeader(
+        title: AppLocalizations.of(context)!.selectCategory,
+        centerTitle: true,
         leading: CustomAppBarButton(
           icon: Icons.arrow_back_ios_new_rounded,
           onPressed: () => Navigator.of(context).pop(),
           tooltip: 'Back',
         ),
-        title: AutoSizeText(
-          AppLocalizations.of(context)!.selectCategory,
-          style: GoogleFonts.baloo2(
-            fontWeight: FontWeight.bold,
-            fontSize: (size.width * 0.08).clamp(20, 32), // Slightly smaller max for single line
-            color: Colors.white,
-            shadows: [
-              Shadow(
-                blurRadius: 4.0,
-                color: Colors.black.withAlpha((0.5 * 255).round()),
-                offset: const Offset(1.0, 1.0),
-              ),
-            ],
-          ),
-          minFontSize: 14,
-          maxLines: 1, // Force single line
-          overflow: TextOverflow.ellipsis, // Ellipsis if too long
-          wrapWords: false,
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: appBarHeight,
-        titleSpacing: 0,
       ),
       body: Stack(
         children: [

@@ -890,6 +890,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               final double spacingLarge =
                   (constraints.maxHeight * 0.06).clamp(24, 60);
               final double screenWidth = constraints.maxWidth;
+              final double screenHeight = constraints.maxHeight;
               return Stack(
                 children: [
                   Center(
@@ -900,12 +901,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         if (_currentIndex != null || _isSpinning)
                           PlayerCircle(
                             players: widget.players,
-                            size: screenWidth * 0.8,
-                            highlightedIndex:
-                                _isSpinning ? _highlightedIndex : _currentIndex,
+                            size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55), // Responsive: min 220, max 55% of height
+                            highlightedIndex: _isSpinning ? _highlightedIndex : _currentIndex,
                             animated: _isSpinning,
-                            animationDuration:
-                                const Duration(milliseconds: 1800),
+                            animationDuration: const Duration(milliseconds: 1800),
                             previousIndex: _isSpinning ? _previousIndex : null,
                             colors: _playerColors, // Pass the shuffled palette
                           ),

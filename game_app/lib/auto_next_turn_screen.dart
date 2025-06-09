@@ -630,7 +630,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           ),
                           PlayerCircle(
                             players: widget.players,
-                            size: screenWidth * 0.8, // Responsive size
+                            size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55), // Responsive: min 220, max 55% of height
                             highlightedIndex: _isAnimatingHighlight ? _pendingHighlightIndex : _currentIndex,
                             animated: true,
                             animationDuration: const Duration(milliseconds: 1800), // smoother and slower

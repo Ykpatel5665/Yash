@@ -907,7 +907,7 @@ class _TruthDareDialog extends StatelessWidget {
                         Navigator.of(context).pop(isTruth ? 'truth' : 'dare');
                       },
                       child: Text(
-                        'Choose randomly',
+                        AppLocalizations.of(context)!.chooseRandomBtn,
                         style: GoogleFonts.baloo2(
                           fontSize: (screenSize.width * 0.038).clamp(12, 16),
                           color: Colors.white.withOpacity(0.7),

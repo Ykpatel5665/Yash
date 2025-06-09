@@ -261,7 +261,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String playerTask(Object playerName) {
-    return '$playerName, 당신의 도전:';
+    return '$playerName님의 미션:';
   }
 
   @override
@@ -284,4 +284,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get dontShowAgain => '다시 묻지 않기';
+
+  @override
+  String get chooseRandomBtn => '무작위로 선택';
 }

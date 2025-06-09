@@ -90,5 +90,6 @@
   "lostRound": "Te rendiste en esta ronda.",
   "timesUpTitle": "¡Se acabó el tiempo!",
   "ranOutOfTime": "Se te acabó el tiempo.",
-  "dontShowAgain": "No volver a preguntar"
+  "dontShowAgain": "No volver a preguntar",
+  "chooseRandomBtn": "Elegir al azar"
 }

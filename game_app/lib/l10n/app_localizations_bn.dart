@@ -261,7 +261,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String playerTask(Object playerName) {
-    return '$playerName, আপনার চ্যালেঞ্জ:';
+    return '$playerName, তোমার কাজ:';
   }
 
   @override
@@ -284,4 +284,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get dontShowAgain => 'আর জিজ্ঞাসা করবেন না';
+
+  @override
+  String get chooseRandomBtn => 'এলোমেলোভাবে বেছে নিন';
 }

@@ -616,7 +616,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerTask.
   ///
   /// In en, this message translates to:
-  /// **'{playerName}, your challenge:'**
+  /// **'{playerName}, your challenge'**
   String playerTask(Object playerName);
 
   /// No description provided for @congratsTitle.
@@ -660,6 +660,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Don\'t ask again'**
   String get dontShowAgain;
+
+  /// No description provided for @chooseRandomBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose randomly'**
+  String get chooseRandomBtn;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

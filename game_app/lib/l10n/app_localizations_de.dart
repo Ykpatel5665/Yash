@@ -261,7 +261,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String playerTask(Object playerName) {
-    return '$playerName, deine Herausforderung:';
+    return '$playerName, deine Aufgabe:';
   }
 
   @override
@@ -284,4 +284,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dontShowAgain => 'Nicht mehr fragen';
+
+  @override
+  String get chooseRandomBtn => 'Zufällig wählen';
 }

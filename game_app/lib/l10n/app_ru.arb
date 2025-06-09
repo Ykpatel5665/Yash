@@ -90,5 +90,6 @@
   "lostRound": "Вы сдались в этом раунде.",
   "timesUpTitle": "Время вышло!",
   "ranOutOfTime": "У вас закончилось время.",
-  "dontShowAgain": "Больше не спрашивать"
+  "dontShowAgain": "Больше не спрашивать",
+  "chooseRandomBtn": "Выбрать случайно"
 }

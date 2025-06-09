@@ -90,5 +90,6 @@
   "lostRound": "आपने यह राउंड छोड़ दिया।",
   "timesUpTitle": "समय समाप्त!",
   "ranOutOfTime": "आपका समय समाप्त हो गया।",
-  "dontShowAgain": "फिर से न पूछें"
+  "dontShowAgain": "फिर से न पूछें",
+  "chooseRandomBtn": "यादृच्छिक चुनें"
 }

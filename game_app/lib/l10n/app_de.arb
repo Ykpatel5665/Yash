@@ -90,5 +90,6 @@
   "lostRound": "Du hast diese Runde aufgegeben.",
   "timesUpTitle": "Zeit ist um!",
   "ranOutOfTime": "Deine Zeit ist abgelaufen.",
-  "dontShowAgain": "Nicht mehr fragen"
+  "dontShowAgain": "Nicht mehr fragen",
+  "chooseRandomBtn": "Zufällig wählen"
 }

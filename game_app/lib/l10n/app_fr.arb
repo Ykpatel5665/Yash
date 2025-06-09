@@ -90,5 +90,6 @@
   "lostRound": "Vous avez abandonné cette manche.",
   "timesUpTitle": "Temps écoulé !",
   "ranOutOfTime": "Vous avez manqué de temps.",
-  "dontShowAgain": "Ne plus demander"
+  "dontShowAgain": "Ne plus demander",
+  "chooseRandomBtn": "Choisir au hasard"
 }

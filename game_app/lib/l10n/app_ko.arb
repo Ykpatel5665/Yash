@@ -90,5 +90,6 @@
   "lostRound": "이번 라운드를 포기했습니다.",
   "timesUpTitle": "시간 종료!",
   "ranOutOfTime": "시간이 다 됐어요.",
-  "dontShowAgain": "다시 묻지 않기"
+  "dontShowAgain": "다시 묻지 않기",
+  "chooseRandomBtn": "무작위로 선택"
 }

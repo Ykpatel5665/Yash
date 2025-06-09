@@ -205,7 +205,7 @@ class _TruthDareDialog extends StatelessWidget {
                         Navigator.of(context).pop(isTruth ? 'truth' : 'dare');
                       },
                       child: Text(
-                        'Choose randomly',
+                        AppLocalizations.of(context)!.chooseRandomBtn,
                         style: GoogleFonts.baloo2(
                           fontSize: (screenSize.width * 0.038).clamp(12, 16),
                           color: Colors.white.withOpacity(0.7),
@@ -646,187 +646,182 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         (screenSize.height * 0.022).clamp(12, 28); // Responsive
 
     final result = await showGeneralDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          barrierLabel:
-              MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          barrierColor: Colors.black54,
-          transitionDuration: const Duration(milliseconds: 350),
-          pageBuilder: (dialogContext, animation, secondaryAnimation) {
-            return Center(
-              child: Material(
-                type: MaterialType.transparency,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                    child: Container(
-                      width:
-                          cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: cardPadding,
-                          vertical: cardPadding), // Responsive
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.32),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.25),
-                          width: 2.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.10),
-                            blurRadius: 12,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.quitGameTitle,
-                            style: GoogleFonts.baloo2(
-                              fontSize: titleFontSize, // Responsive
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4,
-                                  color: Colors.white.withOpacity(0.3),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: sectionSpacing), // Responsive
-                          Icon(
-                            Icons.sentiment_dissatisfied,
-                            color: Colors.white70,
-                            size: iconSize, // Responsive
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color:
-                                    Colors.black.withAlpha((0.4 * 255).round()),
-                                offset: const Offset(1.0, 1.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: sectionSpacing), // Responsive
-                          Text(
-                            AppLocalizations.of(context)!.quitGameMessage,
-                            style: GoogleFonts.baloo2(
-                              fontSize: messageFontSize, // Responsive
-                              color: Colors.white.withOpacity(0.92),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: buttonRowSpacing), // Responsive
-                          Row(
-                            children: [
-                              Expanded(
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF5B86E5),
-                                        Color(0xFF8F6ED5)
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.18),
-                                        blurRadius: 16,
-                                        spreadRadius: 1,
-                                      ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(dialogContext).pop(false);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: buttonVerticalPadding),
-                                      minimumSize: const Size(0, 48),
-                                      textStyle: GoogleFonts.baloo2(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: buttonFontSize,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      AppLocalizations.of(context)!.no,
-                                      style: GoogleFonts.baloo2(
-                                        color: Colors.white.withOpacity(0.7),
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: buttonFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: buttonSpacing), // Responsive
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.of(dialogContext).pop(true);
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: buttonVerticalPadding),
-                                    minimumSize: const Size(0, 48),
-                                    textStyle: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: buttonFontSize,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.yes,
-                                    style: GoogleFonts.baloo2(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: buttonFontSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            type: MaterialType.transparency,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.symmetric(
+                      horizontal: cardPadding, vertical: cardPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.quitGameTitle,
+                        style: GoogleFonts.baloo2(
+                          fontSize: titleFontSize, // Responsive
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: sectionSpacing), // Responsive
+                      Icon(
+                        Icons.sentiment_dissatisfied,
+                        color: Colors.white70,
+                        size: iconSize, // Responsive
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()),
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: sectionSpacing), // Responsive
+                      Text(
+                        AppLocalizations.of(context)!.quitGameMessage,
+                        style: GoogleFonts.baloo2(
+                          fontSize: messageFontSize, // Responsive
+                          color: Colors.white.withOpacity(0.92),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: buttonRowSpacing), // Responsive
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF5B86E5),
+                                    Color(0xFF8F6ED5)
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white.withOpacity(0.18),
+                                    blurRadius: 16,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop(false);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: buttonVerticalPadding),
+                                  minimumSize: const Size(0, 48),
+                                  textStyle: GoogleFonts.baloo2(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: buttonFontSize,
+                                  ),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.no,
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: buttonSpacing), // Responsive
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop(true);
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: buttonVerticalPadding),
+                                minimumSize: const Size(0, 48),
+                                textStyle: GoogleFonts.baloo2(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                                style: GoogleFonts.baloo2(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          },
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 3);
-            const end = Offset.zero;
-            const curve = Curves.easeOutCubic;
-            final tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            final offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        ) ??
-        false;
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 0.3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    ) ?? false;
     _quitDialogOpen = false;
     // Resume dialog if needed
     if (!result &&

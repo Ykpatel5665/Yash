@@ -90,5 +90,6 @@
   "lostRound": "لقد انسحبت من هذه الجولة.",
   "timesUpTitle": "انتهى الوقت!",
   "ranOutOfTime": "لقد نفد وقتك.",
-  "dontShowAgain": "لا تسأل مرة أخرى"
+  "dontShowAgain": "لا تسأل مرة أخرى",
+  "chooseRandomBtn": "اختر عشوائياً"
 }

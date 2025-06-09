@@ -90,5 +90,6 @@
   "lostRound": "Você desistiu desta rodada.",
   "timesUpTitle": "O tempo acabou!",
   "ranOutOfTime": "O tempo acabou para você.",
-  "dontShowAgain": "Não perguntar novamente"
+  "dontShowAgain": "Não perguntar novamente",
+  "chooseRandomBtn": "Escolher aleatoriamente"
 }

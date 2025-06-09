@@ -90,5 +90,6 @@
   "lostRound": "You forfeited this round.",
   "timesUpTitle": "Time’s up!",
   "ranOutOfTime": "You ran out of time.",
-  "dontShowAgain": "Don't ask again"
+  "dontShowAgain": "Don't ask again",
+  "chooseRandomBtn": "Choose randomly"
 }

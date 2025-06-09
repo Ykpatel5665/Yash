@@ -89,5 +89,6 @@
   "lostRound": "你放弃了这一轮。",
   "timesUpTitle": "时间到！",
   "ranOutOfTime": "你的时间用完了。",
-  "dontShowAgain": "不再询问"
+  "dontShowAgain": "不再询问",
+  "chooseRandomBtn": "随机选择"
 }

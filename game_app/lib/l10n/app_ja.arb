@@ -90,5 +90,6 @@
   "lostRound": "このラウンドを棄権しました。",
   "timesUpTitle": "時間切れ！",
   "ranOutOfTime": "時間がなくなりました。",
-  "dontShowAgain": "今後は尋ねない"
+  "dontShowAgain": "今後は尋ねない",
+  "chooseRandomBtn": "ランダムに選ぶ"
 }

@@ -90,5 +90,6 @@
   "lostRound": "তুমি এই রাউন্ডটি পরিত্যাগ করেছো।",
   "timesUpTitle": "সময় শেষ!",
   "ranOutOfTime": "তোমার সময় শেষ হয়ে গেছে।",
-  "dontShowAgain": "আর জিজ্ঞাসা করবেন না"
+  "dontShowAgain": "আর জিজ্ঞাসা করবেন না",
+  "chooseRandomBtn": "এলোমেলোভাবে বেছে নিন"
 }

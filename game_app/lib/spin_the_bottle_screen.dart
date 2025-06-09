@@ -1181,12 +1181,31 @@ class _TruthDareDialog extends StatelessWidget {
                       ),
                     ],
                   ),
+                  SizedBox(height: 18),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        final random = math.Random();
+                        final isTruth = random.nextBool();
+                        Navigator.of(context).pop(isTruth ? 'truth' : 'dare');
+                      },
+                      child: Text(
+                        'Choose randomly',
+                        style: GoogleFonts.baloo2(
+                          fontSize: (screenSize.width * 0.038).clamp(12, 16),
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ),
-    );
+      ); // <-- closes Material
   }
 }

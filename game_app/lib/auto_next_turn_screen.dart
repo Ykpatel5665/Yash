@@ -10,6 +10,7 @@ import 'custom_appbar_button.dart';
 import 'player_circle_painter.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
+import 'dart:math' as math; // Import math for random selection
 
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
@@ -896,6 +897,25 @@ class _TruthDareDialog extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                  SizedBox(height: 18),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        final random = math.Random();
+                        final isTruth = random.nextBool();
+                        Navigator.of(context).pop(isTruth ? 'truth' : 'dare');
+                      },
+                      child: Text(
+                        'Choose randomly',
+                        style: GoogleFonts.baloo2(
+                          fontSize: (screenSize.width * 0.038).clamp(12, 16),
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

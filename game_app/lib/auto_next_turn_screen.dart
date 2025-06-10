@@ -12,6 +12,10 @@ import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 import 'dart:math' as math; // Import math for random selection
 
+// Shared dialog constants and helpers (copied from random_turn_screen.dart)
+const double kMaxCardWidth = 420.0;
+double getResponsiveCardPadding(double screenWidth) => (screenWidth * 0.06).clamp(16, 32);
+
 // Convert to StatefulWidget for turn management
 class AutoNextTurnScreen extends StatefulWidget {
   final List<String> players;
@@ -295,12 +299,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     _pendingShowTruthDare = false; // Block dialog while quit dialog is open
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
-    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
-    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
-    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
-    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
-    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
-    // Define cardPadding, titleFontSize, iconSize, and messageFontSize at the start of the pageBuilder
     final result = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -308,10 +306,17 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        final double cardPadding = (screenSize.width * 0.06).clamp(16, 32);
+        final double cardWidth = screenSize.width * 0.92;
+        final double maxCardWidth = kMaxCardWidth;
+        final double cardPadding = getResponsiveCardPadding(screenSize.width); // Responsive
         final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36);
         final double iconSize = (screenSize.width * 0.14).clamp(36, 60);
         final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22);
+        final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22);
+        final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22);
+        final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32);
+        final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40);
+        final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28);
         return Center(
           child: Material(
             type: MaterialType.transparency,
@@ -320,7 +325,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: cardPadding, vertical: cardPadding), // Responsive
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
                     borderRadius: BorderRadius.circular(32),
@@ -343,7 +349,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                       Text(
                         AppLocalizations.of(context)!.quitGameTitle,
                         style: GoogleFonts.baloo2(
-                          fontSize: titleFontSize, // Responsive
+                          fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           shadows: [
@@ -355,11 +361,11 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: sectionSpacing), // Responsive
+                      SizedBox(height: sectionSpacing),
                       Icon(
                         Icons.sentiment_dissatisfied,
                         color: Colors.white70,
-                        size: iconSize, // Responsive
+                        size: iconSize,
                         shadows: [
                           Shadow(
                             blurRadius: 4.0,
@@ -368,17 +374,17 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: sectionSpacing), // Responsive
+                      SizedBox(height: sectionSpacing),
                       Text(
                         AppLocalizations.of(context)!.quitGameMessage,
                         style: GoogleFonts.baloo2(
-                          fontSize: messageFontSize, // Responsive
+                          fontSize: messageFontSize,
                           color: Colors.white.withOpacity(0.92),
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: buttonRowSpacing), // Responsive
+                      SizedBox(height: buttonRowSpacing),
                       Row(
                         children: [
                           Expanded(
@@ -412,7 +418,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
                                   minimumSize: const Size(0, 48),
                                   textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w800,
                                     fontSize: buttonFontSize,
                                   ),
                                 ),
@@ -427,7 +433,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(width: buttonSpacing), // Responsive
+                          SizedBox(width: buttonSpacing),
                           Expanded(
                             child: TextButton(
                               onPressed: () {

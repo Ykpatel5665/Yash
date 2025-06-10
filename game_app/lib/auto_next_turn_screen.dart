@@ -36,6 +36,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   bool _scoreboardOpen = false;
   bool _pendingShowTruthDare = false; // Track if dialog should show after scoreboard
   bool _quitDialogOpen = false; // Track if quit confirmation dialog is open
+  bool _hasQuit = false; // Track if user has quit to prevent dialog on home
 
   int _pendingHighlightIndex = -1; // For transition animation
   bool _isAnimatingHighlight = false;
@@ -51,7 +52,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     _playerColors = PlayerCirclePainter.shuffleColors();
     // Automatically show the Truth/Dare dialog after 2 seconds for the first player
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted && !_lastPlayerFinished) {
+      if (mounted && !_lastPlayerFinished && !_hasQuit) {
         _showTruthOrDareDialog();
       }
     });
@@ -69,13 +70,13 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         _pendingHighlightIndex = _currentIndex + 1;
       });
       Future.delayed(const Duration(milliseconds: 1800), () { // smoother and slower transition
-        if (!mounted) return;
+        if (!mounted || _hasQuit) return;
         setState(() {
           _currentIndex = _pendingHighlightIndex;
           _isAnimatingHighlight = false;
         });
         // Only show dialog if scoreboard is not open
-        if (mounted && !_lastPlayerFinished && !_scoreboardOpen) {
+        if (mounted && !_lastPlayerFinished && !_scoreboardOpen && !_hasQuit) {
           _showTruthOrDareDialog();
         }
       });
@@ -283,10 +284,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
       _scoreboardOpen = false;
     });
     // Only show dialog if we are still on this screen and not in the process of popping
-    if (mounted && ModalRoute.of(context)?.isCurrent == true && (_pendingShowTruthDare || (!_lastPlayerFinished && !_pendingShowTruthDare))) {
+    if (mounted && ModalRoute.of(context)?.isCurrent == true && (_pendingShowTruthDare || (!_lastPlayerFinished && !_pendingShowTruthDare)) && !_hasQuit) {
       _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_lastPlayerFinished && !_pendingShowTruthDare && ModalRoute.of(context)?.isCurrent == true && !_quitDialogOpen) {
+        if (mounted && !_lastPlayerFinished && !_pendingShowTruthDare && ModalRoute.of(context)?.isCurrent == true && !_quitDialogOpen && !_hasQuit) {
           _showTruthOrDareDialog();
         }
       });
@@ -295,8 +296,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   Future<bool> _showQuitConfirmation() async {
     // Track if the Truth/Dare dialog should resume after closing
-    final bool shouldResumeTruthDare = !_lastPlayerFinished && !_pendingShowTruthDare && !_scoreboardOpen && !_quitDialogOpen;
-    _pendingShowTruthDare = false; // Block dialog while quit dialog is open
+    final bool shouldResumeTruthDare = !_lastPlayerFinished && !_scoreboardOpen && !_quitDialogOpen && !_hasQuit;
+    if (shouldResumeTruthDare) {
+      _pendingShowTruthDare = true;
+    }
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final result = await showGeneralDialog<bool>(
@@ -481,10 +484,15 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         },
       ) ?? false;
     _quitDialogOpen = false;
+    if (result) {
+      _hasQuit = true;
+      _pendingShowTruthDare = false;
+    }
     // Resume Truth/Dare dialog if it was supposed to show and user said No
-    if (!result && mounted && shouldResumeTruthDare) {
+    if (!result && mounted && _pendingShowTruthDare && !_hasQuit) {
+      _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_lastPlayerFinished && !_pendingShowTruthDare && ModalRoute.of(context)?.isCurrent == true) {
+        if (mounted && !_lastPlayerFinished && !_scoreboardOpen && !_quitDialogOpen && !_hasQuit) {
           _showTruthOrDareDialog();
         }
       });
@@ -531,9 +539,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   }
 
   Future<void> _showTruthOrDareDialog() async {
-    if (_scoreboardOpen || _quitDialogOpen) {
+    if (_scoreboardOpen || _quitDialogOpen || _hasQuit) {
       _pendingShowTruthDare = true;
-      return; // Prevent dialog if scoreboard or quit dialog is open
+      return; // Prevent dialog if scoreboard or quit dialog is open or user has quit
     }
     _pendingShowTruthDare = false;
     final playerName = widget.players[_currentIndex];
@@ -560,6 +568,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         );
       },
     );
+    if (_hasQuit) return;
     if (result == 'truth') {
       await _showTruthOrDareScreen(true);
     } else if (result == 'dare') {
@@ -650,8 +659,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                       _currentIndex = 0;
                                       _lastPlayerFinished = false;
                                       _playerColors = PlayerCirclePainter.shuffleColors();
+                                      _hasQuit = false; // Reset quit flag on restart
                                       Future.delayed(const Duration(seconds: 2), () {
-                                        if (mounted && !_lastPlayerFinished) {
+                                        if (mounted && !_lastPlayerFinished && !_hasQuit) {
                                           _showTruthOrDareDialog();
                                         }
                                       });

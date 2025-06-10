@@ -911,21 +911,29 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             if (!_gameStarted && !_lastPlayerFinished)
                               ClipOval(
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                   child: Container(
                                     width: (screenWidth * 0.16).clamp(48, 70),
                                     height: (screenWidth * 0.16).clamp(48, 70),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.18),
                                       shape: BoxShape.circle,
+                                      gradient: RadialGradient(
+                                        colors: [
+                                          Colors.black.withOpacity(0.22), // Darker glass effect
+                                          Colors.black.withOpacity(0.10),
+                                          Colors.transparent
+                                        ],
+                                        center: Alignment.topLeft,
+                                        radius: 0.95,
+                                      ),
                                       border: Border.all(
-                                        color: Colors.white.withOpacity(0.45),
-                                        width: 2.2,
+                                        color: Colors.white.withOpacity(0.22), // Slightly lighter border for contrast
+                                        width: 1.6,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.10),
-                                          blurRadius: 8,
+                                          color: Colors.black.withOpacity(0.22), // Subtle dark glow
+                                          blurRadius: 12,
                                           spreadRadius: 1,
                                         ),
                                       ],
@@ -949,13 +957,18 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                             style: GoogleFonts.baloo2(
                                               fontWeight: FontWeight.bold,
                                               fontSize: (screenWidth * 0.035).clamp(13, 18),
-                                              color: Colors.white.withOpacity(0.92),
+                                              color: Colors.white.withOpacity(0.92), // Slightly less transparent for better contrast
                                               letterSpacing: 0.5,
                                               shadows: [
                                                 Shadow(
                                                   blurRadius: 8,
-                                                  color: Colors.black.withOpacity(0.18),
+                                                  color: Colors.black.withOpacity(0.32), // Add a dark shadow for contrast
                                                   offset: Offset(0, 2),
+                                                ),
+                                                Shadow(
+                                                  blurRadius: 2,
+                                                  color: Colors.black.withOpacity(0.18), // Subtle extra shadow
+                                                  offset: Offset(0, 0),
                                                 ),
                                               ],
                                             ),

@@ -62,14 +62,17 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     _controller = AnimationController(
       vsync: this,
       // Duration will be set dynamically in _initiateSpinAnimation
-    )..addListener(() {
+    )
+      ..addListener(() {
         if (_animation != null && _gamePhase == GamePhase.spinning) {
           setState(() {
             _currentAngle = _animation!.value;
           });
         }
-      })..addStatusListener((status) {
-        if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed ||
+            status == AnimationStatus.dismissed) {
           if (_gamePhase == GamePhase.spinning) {
             _onSpinComplete();
           }
@@ -92,7 +95,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   void _onSpinComplete() {
     // print("Spin Complete. Final Raw Angle: ${_currentAngle.toStringAsFixed(2)}");
     final double finalAngle = _currentAngle % (2 * math.pi);
-    final normalizedAngle = finalAngle < 0 ? finalAngle + 2 * math.pi : finalAngle;
+    final normalizedAngle =
+        finalAngle < 0 ? finalAngle + 2 * math.pi : finalAngle;
 
     final selectedIndex = _getSelectedPlayerIndex(normalizedAngle);
 
@@ -111,11 +115,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       });
     } else {
       // No player selected (e.g. if playerCount is 0 or error in logic)
-        setState(() {
-          _gamePhase = GamePhase.readyToSpin;
-          _selectedPlayerIndex = null;
-          _controller.reset(); // <--- ADDED RESET
-        });
+      setState(() {
+        _gamePhase = GamePhase.readyToSpin;
+        _selectedPlayerIndex = null;
+        _controller.reset(); // <--- ADDED RESET
+      });
     }
   }
 
@@ -141,7 +145,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         const begin = Offset(0.0, 0.3);
         const end = Offset.zero;
         const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         final offsetAnimation = animation.drive(tween);
         return SlideTransition(
           position: offsetAnimation,
@@ -170,7 +175,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final double anglePerPlayer = (2 * math.pi) / playerCount;
 
     final normalizedTipAngle = finalAngle % (2 * math.pi);
-    final positiveNormalizedTipAngle = normalizedTipAngle < 0 ? normalizedTipAngle + (2 * math.pi) : normalizedTipAngle;
+    final positiveNormalizedTipAngle = normalizedTipAngle < 0
+        ? normalizedTipAngle + (2 * math.pi)
+        : normalizedTipAngle;
 
     int selectedIndex = (positiveNormalizedTipAngle / anglePerPlayer).floor();
 
@@ -185,7 +192,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   // --- Gesture Handling --- (These are the intended current versions)
   void _onPanStart(DragStartDetails details) {
     if (_gamePhase != GamePhase.readyToSpin) return;
-    _controller.stop(); 
+    _controller.stop();
     _lastPanPosition = details.localPosition;
   }
 
@@ -195,9 +202,12 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final Offset center = renderBox.size.center(Offset.zero);
 
-    final double previousAngle = math.atan2(_lastPanPosition!.dy - center.dy, _lastPanPosition!.dx - center.dx);
-    final double currentGestureAngle = math.atan2(details.localPosition.dy - center.dy, details.localPosition.dx - center.dx);
-    
+    final double previousAngle = math.atan2(
+        _lastPanPosition!.dy - center.dy, _lastPanPosition!.dx - center.dx);
+    final double currentGestureAngle = math.atan2(
+        details.localPosition.dy - center.dy,
+        details.localPosition.dx - center.dx);
+
     double deltaAngle = currentGestureAngle - previousAngle;
 
     if (deltaAngle > math.pi) {
@@ -221,7 +231,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final Offset center = renderBox.size.center(Offset.zero);
-    
+
     final Offset pixelsPerSecond = details.velocity.pixelsPerSecond;
     final Offset r = _lastPanPosition! - center;
 
@@ -230,18 +240,20 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       return;
     }
 
-    double angularVelocity = (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) / r.distanceSquared;
-    angularVelocity *= 2.0; 
+    double angularVelocity =
+        (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) /
+            r.distanceSquared;
+    angularVelocity *= 2.0;
 
-    if (angularVelocity.abs() > 0.5) { 
+    if (angularVelocity.abs() > 0.5) {
       _initiateSpinAnimation(angularVelocity);
     }
     _lastPanPosition = null;
   }
 
   void _initiateSpinAnimation(double initialAngularVelocity) {
-
-    if (!initialAngularVelocity.isFinite || initialAngularVelocity.abs() < 0.1) {
+    if (!initialAngularVelocity.isFinite ||
+        initialAngularVelocity.abs() < 0.1) {
       if (_gamePhase == GamePhase.spinning) {
         setState(() {
           _gamePhase = GamePhase.readyToSpin;
@@ -257,8 +269,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       });
     }
 
-    const double testSpinDurationSeconds = 2.0; 
-    const double testRotations = 3.0;          
+    const double testSpinDurationSeconds = 2.0;
+    const double testRotations = 3.0;
 
     final double direction = initialAngularVelocity.sign;
     final double targetAngleDelta = direction * testRotations * 2 * math.pi;
@@ -266,7 +278,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
     if (!_currentAngle.isFinite || !targetAngle.isFinite) {
       setState(() {
-        _gamePhase = GamePhase.readyToSpin; 
+        _gamePhase = GamePhase.readyToSpin;
       });
       return;
     }
@@ -277,20 +289,22 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCubic, 
+        curve: Curves.easeOutCubic,
       ),
     );
 
-    final int animationDurationMilliseconds = (testSpinDurationSeconds * 1000).toInt();
+    final int animationDurationMilliseconds =
+        (testSpinDurationSeconds * 1000).toInt();
     if (animationDurationMilliseconds <= 0) {
       setState(() {
-        _gamePhase = GamePhase.readyToSpin; 
+        _gamePhase = GamePhase.readyToSpin;
       });
       return;
     }
 
-    _controller.duration = Duration(milliseconds: animationDurationMilliseconds);
-    
+    _controller.duration =
+        Duration(milliseconds: animationDurationMilliseconds);
+
     _controller.forward(from: 0.0);
   }
 
@@ -299,7 +313,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final questions = await loadQuestions(
       type: type,
       selectedCategories: widget.selectedCategoryIds,
-      ageGroup: widget.ageGroup.name == 'kids' ? 'Kids' : widget.ageGroup.name == 'teen' ? 'Teens' : 'Adults',
+      ageGroup: widget.ageGroup.name == 'kids'
+          ? 'Kids'
+          : widget.ageGroup.name == 'teen'
+              ? 'Teens'
+              : 'Adults',
     );
     if (questions.isEmpty) return null;
     questions.shuffle();
@@ -307,7 +325,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   }
 
   void _onTruthSelected() async {
-    if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
+    if (_gamePhase != GamePhase.awaitingTruthDare ||
+        _selectedPlayerIndex == null) return;
     final question = await _getRandomQuestionFromJson(type: 'truth');
     final playerName = widget.players[_selectedPlayerIndex!];
     await Navigator.push(
@@ -341,7 +360,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   }
 
   void _onDareSelected() async {
-    if (_gamePhase != GamePhase.awaitingTruthDare || _selectedPlayerIndex == null) return;
+    if (_gamePhase != GamePhase.awaitingTruthDare ||
+        _selectedPlayerIndex == null) return;
     final question = await _getRandomQuestionFromJson(type: 'dare');
     final playerName = widget.players[_selectedPlayerIndex!];
     await Navigator.push(
@@ -387,8 +407,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         color: baseColor.withOpacity(0.8),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-          BoxShadow(color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
-          BoxShadow(color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
+          BoxShadow(
+              color: shadowDark, offset: const Offset(3, 3), blurRadius: 6),
+          BoxShadow(
+              color: shadowLight, offset: const Offset(-3, -3), blurRadius: 6),
         ],
       ),
       child: ElevatedButton(
@@ -427,27 +449,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         final double cardPadding = 24.0;
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
-
-        // Gradient for the Close button (similar to Truth/Dare dialog)
-        BoxDecoration closeButtonDecoration = BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF4DD0E1), // Cyan
-              Color(0xFF1976D2), // Blue
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withOpacity(0.18),
-              blurRadius: 16,
-              spreadRadius: 1,
-            ),
-          ],
-        );
-
+        final double iconSize = (screenSize.width * 0.14).clamp(36, 60);
+        final double maxDialogHeight =
+            (screenSize.height * 0.7).clamp(320, 600);
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Center(
@@ -456,11 +460,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
                 child: Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.88,
-                  ),
                   width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
                   padding: EdgeInsets.all(cardPadding),
+                  constraints: BoxConstraints(
+                    maxHeight: maxDialogHeight,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.32),
                     borderRadius: BorderRadius.circular(32),
@@ -476,119 +480,173 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       ),
                     ],
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AutoSizeText(
-                          AppLocalizations.of(context)!.scoreboard,
-                          style: GoogleFonts.baloo2(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  child: Stack(
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AutoSizeText(
+                            AppLocalizations.of(context)!.scoreboard,
+                            style: GoogleFonts.baloo2(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4,
+                                  color: Colors.white.withOpacity(0.3),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                            minFontSize: 12,
+                            maxLines: 2,
+                            wrapWords: true,
+                          ),
+                          SizedBox(height: 28),
+                          Icon(
+                            Icons.emoji_events_rounded,
+                            color: Color(0xFFFFD700),
+                            size: iconSize,
                             shadows: [
                               Shadow(
-                                blurRadius: 4,
-                                color: Colors.white.withOpacity(0.3),
+                                blurRadius: 4.0,
+                                color:
+                                    Colors.black.withAlpha((0.4 * 255).round()),
+                                offset: const Offset(1.0, 1.0),
                               ),
                             ],
                           ),
-                          textAlign: TextAlign.center,
-                          minFontSize: 12,
-                          maxLines: 2,
-                          wrapWords: true,
-                        ),
-                        SizedBox(height: 28),
-                        Icon(
-                          Icons.emoji_events_rounded,
-                          color: Color(0xFFFFD700), // Gold
-                          size: screenSize.width * 0.14,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black.withAlpha((0.4 * 255).round()),
-                              offset: const Offset(1.0, 1.0),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 28),
-                        Column(
-                          children: [
-                            ...widget.players.map((player) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          SizedBox(height: 28),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
                                 children: [
-                                  AutoSizeText(
-                                    player,
-                                    style: GoogleFonts.baloo2(
-                                      fontSize: fontSize,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    minFontSize: 10,
-                                    maxLines: 2,
-                                    wrapWords: true,
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.13),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: AutoSizeText(
-                                      _playerScores[player]?.toString() ?? '0',
-                                      style: GoogleFonts.baloo2(
-                                        fontSize: fontSize,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      minFontSize: 10,
-                                      maxLines: 1,
-                                      wrapWords: true,
-                                    ),
-                                  ),
+                                  ...widget.players.map((player) => Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            AutoSizeText(
+                                              player,
+                                              style: GoogleFonts.baloo2(
+                                                fontSize: fontSize,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              minFontSize: 10,
+                                              maxLines: 2,
+                                              wrapWords: true,
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withOpacity(0.13),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: AutoSizeText(
+                                                _playerScores[player]
+                                                        ?.toString() ??
+                                                    '0',
+                                                style: GoogleFonts.baloo2(
+                                                  fontSize: fontSize,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                minFontSize: 10,
+                                                maxLines: 1,
+                                                wrapWords: true,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
                                 ],
                               ),
-                            )),
-                          ],
-                        ),
-                        SizedBox(height: 32),
-                        DecoratedBox(
-                          decoration: closeButtonDecoration,
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 32),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
                             ),
-                            child: Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.close,
-                                style: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.bold,
+                          ),
+                          SizedBox(height: 32), // Space for floating button
+                        ],
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom: (screenSize.height * 0.02).clamp(10, 24),
+                            left: (screenSize.width * 0.04).clamp(8, 20),
+                            right: (screenSize.width * 0.04).clamp(8, 20),
+                          ),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF5B86E5),
+                                  Color(0xFF8F6ED5),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.18),
+                                  blurRadius: 16,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical:
+                                      (screenSize.height * 0.022).clamp(12, 28),
+                                  horizontal:
+                                      (screenSize.width * 0.08).clamp(18, 40),
+                                ),
+                                textStyle: GoogleFonts.baloo2(
                                   fontSize: buttonFontSize,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 8,
-                                      color: Colors.black.withOpacity(0.25),
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.close,
+                                  style: GoogleFonts.baloo2(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: buttonFontSize,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 8,
+                                        color: Colors.black.withOpacity(0.25),
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -601,10 +659,17 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       _scoreboardOpen = false;
     });
     // Resume dialog if needed
-    if (mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+    if (mounted &&
+        ModalRoute.of(context)?.isCurrent == true &&
+        _pendingShowTruthDare) {
       _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && _gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null) {
+        if (mounted &&
+            ModalRoute.of(context)?.isCurrent == true &&
+            !_scoreboardOpen &&
+            !_quitDialogOpen &&
+            _gamePhase == GamePhase.awaitingTruthDare &&
+            _selectedPlayerIndex != null) {
           final playerName = widget.players[_selectedPlayerIndex!];
           _showTruthDareDialog(playerName);
         }
@@ -619,192 +684,219 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
-    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32); // Responsive
-    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive
-    final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22); // Responsive
-    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22); // Responsive
-    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22); // Responsive
-    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32); // Responsive
-    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40); // Responsive
-    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28); // Responsive
+    final double cardPadding =
+        (screenSize.width * 0.06).clamp(16, 32); // Responsive
+    final double titleFontSize =
+        (screenSize.width * 0.08).clamp(24, 36); // Responsive
+    final double iconSize =
+        (screenSize.width * 0.14).clamp(36, 60); // Responsive
+    final double messageFontSize =
+        (screenSize.width * 0.05).clamp(15, 22); // Responsive
+    final double buttonFontSize =
+        (screenSize.width * 0.055).clamp(16, 22); // Responsive
+    final double buttonSpacing =
+        (screenSize.width * 0.045).clamp(10, 22); // Responsive
+    final double sectionSpacing =
+        (screenSize.height * 0.03).clamp(14, 32); // Responsive
+    final double buttonRowSpacing =
+        (screenSize.height * 0.04).clamp(18, 40); // Responsive
+    final double buttonVerticalPadding =
+        (screenSize.height * 0.022).clamp(12, 28); // Responsive
 
     final result = await showGeneralDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        return Center(
-          child: Material(
-            type: MaterialType.transparency,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                child: Container(
-                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.all(cardPadding), // Responsive
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.32),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.quitGameTitle,
-                        style: GoogleFonts.baloo2(
-                          fontSize: titleFontSize, // Responsive
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4,
-                              color: Colors.white.withOpacity(0.3),
-                            ),
-                          ],
+          context: context,
+          barrierDismissible: false,
+          barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black54,
+          transitionDuration: const Duration(milliseconds: 350),
+          pageBuilder: (dialogContext, animation, secondaryAnimation) {
+            return Center(
+              child: Material(
+                type: MaterialType.transparency,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                    child: Container(
+                      width:
+                          cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                      padding: EdgeInsets.all(cardPadding), // Responsive
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.32),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.25),
+                          width: 2.5,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: sectionSpacing), // Responsive
-                      Icon(
-                        Icons.sentiment_dissatisfied,
-                        color: Colors.white70,
-                        size: iconSize, // Responsive
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4.0,
-                            color: Colors.black.withAlpha((0.4 * 255).round()),
-                            offset: const Offset(1.0, 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            blurRadius: 12,
+                            spreadRadius: 1,
                           ),
                         ],
                       ),
-                      SizedBox(height: sectionSpacing), // Responsive
-                      Text(
-                        AppLocalizations.of(context)!.quitGameMessage,
-                        style: GoogleFonts.baloo2(
-                          fontSize: messageFontSize, // Responsive
-                          color: Colors.white.withOpacity(0.92),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: buttonRowSpacing), // Responsive
-                      Row(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                          Text(
+                            AppLocalizations.of(context)!.quitGameTitle,
+                            style: GoogleFonts.baloo2(
+                              fontSize: titleFontSize, // Responsive
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4,
+                                  color: Colors.white.withOpacity(0.3),
                                 ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.18),
-                                    blurRadius: 16,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop(false);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
-                                  minimumSize: const Size(0, 48),
-                                  textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: buttonFontSize,
-                                  ),
-                                ),
-                                child: Text(
-                                  AppLocalizations.of(context)!.no,
-                                  style: GoogleFonts.baloo2(
-                                    color: Colors.white.withOpacity(0.7),
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: buttonFontSize,
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
+                            textAlign: TextAlign.center,
                           ),
-                          SizedBox(width: buttonSpacing), // Responsive
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.of(dialogContext).pop(true);
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
-                                minimumSize: const Size(0, 48),
-                                textStyle: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: buttonFontSize,
-                                ),
+                          SizedBox(height: sectionSpacing), // Responsive
+                          Icon(
+                            Icons.sentiment_dissatisfied,
+                            color: Colors.white70,
+                            size: iconSize, // Responsive
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4.0,
+                                color:
+                                    Colors.black.withAlpha((0.4 * 255).round()),
+                                offset: const Offset(1.0, 1.0),
                               ),
-                              child: Text(
-                                AppLocalizations.of(context)!.yes,
-                                style: GoogleFonts.baloo2(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: buttonFontSize,
-                                ),
-                              ),
+                            ],
+                          ),
+                          SizedBox(height: sectionSpacing), // Responsive
+                          Text(
+                            AppLocalizations.of(context)!.quitGameMessage,
+                            style: GoogleFonts.baloo2(
+                              fontSize: messageFontSize, // Responsive
+                              color: Colors.white.withOpacity(0.92),
+                              fontWeight: FontWeight.w500,
                             ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: buttonRowSpacing), // Responsive
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF5B86E5),
+                                        Color(0xFF8F6ED5)
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.18),
+                                        blurRadius: 16,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(dialogContext).pop(false);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: buttonVerticalPadding),
+                                      minimumSize: const Size(0, 48),
+                                      textStyle: GoogleFonts.baloo2(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: buttonFontSize,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.no,
+                                      style: GoogleFonts.baloo2(
+                                        color: Colors.white.withOpacity(0.7),
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: buttonFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: buttonSpacing), // Responsive
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(true);
+                                  },
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: buttonVerticalPadding),
+                                    minimumSize: const Size(0, 48),
+                                    textStyle: GoogleFonts.baloo2(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: buttonFontSize,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.yes,
+                                    style: GoogleFonts.baloo2(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: buttonFontSize,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 3);
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    ) ?? false;
+            );
+          },
+          transitionBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 3);
+            const end = Offset.zero;
+            const curve = Curves.easeOutCubic;
+            final tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            final offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+        ) ??
+        false;
     _quitDialogOpen = false;
     // Resume dialog if needed
-    if (!result && mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+    if (!result &&
+        mounted &&
+        ModalRoute.of(context)?.isCurrent == true &&
+        _pendingShowTruthDare) {
       _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && _gamePhase == GamePhase.awaitingTruthDare && _selectedPlayerIndex != null) {
+        if (mounted &&
+            ModalRoute.of(context)?.isCurrent == true &&
+            !_scoreboardOpen &&
+            !_quitDialogOpen &&
+            _gamePhase == GamePhase.awaitingTruthDare &&
+            _selectedPlayerIndex != null) {
           final playerName = widget.players[_selectedPlayerIndex!];
           _showTruthDareDialog(playerName);
         }
@@ -841,7 +933,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               if (shouldQuit) {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(setLocale: widget.setLocale)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MyHomePage(setLocale: widget.setLocale)),
                   (Route<dynamic> route) => false,
                 );
               }
@@ -850,7 +944,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
+          toolbarHeight:
+              (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
         ),
         extendBodyBehindAppBar: true,
         body: Container(
@@ -863,7 +958,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               final double screenHeight = constraints.maxHeight;
               final double buttonRowHorizontalPadding = screenWidth * 0.05;
               final double buttonBottomPadding = screenHeight * 0.05;
-              final double wheelSize = (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55);
+              final double wheelSize =
+                  (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55);
               return Stack(
                 children: [
                   // Centered wheel
@@ -877,7 +973,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                             PlayerCircle(
                               players: widget.players,
                               size: wheelSize,
-                              highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
+                              highlightedIndex:
+                                  _gamePhase == GamePhase.awaitingTruthDare
+                                      ? _selectedPlayerIndex
+                                      : null,
                               colors: _playerColors,
                             ),
                             Positioned(
@@ -897,7 +996,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                       return Container(
                                         height: wheelSize * 0.6,
                                         color: Colors.red.withOpacity(0.5),
-                                        child: const Center(child: Text('Add bottle.png to assets!', style: TextStyle(color: Colors.white))),
+                                        child: const Center(
+                                            child: Text(
+                                                'Add bottle.png to assets!',
+                                                style: TextStyle(
+                                                    color: Colors.white))),
                                       );
                                     },
                                   ),
@@ -1168,6 +1271,6 @@ class _TruthDareDialog extends StatelessWidget {
           ),
         ),
       ),
-      ); // <-- closes Material
+    ); // <-- closes Material
   }
 }

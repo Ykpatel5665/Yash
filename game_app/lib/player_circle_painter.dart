@@ -87,26 +87,28 @@ Color(0xFFFF3D00), // Blaze Orange
       canvas.drawCircle(center, radius, sectionPaint);
       canvas.restore();
       if (highlightedIndex != null && i == highlightedIndex) {
-        // Add a subtle white radial glow fill for the highlighted slice
-        final Paint glowFill = Paint()
+        // Add a contained glass highlight fill for the highlighted slice
+        final Paint glassFill = Paint()
           ..shader = RadialGradient(
             colors: [
-              Colors.white.withOpacity(0.22),
+              Colors.white.withOpacity(0.13), // Subtle glass highlight
               Colors.transparent,
             ],
             stops: [0.0, 1.0],
+            center: Alignment.center,
+            radius: 0.7,
           ).createShader(arcRect)
           ..style = PaintingStyle.fill;
         canvas.save();
         canvas.clipPath(slicePath);
-        canvas.drawCircle(center, radius, glowFill);
+        canvas.drawCircle(center, radius * 0.98, glassFill); // Slightly smaller to avoid overflow
         canvas.restore();
-        // Existing highlight stroke
+        // Existing highlight stroke (kept, but blur reduced for less overflow)
         final Paint highlightPaint = Paint()
-          ..color = Colors.white.withOpacity(0.45)
+          ..color = Colors.white.withOpacity(0.38)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = responsiveBorderWidth * 2.2
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+          ..strokeWidth = responsiveBorderWidth * 1.7
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4); // Less blur
         canvas.drawArc(
           arcRect,
           startAngle,

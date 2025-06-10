@@ -947,9 +947,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                           },
                                           child: Center(
                                             child: AutoSizeText(
-                                              'Start',
+                                              AppLocalizations.of(context)!.start, // Use localization for 'Start'
                                               minFontSize: 10,
                                               maxLines: 1,
+                                              overflow: TextOverflow.visible,
+                                              wrapWords: false,
                                               style: GoogleFonts.baloo2(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: (screenWidth * 0.035).clamp(13, 18),

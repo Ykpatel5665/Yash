@@ -853,142 +853,104 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
           toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
         ),
         extendBodyBehindAppBar: true,
-        body: Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: const BoxDecoration(gradient: backgroundGradient),
-                child: SafeArea(
-                  child: LayoutBuilder( // Use LayoutBuilder for responsive sizing
-                    builder: (context, constraints) {
-                      // Calculate responsive sizes based on available height/width
-                      final double availableHeight = constraints.maxHeight;
-                      final double availableWidth = constraints.maxWidth;
-
-                      // Define spacing percentages (adjust these as needed)
-                      final double topSpacingPercent = 0.08; // Space between AppBar and Wheel
-                      final double bottomSpacingPercent = 0.06; // Space between Wheel and Buttons
-                      final double buttonBottomPaddingPercent = 0.05; // Padding below buttons
-
-                      // Calculate available height for the wheel itself
-                      final double wheelMaxHeight = availableHeight * (1.0 -
-                          topSpacingPercent -
-                          bottomSpacingPercent -
-                          buttonBottomPaddingPercent -
-                          0.1); // Subtract space for buttons row height (approx 0.1)
-
-                      // Adjust circle size based on available space
-                      final double circleDiameter = math.min(availableWidth * 0.8, wheelMaxHeight);
-
-                      // Calculate spacing in pixels
-                      final double topSpacing = availableHeight * topSpacingPercent;
-                      final double bottomSpacing = availableHeight * bottomSpacingPercent;
-                      final double buttonBottomPadding = availableHeight * buttonBottomPaddingPercent;
-                      final double buttonRowHorizontalPadding = availableWidth * 0.05;
-
-                      return SingleChildScrollView(
-                        physics: const ClampingScrollPhysics(),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: constraints.maxHeight,
-                          ),
-                          child: IntrinsicHeight(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(height: topSpacing), // Space below AppBar
-
-                                // Wheel Stack (not centered anymore, positioned by Column)
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Player Circle with responsive size and highlight
-                                    PlayerCircle(
-                                      players: widget.players,
-                                      size: circleDiameter,
-                                      // Highlight the selected player
-                                      highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
-                                      colors: _playerColors, // Pass the shuffled palette
-                                    ),
-
-                                    // Spinning Bottle with responsive size
-                                    Positioned(
-                                      child: GestureDetector(
-                                        onPanStart: _onPanStart,
-                                        onPanUpdate: _onPanUpdate,
-                                        onPanEnd: _onPanEnd,
-                                        // Disable gestures while spinning or choosing T/D
-                                        behavior: (_gamePhase == GamePhase.readyToSpin)
-                                            ? HitTestBehavior.deferToChild // Allow gestures only when ready
-                                            : HitTestBehavior.opaque, // Block gestures otherwise
-                                        child: Transform.rotate(
-                                          angle: _currentAngle,
-                                          child: Image.asset(
-                                            'assets/bottle.png',
-                                            height: circleDiameter * 0.6,
-                                            errorBuilder: (context, error, stackTrace) {
-                                              return Container(
-                                                height: circleDiameter * 0.6,
-                                                color: Colors.red.withOpacity(0.5),
-                                                child: const Center(child: Text('Add bottle.png to assets!', style: TextStyle(color: Colors.white)))
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                SizedBox(height: bottomSpacing), // Space above buttons
-
-                                // Bottom Action Buttons
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: buttonBottomPadding,
-                                    left: buttonRowHorizontalPadding,
-                                    right: buttonRowHorizontalPadding,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      _buildIconButton(
-                                        _isMuted ? Icons.volume_off : Icons.volume_up,
-                                        () {
-                                          setState(() {
-                                            _isMuted = !_isMuted;
-                                          });
-                                          print("Volume Toggled: ${_isMuted ? 'Muted' : 'Unmuted'}");
-                                          // TODO: Implement actual volume control logic
-                                        },
-                                      ),
-                                      _buildIconButton(
-                                        Icons.emoji_events_outlined, // Use trophy icon
-                                        _showScoreboardDialog,
-                                      ),
-                                      _buildIconButton(
-                                        Icons.play_circle_outline,
-                                        () {
-                                          print("Watch Ad / Premium pressed");
-                                          // TODO: Implement ad watching or premium feature logic
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(gradient: backgroundGradient),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final double screenWidth = constraints.maxWidth;
+              final double screenHeight = constraints.maxHeight;
+              final double buttonRowHorizontalPadding = screenWidth * 0.05;
+              final double buttonBottomPadding = screenHeight * 0.05;
+              final double wheelSize = (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55);
+              return Stack(
+                children: [
+                  // Centered wheel
+                  Column(
+                    children: [
+                      const Spacer(),
+                      Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            PlayerCircle(
+                              players: widget.players,
+                              size: wheelSize,
+                              highlightedIndex: _gamePhase == GamePhase.awaitingTruthDare ? _selectedPlayerIndex : null,
+                              colors: _playerColors,
                             ),
-                          ),
+                            Positioned(
+                              child: GestureDetector(
+                                onPanStart: _onPanStart,
+                                onPanUpdate: _onPanUpdate,
+                                onPanEnd: _onPanEnd,
+                                behavior: (_gamePhase == GamePhase.readyToSpin)
+                                    ? HitTestBehavior.deferToChild
+                                    : HitTestBehavior.opaque,
+                                child: Transform.rotate(
+                                  angle: _currentAngle,
+                                  child: Image.asset(
+                                    'assets/bottle.png',
+                                    height: wheelSize * 0.6,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: wheelSize * 0.6,
+                                        color: Colors.red.withOpacity(0.5),
+                                        child: const Center(child: Text('Add bottle.png to assets!', style: TextStyle(color: Colors.white))),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      const Spacer(),
+                    ],
                   ),
-                ),
-              ),
-            ),
-          ],
+                  // Button row pinned to bottom
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        bottom: buttonBottomPadding,
+                        left: buttonRowHorizontalPadding,
+                        right: buttonRowHorizontalPadding,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          _buildIconButton(
+                            _isMuted ? Icons.volume_off : Icons.volume_up,
+                            () {
+                              setState(() {
+                                _isMuted = !_isMuted;
+                              });
+                              // TODO: Implement actual volume control logic
+                            },
+                          ),
+                          _buildIconButton(
+                            Icons.emoji_events_outlined,
+                            _showScoreboardDialog,
+                          ),
+                          _buildIconButton(
+                            Icons.play_circle_outline,
+                            () {
+                              // TODO: Implement ad watching or premium feature logic
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     ); // Close Scaffold, WillPopScope, and build

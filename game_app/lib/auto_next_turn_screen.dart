@@ -570,19 +570,13 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final double screenWidth = size.width;
-    final double screenHeight = size.height;
-    final double buttonFontSize = (screenWidth * 0.045).clamp(15, 22);
-    final double buttonPaddingV = (screenHeight * 0.018).clamp(10, 22);
-    final double buttonPaddingH = (screenWidth * 0.08).clamp(24, 40);
-    final double spacingLarge = (screenHeight * 0.06).clamp(24, 60);
     return WillPopScope(
       onWillPop: () async {
         final shouldQuit = await _showQuitConfirmation();
         return shouldQuit;
       },
-      child: Scaffold(        appBar: AppHeader(
+      child: Scaffold(
+        appBar: AppHeader(
           title: AppLocalizations.of(context)!.autoNextTurn,
           centerTitle: true,
           leading: CustomAppBarButton(
@@ -599,8 +593,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
           elevation: 0,
           toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
           actions: null,
-          // Force single line, ellipsis, and responsive font size
-          // This is handled by AppHeader's AutoSizeText, but we ensure maxLines: 1 and overflow: ellipsis
         ),
         extendBodyBehindAppBar: true,
         body: Container(
@@ -621,102 +613,117 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               children: [
                 LayoutBuilder(
                   builder: (context, constraints) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: spacingLarge,
-                          ),
-                          PlayerCircle(
-                            players: widget.players,
-                            size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55), // Responsive: min 220, max 55% of height
-                            highlightedIndex: _isAnimatingHighlight ? _pendingHighlightIndex : _currentIndex,
-                            animated: true,
-                            animationDuration: const Duration(milliseconds: 1800), // smoother and slower
-                            previousIndex: _isAnimatingHighlight ? _currentIndex : null,
-                            colors: _playerColors, // Pass the shuffled palette
-                          ),
-                          SizedBox(height: spacingLarge),
-                          if (_lastPlayerFinished) ...[
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _currentIndex = 0;
-                                  _lastPlayerFinished = false;
-                                  // --- ADDED: Shuffle the color palette on restart ---
-                                  _playerColors = PlayerCirclePainter.shuffleColors();
-                                  // Auto show dialog for first player after restart
-                                  Future.delayed(const Duration(seconds: 2), () {
-                                    if (mounted && !_lastPlayerFinished) {
-                                      _showTruthOrDareDialog();
-                                    }
-                                  });
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: buttonPaddingH,
-                                  vertical: buttonPaddingV,
-                                ),
-                                textStyle: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                elevation: 3,
-                              ),
-                              child: AutoSizeText(
-                                AppLocalizations.of(context)!.restart,
-                                minFontSize: 10,
-                                maxLines: 1,
-                                overflow: TextOverflow.visible,
-                                wrapWords: false,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: buttonFontSize,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                    final double bottomPadding = constraints.maxHeight * 0.04;
+                    final double horizontalPadding = constraints.maxWidth * 0.07;
+                    final double spacingLarge = (constraints.maxHeight * 0.06).clamp(24, 60);
+                    final double screenWidth = constraints.maxWidth;
+                    final double screenHeight = constraints.maxHeight;
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: PlayerCircle(
+                              players: widget.players,
+                              size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
+                              highlightedIndex: _isAnimatingHighlight ? _pendingHighlightIndex : _currentIndex,
+                              animated: true,
+                              animationDuration: const Duration(milliseconds: 1800),
+                              previousIndex: _isAnimatingHighlight ? _currentIndex : null,
+                              colors: _playerColors,
                             ),
-                            SizedBox(height: spacingLarge * 0.7),
-                            AutoSizeText(
-                              AppLocalizations.of(context)!.allPlayersHadTurn,
-                              style: TextStyle(fontSize: 18, color: Colors.white),
-                              minFontSize: 10,
-                              maxLines: 2,
-                              wrapWords: true,
-                              textAlign: TextAlign.center,
+                          ),
+                        ),
+                        if (_lastPlayerFinished) ...[
+                          Padding(
+                            padding: EdgeInsets.only(top: spacingLarge),
+                            child: Column(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentIndex = 0;
+                                      _lastPlayerFinished = false;
+                                      _playerColors = PlayerCirclePainter.shuffleColors();
+                                      Future.delayed(const Duration(seconds: 2), () {
+                                        if (mounted && !_lastPlayerFinished) {
+                                          _showTruthOrDareDialog();
+                                        }
+                                      });
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: (screenWidth * 0.18).clamp(32, 60),
+                                      vertical: (screenHeight * 0.025).clamp(14, 28),
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                      color: Colors.white,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 3,
+                                    shadowColor: Colors.transparent,
+                                  ),
+                                  child: AutoSizeText(
+                                    AppLocalizations.of(context)!.restart,
+                                    minFontSize: 10,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.visible,
+                                    wrapWords: false,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                SizedBox(height: spacingLarge * 0.7),
+                                AutoSizeText(
+                                  AppLocalizations.of(context)!.allPlayersHadTurn,
+                                  style: TextStyle(fontSize: 18, color: Colors.white),
+                                  minFontSize: 10,
+                                  maxLines: 2,
+                                  wrapWords: true,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ],
-                      ),
+                        // Bottom buttons row
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: horizontalPadding,
+                            right: horizontalPadding,
+                            bottom: bottomPadding,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildIconButton(
+                                _isMuted ? Icons.volume_off : Icons.volume_up,
+                                () {
+                                  setState(() {
+                                    _isMuted = !_isMuted;
+                                  });
+                                },
+                              ),
+                              _buildIconButton(
+                                Icons.emoji_events_outlined,
+                                _showScoreboardDialog,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     );
                   },
-                ),
-                // Bottom buttons row (volume and scorecard)
-                Positioned(
-                  left: MediaQuery.of(context).size.width * 0.07,
-                  right: MediaQuery.of(context).size.width * 0.07,
-                  bottom: MediaQuery.of(context).size.height * 0.04,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildIconButton(
-                        _isMuted ? Icons.volume_off : Icons.volume_up,
-                        () {
-                          setState(() {
-                            _isMuted = !_isMuted;
-                          });
-                          // TODO: Implement actual volume control logic
-                        },
-                      ),
-                      _buildIconButton(
-                        Icons.emoji_events_outlined,
-                        _showScoreboardDialog,
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),

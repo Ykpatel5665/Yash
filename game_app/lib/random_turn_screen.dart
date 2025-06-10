@@ -892,152 +892,154 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               final double screenHeight = constraints.maxHeight;
               return Stack(
                 children: [
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            PlayerCircle(
-                              players: widget.players,
-                              size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
-                              highlightedIndex: _isSpinning ? _highlightedIndex : _currentIndex,
-                              animated: _isSpinning,
-                              animationDuration: const Duration(milliseconds: 1800),
-                              previousIndex: _isSpinning ? _previousIndex : null,
-                              colors: _playerColors,
-                            ),
-                            if (!_gameStarted && !_lastPlayerFinished)
-                              ClipOval(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                  child: Container(
-                                    width: (screenWidth * 0.16).clamp(48, 70),
-                                    height: (screenWidth * 0.16).clamp(48, 70),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: RadialGradient(
-                                        colors: [
-                                          Colors.black.withOpacity(0.22), // Darker glass effect
-                                          Colors.black.withOpacity(0.10),
-                                          Colors.transparent
-                                        ],
-                                        center: Alignment.topLeft,
-                                        radius: 0.95,
-                                      ),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.22), // Slightly lighter border for contrast
-                                        width: 1.6,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.22), // Subtle dark glow
-                                          blurRadius: 12,
-                                          spreadRadius: 1,
+                  // Center the wheel perfectly using Expanded and Center
+                  Column(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              PlayerCircle(
+                                players: widget.players,
+                                size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
+                                highlightedIndex: _isSpinning ? _highlightedIndex : _currentIndex,
+                                animated: _isSpinning,
+                                animationDuration: const Duration(milliseconds: 1800),
+                                previousIndex: _isSpinning ? _previousIndex : null,
+                                colors: _playerColors,
+                              ),
+                              if (!_gameStarted && !_lastPlayerFinished)
+                                ClipOval(
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                    child: Container(
+                                      width: (screenWidth * 0.16).clamp(48, 70),
+                                      height: (screenWidth * 0.16).clamp(48, 70),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: RadialGradient(
+                                          colors: [
+                                            Colors.black.withOpacity(0.22),
+                                            Colors.black.withOpacity(0.10),
+                                            Colors.transparent
+                                          ],
+                                          center: Alignment.topLeft,
+                                          radius: 0.95,
                                         ),
-                                      ],
-                                    ),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      shape: const CircleBorder(),
-                                      child: InkWell(
-                                        customBorder: const CircleBorder(),
-                                        onTap: () {
-                                          setState(() {
-                                            _gameStarted = true;
-                                          });
-                                          _pickRandomPlayerWithSpin();
-                                        },
-                                        child: Center(
-                                          child: AutoSizeText(
-                                            'Start',
-                                            minFontSize: 10,
-                                            maxLines: 1,
-                                            style: GoogleFonts.baloo2(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: (screenWidth * 0.035).clamp(13, 18),
-                                              color: Colors.white.withOpacity(0.92), // Slightly less transparent for better contrast
-                                              letterSpacing: 0.5,
-                                              shadows: [
-                                                Shadow(
-                                                  blurRadius: 8,
-                                                  color: Colors.black.withOpacity(0.32), // Add a dark shadow for contrast
-                                                  offset: Offset(0, 2),
-                                                ),
-                                                Shadow(
-                                                  blurRadius: 2,
-                                                  color: Colors.black.withOpacity(0.18), // Subtle extra shadow
-                                                  offset: Offset(0, 0),
-                                                ),
-                                              ],
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.22),
+                                          width: 1.6,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.22),
+                                            blurRadius: 12,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        shape: const CircleBorder(),
+                                        child: InkWell(
+                                          customBorder: const CircleBorder(),
+                                          onTap: () {
+                                            setState(() {
+                                              _gameStarted = true;
+                                            });
+                                            _pickRandomPlayerWithSpin();
+                                          },
+                                          child: Center(
+                                            child: AutoSizeText(
+                                              'Start',
+                                              minFontSize: 10,
+                                              maxLines: 1,
+                                              style: GoogleFonts.baloo2(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: (screenWidth * 0.035).clamp(13, 18),
+                                                color: Colors.white.withOpacity(0.92),
+                                                letterSpacing: 0.5,
+                                                shadows: [
+                                                  Shadow(
+                                                    blurRadius: 8,
+                                                    color: Colors.black.withOpacity(0.32),
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                  Shadow(
+                                                    blurRadius: 2,
+                                                    color: Colors.black.withOpacity(0.18),
+                                                    offset: Offset(0, 0),
+                                                  ),
+                                                ],
+                                              ),
+                                              textAlign: TextAlign.center,
                                             ),
-                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
-                        if (_lastPlayerFinished)
-                          Padding(
-                            padding: EdgeInsets.only(top: spacingLarge),
-                            child: Column(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _resetTurns();
-                                      _lastPlayerFinished = false;
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black,
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: (screenWidth * 0.18).clamp(32, 60),
-                                      vertical: (screenHeight * 0.025).clamp(14, 28),
-                                    ),
-                                    textStyle: GoogleFonts.baloo2(
-                                      fontSize: (screenWidth * 0.045).clamp(15, 22),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)),
-                                    elevation: 3,
-                                    shadowColor: Colors.transparent,
+                      ),
+                      if (_lastPlayerFinished)
+                        Padding(
+                          padding: EdgeInsets.only(top: spacingLarge),
+                          child: Column(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _resetTurns();
+                                    _lastPlayerFinished = false;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: (screenWidth * 0.18).clamp(32, 60),
+                                    vertical: (screenHeight * 0.025).clamp(14, 28),
                                   ),
-                                  child: AutoSizeText(
-                                    AppLocalizations.of(context)!.restart,
-                                    minFontSize: 10,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.visible,
-                                    wrapWords: false,
-                                    style: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: (screenWidth * 0.045).clamp(15, 22),
-                                      color: Colors.white,
-                                    ),
-                                    textAlign: TextAlign.center,
+                                  textStyle: GoogleFonts.baloo2(
+                                    fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  elevation: 3,
+                                  shadowColor: Colors.transparent,
                                 ),
-                                SizedBox(height: spacingLarge * 0.7),
-                                AutoSizeText(
-                                  AppLocalizations.of(context)!.allPlayersHadTurn,
-                                  style: TextStyle(fontSize: 18, color: Colors.white),
+                                child: AutoSizeText(
+                                  AppLocalizations.of(context)!.restart,
                                   minFontSize: 10,
-                                  maxLines: 2,
-                                  wrapWords: true,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.visible,
+                                  wrapWords: false,
+                                  style: GoogleFonts.baloo2(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                    color: Colors.white,
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(height: spacingLarge * 0.7),
+                              AutoSizeText(
+                                AppLocalizations.of(context)!.allPlayersHadTurn,
+                                style: TextStyle(fontSize: 18, color: Colors.white),
+                                minFontSize: 10,
+                                maxLines: 2,
+                                wrapWords: true,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                   // Bottom buttons row
                   Positioned(

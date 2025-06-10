@@ -12,6 +12,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 
+// Shared dialog constants and helpers
+const double kMaxCardWidth = 420.0;
+double getResponsiveCardPadding(double screenWidth) => (screenWidth * 0.06).clamp(16, 32);
+
 // --- Add the Whoopsie! _TruthDareDialog widget (copied and adapted from AutoNextTurnScreen) ---
 class _TruthDareDialog extends StatelessWidget {
   final String playerName;
@@ -21,7 +25,6 @@ class _TruthDareDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
-    final double maxCardWidth = 420;
     final double cardPadding = 24.0;
     final localizations = AppLocalizations.of(context)!;
     BoxDecoration truthButtonDecoration = BoxDecoration(
@@ -87,7 +90,7 @@ class _TruthDareDialog extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
             child: Container(
-              width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+              width: cardWidth > kMaxCardWidth ? kMaxCardWidth : cardWidth,
               padding: EdgeInsets.all(cardPadding),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.32),
@@ -433,18 +436,14 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
       context: context,
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
-        final double cardWidth = screenSize.width * 0.92;
-        final double maxCardWidth = 420;
-        final double cardPadding =
-            (screenSize.width * 0.06).clamp(16, 32); // Responsive
+        final double cardPadding = getResponsiveCardPadding(screenSize.width);
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
-        final double iconSize =
-            (screenSize.width * 0.14).clamp(36, 60); // Responsive
+        final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
         return Dialog(
           backgroundColor: Colors.transparent,
           child: GameCard(
-            maxWidth: maxCardWidth,
+            maxWidth: kMaxCardWidth,
             padding: EdgeInsets.all(cardPadding),
             child: SingleChildScrollView(
               child: Column(
@@ -625,9 +624,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
-    final double maxCardWidth = 420;
-    final double cardPadding =
-        (screenSize.width * 0.06).clamp(16, 32); // Responsive
+    final double maxCardWidth = kMaxCardWidth;
+    final double cardPadding = getResponsiveCardPadding(screenSize.width); // Responsive
     final double titleFontSize =
         (screenSize.width * 0.08).clamp(24, 36); // Responsive
     final double iconSize =

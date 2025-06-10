@@ -621,6 +621,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
 
   Future<bool> _showQuitConfirmation() async {
     if (_quitDialogOpen) return false;
+    // Set pending show dialog flag if dialog should resume
+    _pendingShowTruthDare = _gameStarted && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished;
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
@@ -822,17 +824,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     ) ?? false;
     _quitDialogOpen = false;
     // Resume dialog if needed
-    if (!result &&
-        mounted &&
-        ModalRoute.of(context)?.isCurrent == true &&
-        _pendingShowTruthDare) {
+    if (!result && mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
       _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted &&
-            ModalRoute.of(context)?.isCurrent == true &&
-            !_scoreboardOpen &&
-            !_quitDialogOpen &&
-            !_lastPlayerFinished) {
+        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
           _showTruthDareDialog();
         }
       });

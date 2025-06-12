@@ -13,6 +13,7 @@ import 'models/player.dart';
 import 'custom_appbar_button.dart';
 import 'package:auto_size_text/auto_size_text.dart'; // Import AutoSizeText
 import 'l10n/app_localizations.dart';
+import 'utils/sound_manager.dart'; // Import SoundManager
 
 class AddPlayersScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -290,6 +291,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                         ),
                       ),
                       onPressed: () {
+                        SoundManager.playButtonSound();
                         // Navigate based on the selected game mode
                         Widget nextScreen;
                         switch (widget.gameMode) {

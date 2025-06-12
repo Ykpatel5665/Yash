@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import '../../utils/sound_manager.dart';
 
 /// A primary button with gradient/shadow support, used throughout the app.
 ///
@@ -77,7 +78,12 @@ class PrimaryButton extends StatelessWidget {
     );
 
     Widget button = ElevatedButton(
-      onPressed: enabled ? onPressed : null,
+      onPressed: enabled
+          ? () {
+              SoundManager.playButtonSound();
+              if (onPressed != null) onPressed!();
+            }
+          : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: gradient == null ? effectiveBg : Colors.transparent,
         foregroundColor: effectiveFg,

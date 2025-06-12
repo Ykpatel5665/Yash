@@ -11,6 +11,7 @@ import 'custom_appbar_button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
+import 'utils/sound_manager.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -172,6 +173,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     if (_gamePhase != GamePhase.readyToSpin) return;
     _stopSpin();
     _lastPanPosition = details.localPosition;
+    SoundManager.playBottleSound();
   }
 
   void _onPanUpdate(DragUpdateDetails details) {

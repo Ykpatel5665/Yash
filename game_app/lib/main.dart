@@ -8,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/headers/app_header.dart';
+import 'utils/sound_manager.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -766,6 +767,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () {
+                                        SoundManager.playButtonSound();
                                         Navigator.of(dialogPageContext).pop(false); // Return false on cancel
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -812,6 +814,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                       ),
                                       child: ElevatedButton(
                                         onPressed: () async {
+                                          SoundManager.playButtonSound();
                                           setState(() {
                                             _selectedGameModeEnum = currentModeSelection;
                                             _selectedAgeGroupEnum = currentAgeSelection;
@@ -951,7 +954,10 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
           IconButton(
             icon: const Icon(Icons.language),
             tooltip: AppLocalizations.of(context)!.changeLanguage,
-            onPressed: () => _showLanguagePickerDialog(context),
+            onPressed: () {
+              SoundManager.playButtonSound();
+              _showLanguagePickerDialog(context);
+            },
           ),
         ],
       ),
@@ -1054,11 +1060,13 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                       ),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton(AppLocalizations.of(context)!.addTruths, Icons.add, () {
+                        SoundManager.playButtonSound();
                         print("Add Truths pressed");
                         // TODO: Navigate to Add Truths screen
                       }),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton(AppLocalizations.of(context)!.addDares, Icons.add, () {
+                        SoundManager.playButtonSound();
                         print("Add Dares pressed");
                         // TODO: Navigate to Add Dares screen
                       }),
@@ -1078,6 +1086,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                               // TODO: Share pressed
                             }, tooltip: AppLocalizations.of(context)!.share),
                             _buildBottomBarButton(Icons.settings, () {
+                              SoundManager.playButtonSound();
                               _showModernGameSetupDialog(context);
                             }, tooltip: AppLocalizations.of(context)!.settings),
                           ],
@@ -1133,7 +1142,10 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        onPressed: onPressed, // Restore button functionality
+        onPressed: () {
+          SoundManager.playButtonSound();
+          onPressed();
+        }, // Restore button functionality
         child: Stack(
           children: [
             Align(
@@ -1191,7 +1203,10 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
             shadowColor: Colors.transparent,
             minimumSize: const Size(60, 60),
           ),
-          onPressed: onPressed,
+          onPressed: () {
+            SoundManager.playButtonSound();
+            onPressed();
+          },
           child: Icon(
             icon,
             color: Colors.black,

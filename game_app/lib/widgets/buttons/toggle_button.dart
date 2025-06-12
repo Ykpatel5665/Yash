@@ -67,7 +67,7 @@ class ToggleButton extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
+        onTap: onTap, // Remove sound here
         child: Padding(
           padding: EdgeInsets.only(
             left: horizontalPadding * 2.2, // Add extra left space

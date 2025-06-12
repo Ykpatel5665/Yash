@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'l10n/app_localizations.dart';
+import 'utils/sound_manager.dart';
 
 class TruthDareQuestionScreen extends StatefulWidget {
   final String playerName;
@@ -258,6 +259,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
   Future<void> _handleForfeit({bool isTimeout = false}) async {
     _timer?.cancel();
     _progressController.stop();
+    await SoundManager.playForfeitSound();
     await _showResultDialog(
       title: isTimeout ? AppLocalizations.of(context)!.timesUpTitle : AppLocalizations.of(context)!.oopsTitle,
       message: isTimeout ? AppLocalizations.of(context)!.ranOutOfTime : AppLocalizations.of(context)!.lostRound,
@@ -270,6 +272,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
   Future<void> _handleDone() async {
     _timer?.cancel();
     _progressController.stop();
+    await SoundManager.playCompletedSound();
     await _showResultDialog(
       title: AppLocalizations.of(context)!.congratsTitle,
       message: AppLocalizations.of(context)!.challengeCompleted,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/sound_manager.dart';
 
 /// A reusable AppBar navigation button matching the Truth/Dare cross style.
 class CustomAppBarButton extends StatelessWidget {
@@ -31,14 +32,16 @@ class CustomAppBarButton extends StatelessWidget {
         width: size ?? buttonSize,
         height: size ?? buttonSize,
         decoration: BoxDecoration(
-          color: Colors.transparent, // Changed from white.withOpacity(0.8)
-          borderRadius: BorderRadius.circular(10), // Square look
-          // Removed boxShadow for a flat look
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
         ),
         child: IconButton(
-          icon: Icon(icon, color: Colors.white, size: iconSize ?? iconSizeValue), // Changed to white
+          icon: Icon(icon, color: Colors.white, size: iconSize ?? iconSizeValue),
           tooltip: tooltip,
-          onPressed: onPressed,
+          onPressed: () {
+            SoundManager.playButtonSound();
+            onPressed();
+          },
         ),
       ),
     );

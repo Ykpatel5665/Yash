@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/sound_manager.dart';
 
 /// A reusable neumorphic/soft UI icon button.
 ///
@@ -53,7 +54,10 @@ class NeumorphicIconButton extends StatelessWidget {
       ),
       child: IconButton(
         icon: Icon(icon, size: responsiveIconSize, color: Colors.black),
-        onPressed: onPressed,
+        onPressed: () {
+          SoundManager.playButtonSound();
+          onPressed();
+        },
         splashRadius: responsiveSize / 2,
         color: Colors.black,
       ),

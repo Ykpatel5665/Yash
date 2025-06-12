@@ -9,6 +9,7 @@ import 'widgets/buttons/toggle_button.dart';
 import 'custom_appbar_button.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
+import 'utils/sound_manager.dart';
 
 class Category {
   final String id;
@@ -428,6 +429,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                         ),
                                       ),
                                       onPressed: _selectedCategoryIds.isEmpty ? null : () async {
+                                        SoundManager.playButtonSound();
                                         await _saveLastPlayedCategories();
                                         Navigator.push(
                                           context,

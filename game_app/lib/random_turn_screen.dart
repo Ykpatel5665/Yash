@@ -11,6 +11,7 @@ import 'player_circle_painter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
+import 'utils/sound_manager.dart';
 
 // Shared dialog constants and helpers
 const double kMaxCardWidth = 420.0;
@@ -573,7 +574,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            SoundManager.playButtonSound();
+                            Navigator.of(context).pop();
+                          },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             backgroundColor: Colors.transparent,
@@ -764,6 +768,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
+                                  SoundManager.playButtonSound();
                                   Navigator.of(dialogContext).pop(false);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -796,6 +801,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           Expanded(
                             child: TextButton(
                               onPressed: () {
+                                SoundManager.playButtonSound();
                                 Navigator.of(dialogContext).pop(true);
                               },
                               style: TextButton.styleFrom(
@@ -959,6 +965,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                         child: InkWell(
                                           customBorder: const CircleBorder(),
                                           onTap: () {
+                                            SoundManager.playButtonSound();
                                             setState(() {
                                               _gameStarted = true;
                                             });
@@ -1068,6 +1075,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         _buildIconButton(
                           _isMuted ? Icons.volume_off : Icons.volume_up,
                           () {
+                            SoundManager.playButtonSound();
                             setState(() {
                               _isMuted = !_isMuted;
                             });
@@ -1075,7 +1083,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         ),
                         _buildIconButton(
                           Icons.emoji_events_outlined,
-                          _showScoreboardDialog,
+                          () {
+                            SoundManager.playButtonSound();
+                            _showScoreboardDialog();
+                          },
                         ),
                       ],
                     ),

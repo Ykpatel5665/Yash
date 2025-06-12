@@ -42,9 +42,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   double _currentAngle = 0.0;
   late final Ticker _spinTicker;
   double _angularVelocity = 0.0; // radians per tick
-  static const double _friction = 0.005; // Tune for feel (radians per tick^2)
-  static const double _minAngularVelocity = 0.002; // Threshold to stop
-  static const double _maxAngularVelocity = 1.0; // Cap max speed
+  static const double _friction = 0.020; // Increased friction for faster stop
+  static const double _minAngularVelocity = 0.01; // Increased threshold to stop
+  static const double _maxAngularVelocity = 1.5; // Allow harder/faster spins
   bool _isSpinning = false;
   bool _isMuted = false;
   GamePhase _gamePhase = GamePhase.readyToSpin;
@@ -61,6 +61,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   // --- ADDED: Store shuffled player colors for this game session ---
   late List<Color> _playerColors;
+
+  Duration? _spinStartTime;
+  static const Duration _minSpinDuration = Duration(seconds: 4);
 
   @override
   void initState() {
@@ -238,11 +241,17 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       });
       return;
     }
+    final random = math.Random();
+    final double randomBonus = random.nextDouble() * 0.5; // 0 to 0.5
+    final double velocityWithRandom = initialAngularVelocity.isNegative
+      ? initialAngularVelocity - randomBonus
+      : initialAngularVelocity + randomBonus;
     setState(() {
       _gamePhase = GamePhase.spinning;
       _selectedPlayerIndex = null;
       _isSpinning = true;
-      _angularVelocity = initialAngularVelocity;
+      _angularVelocity = velocityWithRandom;
+      _spinStartTime = null; // Will be set on first tick
     });
     _spinTicker.start();
   }
@@ -250,6 +259,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   void _onSpinTick(Duration elapsed) {
     if (!_isSpinning) return;
     setState(() {
+      if (_spinStartTime == null) {
+        _spinStartTime = elapsed;
+      }
       _currentAngle += _angularVelocity;
       // Keep angle in [0, 2pi)
       if (_currentAngle < 0) {
@@ -265,11 +277,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         _angularVelocity += _friction;
         if (_angularVelocity > 0) _angularVelocity = 0;
       }
-      // Stop if velocity is low
-      if (_angularVelocity.abs() < _minAngularVelocity) {
+      // Calculate elapsed spin time
+      final spinElapsed = elapsed - (_spinStartTime ?? elapsed);
+      // Stop if velocity is low AND minimum duration reached
+      if (_angularVelocity.abs() < _minAngularVelocity && spinElapsed >= _minSpinDuration) {
         _isSpinning = false;
         _spinTicker.stop();
         _onSpinComplete();
+      } else if (_angularVelocity.abs() < _minAngularVelocity && spinElapsed < _minSpinDuration) {
+        // Keep spinning slowly until min duration
+        _angularVelocity = _minAngularVelocity * (_angularVelocity.isNegative ? -1 : 1);
       }
     });
   }

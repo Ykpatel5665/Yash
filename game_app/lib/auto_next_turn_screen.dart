@@ -11,6 +11,7 @@ import 'player_circle_painter.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 import 'dart:math' as math; // Import math for random selection
+import 'utils/sound_manager.dart'; // Import SoundManager
 
 // Shared dialog constants and helpers (copied from random_turn_screen.dart)
 const double kMaxCardWidth = 420.0;
@@ -296,7 +297,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            SoundManager.playButtonSound();
+                            Navigator.of(context).pop();
+                          },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             backgroundColor: Colors.transparent,
@@ -497,6 +501,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   ),
                                   child: ElevatedButton(
                                     onPressed: () {
+                                      SoundManager.playButtonSound();
                                       Navigator.of(dialogContext).pop(false);
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -529,6 +534,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               Expanded(
                                 child: TextButton(
                                   onPressed: () {
+                                    SoundManager.playButtonSound();
                                     Navigator.of(dialogContext).pop(true);
                                   },
                                   style: TextButton.styleFrom(
@@ -843,6 +849,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               _buildIconButton(
                                 _isMuted ? Icons.volume_off : Icons.volume_up,
                                 () {
+                                  SoundManager.playButtonSound();
                                   setState(() {
                                     _isMuted = !_isMuted;
                                   });
@@ -850,7 +857,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               ),
                               _buildIconButton(
                                 Icons.emoji_events_outlined,
-                                _showScoreboardDialog,
+                                () {
+                                  SoundManager.playButtonSound();
+                                  _showScoreboardDialog();
+                                },
                               ),
                             ],
                           ),

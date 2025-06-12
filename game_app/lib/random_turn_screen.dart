@@ -1011,60 +1011,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           ),
                         ),
                       ),
-                      if (_lastPlayerFinished)
-                        Padding(
-                          padding: EdgeInsets.only(top: spacingLarge),
-                          child: Column(
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _resetTurns();
-                                    _lastPlayerFinished = false;
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: (screenWidth * 0.18).clamp(32, 60),
-                                    vertical: (screenHeight * 0.025).clamp(14, 28),
-                                  ),
-                                  textStyle: GoogleFonts.baloo2(
-                                    fontSize: (screenWidth * 0.045).clamp(15, 22),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  elevation: 3,
-                                  shadowColor: Colors.transparent,
-                                ),
-                                child: AutoSizeText(
-                                  AppLocalizations.of(context)!.restart,
-                                  minFontSize: 10,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.visible,
-                                  wrapWords: false,
-                                  style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: (screenWidth * 0.045).clamp(15, 22),
-                                    color: Colors.white,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(height: spacingLarge * 0.7),
-                              AutoSizeText(
-                                AppLocalizations.of(context)!.allPlayersHadTurn,
-                                style: TextStyle(fontSize: 18, color: Colors.white),
-                                minFontSize: 10,
-                                maxLines: 2,
-                                wrapWords: true,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
                     ],
                   ),
                   // Bottom buttons row
@@ -1096,6 +1042,63 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                   ),
                   // Truth/Dare dialog/buttons
                   // Removed the overlay for _showTruthDarePrompt
+                  if (_lastPlayerFinished)
+                    Positioned(
+                      left: horizontalPadding,
+                      right: horizontalPadding,
+                      bottom: bottomPadding + 70, // Place above the bottom buttons row
+                      child: Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              SoundManager.playButtonSound();
+                              setState(() {
+                                _resetTurns();
+                                _lastPlayerFinished = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: (screenWidth * 0.18).clamp(32, 60),
+                                vertical: (screenHeight * 0.025).clamp(14, 28),
+                              ),
+                              textStyle: GoogleFonts.baloo2(
+                                fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                fontWeight: FontWeight.bold,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              elevation: 3,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: AutoSizeText(
+                              AppLocalizations.of(context)!.restart,
+                              minFontSize: 10,
+                              maxLines: 1,
+                              overflow: TextOverflow.visible,
+                              wrapWords: false,
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.bold,
+                                fontSize: (screenWidth * 0.045).clamp(15, 22),
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          AutoSizeText(
+                            AppLocalizations.of(context)!.allPlayersHadTurn,
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            minFontSize: 10,
+                            maxLines: 2,
+                            wrapWords: true,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               );
             },

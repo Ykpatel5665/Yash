@@ -42,9 +42,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   double _currentAngle = 0.0;
   late final Ticker _spinTicker;
   double _angularVelocity = 0.0; // radians per tick
-  static const double _friction = 0.005; // Tune for feel (radians per tick^2)
-  static const double _minAngularVelocity = 0.002; // Threshold to stop
-  static const double _maxAngularVelocity = 1.0; // Cap max speed
   bool _isSpinning = false;
   bool _isMuted = false;
   GamePhase _gamePhase = GamePhase.readyToSpin;
@@ -62,10 +59,37 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   // --- ADDED: Store shuffled player colors for this game session ---
   late List<Color> _playerColors;
 
+  // --- BEGIN: Ported from SpinningDrawableView.java ---
+  // Constants for spinning physics and obstacles
+  static const double _degPerPeriod = 360.0;
+  static const double _degPerQuarterPeriod = _degPerPeriod / 4.0;
+  static const double _degPerHalfPeriod = _degPerPeriod / 2.0;
+  static const double _degPerThreeQuarterPeriod = (_degPerPeriod * 3.0) / 4.0;
+  static const double _arcOfTolerance = 30.0; // degrees
+  static const double _friction = 0.5; // degrees per tick
+  static const double _bounceEnergyCoefficient = 0.2;
+  static const double _velocityMax = 1.0;
+  static const double _minRotationDegrees = 0.0;
+  static const int _touchNot = 0;
+  static const int _touchTop = 1;
+  static const int _touchBottom = 2;
+
+  // State for advanced spinning/obstacle logic
+  int _touchState = _touchNot;
+  double _formerAngle = 0.0;
+  int _formerTime = -1;
+  double _succeedingAngle = 0.0;
+  int _succeedingTime = -1;
+  bool _obstacleExists = false;
+  double _angle1 = 0.0, _angle2 = 0.0, _angle3 = 0.0;
+  double _rotationStepDegrees = 0.0; // like Java's rotationStepDegrees
+  double _rotationDegrees = 0.0; // for internal degree-based logic
+  double _startSpeed = 0.0;
+  // --- END: Ported from SpinningDrawableView.java ---
+
   @override
   void initState() {
     super.initState();
-    // ...existing code...
     _spinTicker = Ticker(_onSpinTick);
     for (final player in widget.players) {
       _playerScores[player] = 0;
@@ -173,7 +197,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     if (_gamePhase != GamePhase.readyToSpin) return;
     _stopSpin();
     _lastPanPosition = details.localPosition;
-    SoundManager.playBottleSound();
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -224,38 +247,44 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     double angularVelocity =
         (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) /
             r.distanceSquared;
+
     // Cap velocity
-    angularVelocity = angularVelocity.clamp(-_maxAngularVelocity, _maxAngularVelocity);
+    const double maxAngularVelocity = 1.0;
+    angularVelocity = angularVelocity.clamp(-maxAngularVelocity, maxAngularVelocity);
     if (angularVelocity.abs() > 0.1) {
       _startSpin(angularVelocity);
     }
     _lastPanPosition = null;
   }
 
-  void _startSpin(double initialAngularVelocity) {
-    if (!initialAngularVelocity.isFinite || initialAngularVelocity.abs() < 0.1) {
+  // --- Spin logic update to match Java reference ---
+  static const double _degToRad = math.pi / 180.0;
+  static const double _frictionPerTick = 0.5 * _degToRad; // 0.5 deg/frame ≈ 0.0087 rad/tick
+
+  void _startSpin([double? initialAngularVelocity]) {
+    // If not provided, pick a random velocity between 720–3600 degrees/4s
+    final random = math.Random();
+    final double minDegrees = 720; // 2 full turns
+    final double maxDegrees = 3600; // 10 full turns
+    final double spinDegrees = minDegrees + random.nextDouble() * (maxDegrees - minDegrees);
+    // Estimate ~4s at 60fps = 240 frames, so velocity = total angle / frames
+    final double estFrames = 240;
+    final double randomVelocity = (spinDegrees * _degToRad) / estFrames; // radians per tick
+    final double velocity = initialAngularVelocity?.abs() ?? randomVelocity;
+    if (!velocity.isFinite || velocity < 0.1 * _degToRad) {
       setState(() {
         _gamePhase = GamePhase.readyToSpin;
       });
       return;
     }
+    SoundManager.playBottleSound();
     setState(() {
       _gamePhase = GamePhase.spinning;
       _selectedPlayerIndex = null;
       _isSpinning = true;
-      _angularVelocity = initialAngularVelocity;
+      _angularVelocity = velocity * (random.nextBool() ? 1 : -1); // random direction
     });
     _spinTicker.start();
-  }
-
-  void _stopSpin() {
-    if (_isSpinning) {
-      _spinTicker.stop();
-      setState(() {
-        _isSpinning = false;
-        _angularVelocity = 0.0;
-      });
-    }
   }
 
   void _onSpinTick(Duration elapsed) {
@@ -268,16 +297,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       } else if (_currentAngle >= 2 * math.pi) {
         _currentAngle -= 2 * math.pi;
       }
-      // Apply friction
+      // Apply friction (0.5 deg/frame)
       if (_angularVelocity > 0) {
-        _angularVelocity -= _friction;
+        _angularVelocity -= _frictionPerTick;
         if (_angularVelocity < 0) _angularVelocity = 0;
       } else if (_angularVelocity < 0) {
-        _angularVelocity += _friction;
+        _angularVelocity += _frictionPerTick;
         if (_angularVelocity > 0) _angularVelocity = 0;
       }
       // Stop if velocity is low
-      if (_angularVelocity.abs() < _minAngularVelocity) {
+      if (_angularVelocity.abs() < 0.002) {
         _isSpinning = false;
         _spinTicker.stop();
         _onSpinComplete();
@@ -868,6 +897,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     return result;
   }
 
+  void _stopSpin() {
+    if (_isSpinning) {
+      _spinTicker.stop();
+      setState(() {
+        _isSpinning = false;
+        _angularVelocity = 0.0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // ... existing AppBar and background setup ...
@@ -1019,7 +1058,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
           ),
         ),
       ),
-    ); // Close Scaffold, WillPopScope, and build
+    );
   }
 }
 
@@ -1228,12 +1267,12 @@ class _TruthDareDialog extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    ); // <-- closes Material
+                ], // end children
+              ), // end Column
+            ), // end Container
+          ), // end BackdropFilter
+        ), // end ClipRRect
+      ), // end Material
+    ); // end Center
   }
 }

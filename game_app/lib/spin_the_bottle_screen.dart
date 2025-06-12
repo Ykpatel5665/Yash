@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'dart:math' as math; // Import math for rotation
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
@@ -38,8 +39,12 @@ class SpinTheBottleScreen extends StatefulWidget {
 class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     with SingleTickerProviderStateMixin {
   double _currentAngle = 0.0;
-  late AnimationController _controller;
-  Animation<double>? _animation;
+  late final Ticker _spinTicker;
+  double _angularVelocity = 0.0; // radians per tick
+  static const double _friction = 0.005; // Tune for feel (radians per tick^2)
+  static const double _minAngularVelocity = 0.002; // Threshold to stop
+  static const double _maxAngularVelocity = 1.0; // Cap max speed
+  bool _isSpinning = false;
   bool _isMuted = false;
   GamePhase _gamePhase = GamePhase.readyToSpin;
   int? _selectedPlayerIndex;
@@ -59,25 +64,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      // Duration will be set dynamically in _initiateSpinAnimation
-    )
-      ..addListener(() {
-        if (_animation != null && _gamePhase == GamePhase.spinning) {
-          setState(() {
-            _currentAngle = _animation!.value;
-          });
-        }
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed ||
-            status == AnimationStatus.dismissed) {
-          if (_gamePhase == GamePhase.spinning) {
-            _onSpinComplete();
-          }
-        }
-      });
+    // ...existing code...
+    _spinTicker = Ticker(_onSpinTick);
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
@@ -87,38 +75,29 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _spinTicker.dispose();
     super.dispose();
   }
 
   // --- Called when spin animation finishes ---
   void _onSpinComplete() {
-    // print("Spin Complete. Final Raw Angle: ${_currentAngle.toStringAsFixed(2)}");
     final double finalAngle = _currentAngle % (2 * math.pi);
-    final normalizedAngle =
-        finalAngle < 0 ? finalAngle + 2 * math.pi : finalAngle;
-
+    final normalizedAngle = finalAngle < 0 ? finalAngle + 2 * math.pi : finalAngle;
     final selectedIndex = _getSelectedPlayerIndex(normalizedAngle);
-
     setState(() {
       _currentAngle = normalizedAngle;
       _gamePhase = GamePhase.awaitingTruthDare;
       _selectedPlayerIndex = selectedIndex;
     });
-
-    // print("Normalized Angle: ${normalizedAngle.toStringAsFixed(2)}, Selected Index: $selectedIndex");
-
     if (selectedIndex >= 0 && selectedIndex < widget.players.length) {
       final playerName = widget.players[selectedIndex];
       Future.delayed(const Duration(milliseconds: 700), () async {
         await _showTruthDareDialog(playerName);
       });
     } else {
-      // No player selected (e.g. if playerCount is 0 or error in logic)
       setState(() {
         _gamePhase = GamePhase.readyToSpin;
         _selectedPlayerIndex = null;
-        _controller.reset(); // <--- ADDED RESET
       });
     }
   }
@@ -162,7 +141,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       setState(() {
         _gamePhase = GamePhase.readyToSpin;
         _selectedPlayerIndex = null;
-        _controller.reset();
       });
     }
   }
@@ -192,7 +170,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   // --- Gesture Handling --- (These are the intended current versions)
   void _onPanStart(DragStartDetails details) {
     if (_gamePhase != GamePhase.readyToSpin) return;
-    _controller.stop();
+    _stopSpin();
     _lastPanPosition = details.localPosition;
   }
 
@@ -240,72 +218,69 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       return;
     }
 
+    // Calculate angular velocity (radians per second)
     double angularVelocity =
         (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) /
             r.distanceSquared;
-    angularVelocity *= 2.0;
-
-    if (angularVelocity.abs() > 0.5) {
-      _initiateSpinAnimation(angularVelocity);
+    // Cap velocity
+    angularVelocity = angularVelocity.clamp(-_maxAngularVelocity, _maxAngularVelocity);
+    if (angularVelocity.abs() > 0.1) {
+      _startSpin(angularVelocity);
     }
     _lastPanPosition = null;
   }
 
-  void _initiateSpinAnimation(double initialAngularVelocity) {
-    if (!initialAngularVelocity.isFinite ||
-        initialAngularVelocity.abs() < 0.1) {
-      if (_gamePhase == GamePhase.spinning) {
-        setState(() {
-          _gamePhase = GamePhase.readyToSpin;
-        });
+  void _startSpin(double initialAngularVelocity) {
+    if (!initialAngularVelocity.isFinite || initialAngularVelocity.abs() < 0.1) {
+      setState(() {
+        _gamePhase = GamePhase.readyToSpin;
+      });
+      return;
+    }
+    setState(() {
+      _gamePhase = GamePhase.spinning;
+      _selectedPlayerIndex = null;
+      _isSpinning = true;
+      _angularVelocity = initialAngularVelocity;
+    });
+    _spinTicker.start();
+  }
+
+  void _stopSpin() {
+    if (_isSpinning) {
+      _spinTicker.stop();
+      setState(() {
+        _isSpinning = false;
+        _angularVelocity = 0.0;
+      });
+    }
+  }
+
+  void _onSpinTick(Duration elapsed) {
+    if (!_isSpinning) return;
+    setState(() {
+      _currentAngle += _angularVelocity;
+      // Keep angle in [0, 2pi)
+      if (_currentAngle < 0) {
+        _currentAngle += 2 * math.pi;
+      } else if (_currentAngle >= 2 * math.pi) {
+        _currentAngle -= 2 * math.pi;
       }
-      return;
-    }
-
-    if (_gamePhase != GamePhase.spinning) {
-      setState(() {
-        _gamePhase = GamePhase.spinning;
-        _selectedPlayerIndex = null;
-      });
-    }
-
-    const double testSpinDurationSeconds = 2.0;
-    const double testRotations = 3.0;
-
-    final double direction = initialAngularVelocity.sign;
-    final double targetAngleDelta = direction * testRotations * 2 * math.pi;
-    final double targetAngle = _currentAngle + targetAngleDelta;
-
-    if (!_currentAngle.isFinite || !targetAngle.isFinite) {
-      setState(() {
-        _gamePhase = GamePhase.readyToSpin;
-      });
-      return;
-    }
-
-    _animation = Tween<double>(
-      begin: _currentAngle,
-      end: targetAngle,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    final int animationDurationMilliseconds =
-        (testSpinDurationSeconds * 1000).toInt();
-    if (animationDurationMilliseconds <= 0) {
-      setState(() {
-        _gamePhase = GamePhase.readyToSpin;
-      });
-      return;
-    }
-
-    _controller.duration =
-        Duration(milliseconds: animationDurationMilliseconds);
-
-    _controller.forward(from: 0.0);
+      // Apply friction
+      if (_angularVelocity > 0) {
+        _angularVelocity -= _friction;
+        if (_angularVelocity < 0) _angularVelocity = 0;
+      } else if (_angularVelocity < 0) {
+        _angularVelocity += _friction;
+        if (_angularVelocity > 0) _angularVelocity = 0;
+      }
+      // Stop if velocity is low
+      if (_angularVelocity.abs() < _minAngularVelocity) {
+        _isSpinning = false;
+        _spinTicker.stop();
+        _onSpinComplete();
+      }
+    });
   }
 
   // --- Truth/Dare Action Handlers ---
@@ -342,7 +317,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
-              _controller.reset(); // <--- ADDED RESET
+              _stopSpin();
             });
           },
           onForfeit: () {
@@ -350,7 +325,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
-              _controller.reset(); // <--- ADDED RESET
+              _stopSpin();
             });
           },
           useTimer: widget.useTimer,
@@ -377,7 +352,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
-              _controller.reset(); // <--- ADDED RESET
+              _stopSpin();
             });
           },
           onForfeit: () {
@@ -385,7 +360,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             setState(() {
               _gamePhase = GamePhase.readyToSpin;
               _selectedPlayerIndex = null;
-              _controller.reset(); // <--- ADDED RESET
+              _stopSpin();
             });
           },
           useTimer: widget.useTimer,
@@ -680,210 +655,196 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   // --- Quit confirmation dialog with interruption/resume logic ---
   Future<bool> _showQuitConfirmation() async {
     if (_quitDialogOpen) return false;
-    _quitDialogOpen = true;
+    setState(() {
+      _quitDialogOpen = true;
+    });
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = 420;
-    final double cardPadding =
-        (screenSize.width * 0.06).clamp(16, 32); // Responsive
-    final double titleFontSize =
-        (screenSize.width * 0.08).clamp(24, 36); // Responsive
-    final double iconSize =
-        (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double messageFontSize =
-        (screenSize.width * 0.05).clamp(15, 22); // Responsive
-    final double buttonFontSize =
-        (screenSize.width * 0.055).clamp(16, 22); // Responsive
-    final double buttonSpacing =
-        (screenSize.width * 0.045).clamp(10, 22); // Responsive
-    final double sectionSpacing =
-        (screenSize.height * 0.03).clamp(14, 32); // Responsive
-    final double buttonRowSpacing =
-        (screenSize.height * 0.04).clamp(18, 40); // Responsive
-    final double buttonVerticalPadding =
-        (screenSize.height * 0.022).clamp(12, 28); // Responsive
+    final double cardPadding = (screenSize.width * 0.06).clamp(16, 32);
+    final double titleFontSize = (screenSize.width * 0.08).clamp(24, 36);
+    final double iconSize = (screenSize.width * 0.14).clamp(36, 60);
+    final double messageFontSize = (screenSize.width * 0.05).clamp(15, 22);
+    final double buttonFontSize = (screenSize.width * 0.055).clamp(16, 22);
+    final double buttonSpacing = (screenSize.width * 0.045).clamp(10, 22);
+    final double sectionSpacing = (screenSize.height * 0.03).clamp(14, 32);
+    final double buttonRowSpacing = (screenSize.height * 0.04).clamp(18, 40);
+    final double buttonVerticalPadding = (screenSize.height * 0.022).clamp(12, 28);
 
     final result = await showGeneralDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          barrierLabel:
-              MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          barrierColor: Colors.black54,
-          transitionDuration: const Duration(milliseconds: 350),
-          pageBuilder: (dialogContext, animation, secondaryAnimation) {
-            return Center(
-              child: Material(
-                type: MaterialType.transparency,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                    child: Container(
-                      width:
-                          cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                      padding: EdgeInsets.all(cardPadding), // Responsive
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.32),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.25),
-                          width: 2.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.10),
-                            blurRadius: 12,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.quitGameTitle,
-                            style: GoogleFonts.baloo2(
-                              fontSize: titleFontSize, // Responsive
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4,
-                                  color: Colors.white.withOpacity(0.3),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: sectionSpacing), // Responsive
-                          Icon(
-                            Icons.sentiment_dissatisfied,
-                            color: Colors.white70,
-                            size: iconSize, // Responsive
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color:
-                                    Colors.black.withAlpha((0.4 * 255).round()),
-                                offset: const Offset(1.0, 1.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: sectionSpacing), // Responsive
-                          Text(
-                            AppLocalizations.of(context)!.quitGameMessage,
-                            style: GoogleFonts.baloo2(
-                              fontSize: messageFontSize, // Responsive
-                              color: Colors.white.withOpacity(0.92),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: buttonRowSpacing), // Responsive
-                          Row(
-                            children: [
-                              Expanded(
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF5B86E5),
-                                        Color(0xFF8F6ED5)
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.18),
-                                        blurRadius: 16,
-                                        spreadRadius: 1,
-                                      ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(dialogContext).pop(false);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: buttonVerticalPadding),
-                                      minimumSize: const Size(0, 48),
-                                      textStyle: GoogleFonts.baloo2(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: buttonFontSize,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      AppLocalizations.of(context)!.no,
-                                      style: GoogleFonts.baloo2(
-                                        color: Colors.white.withOpacity(0.7),
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: buttonFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: buttonSpacing), // Responsive
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.of(dialogContext).pop(true);
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: buttonVerticalPadding),
-                                    minimumSize: const Size(0, 48),
-                                    textStyle: GoogleFonts.baloo2(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: buttonFontSize,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.yes,
-                                    style: GoogleFonts.baloo2(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: buttonFontSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            type: MaterialType.transparency,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                child: Container(
+                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                  padding: EdgeInsets.all(cardPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.32),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 2.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.quitGameTitle,
+                        style: GoogleFonts.baloo2(
+                          fontSize: titleFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: sectionSpacing),
+                      Icon(
+                        Icons.sentiment_dissatisfied,
+                        color: Colors.white70,
+                        size: iconSize,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4.0,
+                            color: Colors.black.withAlpha((0.4 * 255).round()),
+                            offset: const Offset(1.0, 1.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: sectionSpacing),
+                      Text(
+                        AppLocalizations.of(context)!.quitGameMessage,
+                        style: GoogleFonts.baloo2(
+                          fontSize: messageFontSize,
+                          color: Colors.white.withOpacity(0.92),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: buttonRowSpacing),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white.withOpacity(0.18),
+                                    blurRadius: 16,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop(false);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                  minimumSize: const Size(0, 48),
+                                  textStyle: GoogleFonts.baloo2(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
+                                  ),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.no,
+                                  style: GoogleFonts.baloo2(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: buttonFontSize,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: buttonSpacing),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop(true);
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                minimumSize: const Size(0, 48),
+                                textStyle: GoogleFonts.baloo2(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                                style: GoogleFonts.baloo2(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: buttonFontSize,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          },
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 3);
-            const end = Offset.zero;
-            const curve = Curves.easeOutCubic;
-            final tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            final offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        ) ??
-        false;
-    _quitDialogOpen = false;
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 3);
+        const end = Offset.zero;
+        const curve = Curves.easeOutCubic;
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    ) ??
+    false;
+    setState(() {
+      _quitDialogOpen = false;
+    });
     // Resume dialog if needed
     if (!result &&
         mounted &&

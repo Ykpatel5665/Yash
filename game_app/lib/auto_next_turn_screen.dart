@@ -768,13 +768,13 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
+                                    SoundManager.playButtonSound();
                                     setState(() {
                                       _currentIndex = 0;
                                       _lastPlayerFinished = false;
                                       _playerColors =
                                           PlayerCirclePainter.shuffleColors();
-                                      _hasQuit =
-                                          false; // Reset quit flag on restart
+                                      _hasQuit = false; // Reset quit flag on restart
                                       Future.delayed(const Duration(seconds: 2),
                                           () {
                                         if (mounted &&

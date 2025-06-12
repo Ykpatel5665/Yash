@@ -59,34 +59,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   // --- ADDED: Store shuffled player colors for this game session ---
   late List<Color> _playerColors;
 
-  // --- BEGIN: Ported from SpinningDrawableView.java ---
-  // Constants for spinning physics and obstacles
-  static const double _degPerPeriod = 360.0;
-  static const double _degPerQuarterPeriod = _degPerPeriod / 4.0;
-  static const double _degPerHalfPeriod = _degPerPeriod / 2.0;
-  static const double _degPerThreeQuarterPeriod = (_degPerPeriod * 3.0) / 4.0;
-  static const double _arcOfTolerance = 30.0; // degrees
-  static const double _friction = 0.5; // degrees per tick
-  static const double _bounceEnergyCoefficient = 0.2;
-  static const double _velocityMax = 1.0;
-  static const double _minRotationDegrees = 0.0;
-  static const int _touchNot = 0;
-  static const int _touchTop = 1;
-  static const int _touchBottom = 2;
-
-  // State for advanced spinning/obstacle logic
-  int _touchState = _touchNot;
-  double _formerAngle = 0.0;
-  int _formerTime = -1;
-  double _succeedingAngle = 0.0;
-  int _succeedingTime = -1;
-  bool _obstacleExists = false;
-  double _angle1 = 0.0, _angle2 = 0.0, _angle3 = 0.0;
-  double _rotationStepDegrees = 0.0; // like Java's rotationStepDegrees
-  double _rotationDegrees = 0.0; // for internal degree-based logic
-  double _startSpeed = 0.0;
-  // --- END: Ported from SpinningDrawableView.java ---
-
   @override
   void initState() {
     super.initState();
@@ -612,7 +584,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               ],
                             ),
                             child: ElevatedButton(
-                              onPressed: () => Navigator.of(context).pop(),
+                              onPressed: () {
+                                SoundManager.playButtonSound();
+                                Navigator.of(context).pop();
+                              },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 backgroundColor: Colors.transparent,
@@ -798,6 +773,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
+                                  SoundManager.playButtonSound();
                                   Navigator.of(dialogContext).pop(false);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -829,6 +805,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           Expanded(
                             child: TextButton(
                               onPressed: () {
+                                SoundManager.playButtonSound();
                                 Navigator.of(dialogContext).pop(true);
                               },
                               style: TextButton.styleFrom(
@@ -1032,6 +1009,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           _buildIconButton(
                             _isMuted ? Icons.volume_off : Icons.volume_up,
                             () {
+                              SoundManager.playButtonSound();
                               setState(() {
                                 _isMuted = !_isMuted;
                               });
@@ -1040,11 +1018,15 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           ),
                           _buildIconButton(
                             Icons.emoji_events_outlined,
-                            _showScoreboardDialog,
+                            () {
+                              SoundManager.playButtonSound();
+                              _showScoreboardDialog();
+                            },
                           ),
                           _buildIconButton(
                             Icons.play_circle_outline,
                             () {
+                              SoundManager.playButtonSound();
                               // TODO: Implement ad watching or premium feature logic
                             },
                           ),

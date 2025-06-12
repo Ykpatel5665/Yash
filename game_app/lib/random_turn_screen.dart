@@ -162,6 +162,7 @@ class _TruthDareDialog extends StatelessWidget {
                           decoration: truthButtonDecoration,
                           child: ElevatedButton(
                             onPressed: () async {
+                              SoundManager.playButtonSound();
                               Navigator.of(context).pop('truth');
                             },
                             style: buttonStyle,
@@ -183,6 +184,7 @@ class _TruthDareDialog extends StatelessWidget {
                           decoration: dareButtonDecoration,
                           child: ElevatedButton(
                             onPressed: () async {
+                              SoundManager.playButtonSound();
                               Navigator.of(context).pop('dare');
                             },
                             style: buttonStyle,
@@ -204,6 +206,7 @@ class _TruthDareDialog extends StatelessWidget {
                   Center(
                     child: GestureDetector(
                       onTap: () {
+                        SoundManager.playButtonSound();
                         final random = Random();
                         final isTruth = random.nextBool();
                         Navigator.of(context).pop(isTruth ? 'truth' : 'dare');

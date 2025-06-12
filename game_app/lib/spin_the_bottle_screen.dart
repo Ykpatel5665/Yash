@@ -42,6 +42,9 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   double _currentAngle = 0.0;
   late final Ticker _spinTicker;
   double _angularVelocity = 0.0; // radians per tick
+  static const double _friction = 0.005; // Tune for feel (radians per tick^2)
+  static const double _minAngularVelocity = 0.002; // Threshold to stop
+  static const double _maxAngularVelocity = 1.0; // Cap max speed
   bool _isSpinning = false;
   bool _isMuted = false;
   GamePhase _gamePhase = GamePhase.readyToSpin;
@@ -219,42 +222,27 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     double angularVelocity =
         (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) /
             r.distanceSquared;
-
     // Cap velocity
-    const double maxAngularVelocity = 1.0;
-    angularVelocity = angularVelocity.clamp(-maxAngularVelocity, maxAngularVelocity);
+    angularVelocity = angularVelocity.clamp(-_maxAngularVelocity, _maxAngularVelocity);
     if (angularVelocity.abs() > 0.1) {
+      SoundManager.playBottleSound();
       _startSpin(angularVelocity);
     }
     _lastPanPosition = null;
   }
 
-  // --- Spin logic update to match Java reference ---
-  static const double _degToRad = math.pi / 180.0;
-  static const double _frictionPerTick = 0.5 * _degToRad; // 0.5 deg/frame ≈ 0.0087 rad/tick
-
-  void _startSpin([double? initialAngularVelocity]) {
-    // If not provided, pick a random velocity between 720–3600 degrees/4s
-    final random = math.Random();
-    final double minDegrees = 720; // 2 full turns
-    final double maxDegrees = 3600; // 10 full turns
-    final double spinDegrees = minDegrees + random.nextDouble() * (maxDegrees - minDegrees);
-    // Estimate ~4s at 60fps = 240 frames, so velocity = total angle / frames
-    final double estFrames = 240;
-    final double randomVelocity = (spinDegrees * _degToRad) / estFrames; // radians per tick
-    final double velocity = initialAngularVelocity?.abs() ?? randomVelocity;
-    if (!velocity.isFinite || velocity < 0.1 * _degToRad) {
+  void _startSpin(double initialAngularVelocity) {
+    if (!initialAngularVelocity.isFinite || initialAngularVelocity.abs() < 0.1) {
       setState(() {
         _gamePhase = GamePhase.readyToSpin;
       });
       return;
     }
-    SoundManager.playBottleSound();
     setState(() {
       _gamePhase = GamePhase.spinning;
       _selectedPlayerIndex = null;
       _isSpinning = true;
-      _angularVelocity = velocity * (random.nextBool() ? 1 : -1); // random direction
+      _angularVelocity = initialAngularVelocity;
     });
     _spinTicker.start();
   }
@@ -269,16 +257,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       } else if (_currentAngle >= 2 * math.pi) {
         _currentAngle -= 2 * math.pi;
       }
-      // Apply friction (0.5 deg/frame)
+      // Apply friction
       if (_angularVelocity > 0) {
-        _angularVelocity -= _frictionPerTick;
+        _angularVelocity -= _friction;
         if (_angularVelocity < 0) _angularVelocity = 0;
       } else if (_angularVelocity < 0) {
-        _angularVelocity += _frictionPerTick;
+        _angularVelocity += _friction;
         if (_angularVelocity > 0) _angularVelocity = 0;
       }
       // Stop if velocity is low
-      if (_angularVelocity.abs() < 0.002) {
+      if (_angularVelocity.abs() < _minAngularVelocity) {
         _isSpinning = false;
         _spinTicker.stop();
         _onSpinComplete();

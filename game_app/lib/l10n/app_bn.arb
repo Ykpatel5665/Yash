@@ -91,5 +91,6 @@
   "timesUpTitle": "সময় শেষ!",
   "ranOutOfTime": "তোমার সময় শেষ হয়ে গেছে।",
   "dontShowAgain": "আর জিজ্ঞাসা করবেন না",
-  "chooseRandomBtn": "এলোমেলোভাবে বেছে নিন"
+  "chooseRandomBtn": "এলোমেলোভাবে বেছে নিন",
+  "itsStr": "এটি "
 }

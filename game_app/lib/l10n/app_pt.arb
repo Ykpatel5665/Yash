@@ -91,5 +91,6 @@
   "timesUpTitle": "O tempo acabou!",
   "ranOutOfTime": "O tempo acabou para você.",
   "dontShowAgain": "Não perguntar novamente",
-  "chooseRandomBtn": "Escolher aleatoriamente"
+  "chooseRandomBtn": "Escolher aleatoriamente",
+  "itsStr": "É "
 }

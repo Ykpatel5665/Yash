@@ -91,5 +91,6 @@
   "timesUpTitle": "Zeit ist um!",
   "ranOutOfTime": "Deine Zeit ist abgelaufen.",
   "dontShowAgain": "Nicht mehr fragen",
-  "chooseRandomBtn": "Zufällig wählen"
+  "chooseRandomBtn": "Zufällig wählen",
+  "itsStr": "Es ist "
 }

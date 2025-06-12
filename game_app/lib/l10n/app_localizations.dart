@@ -666,6 +666,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose randomly'**
   String get chooseRandomBtn;
+
+  /// No description provided for @itsStr.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s '**
+  String get itsStr;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

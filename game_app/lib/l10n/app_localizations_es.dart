@@ -287,4 +287,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => 'Elegir al azar';
+
+  @override
+  String get itsStr => 'Es ';
 }

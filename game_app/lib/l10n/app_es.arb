@@ -91,5 +91,6 @@
   "timesUpTitle": "¡Se acabó el tiempo!",
   "ranOutOfTime": "Se te acabó el tiempo.",
   "dontShowAgain": "No volver a preguntar",
-  "chooseRandomBtn": "Elegir al azar"
+  "chooseRandomBtn": "Elegir al azar",
+  "itsStr": "Es "
 }

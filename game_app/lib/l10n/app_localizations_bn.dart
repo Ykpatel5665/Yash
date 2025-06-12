@@ -287,4 +287,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => 'এলোমেলোভাবে বেছে নিন';
+
+  @override
+  String get itsStr => 'এটি ';
 }

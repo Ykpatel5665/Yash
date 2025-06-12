@@ -287,4 +287,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => 'Выбрать случайно';
+
+  @override
+  String get itsStr => 'Это ';
 }

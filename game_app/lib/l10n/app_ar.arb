@@ -91,5 +91,6 @@
   "timesUpTitle": "انتهى الوقت!",
   "ranOutOfTime": "لقد نفد وقتك.",
   "dontShowAgain": "لا تسأل مرة أخرى",
-  "chooseRandomBtn": "اختر عشوائياً"
+  "chooseRandomBtn": "اختر عشوائياً",
+  "itsStr": "إنها "
 }

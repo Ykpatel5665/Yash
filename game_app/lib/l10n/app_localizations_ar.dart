@@ -287,4 +287,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => 'اختر عشوائياً';
+
+  @override
+  String get itsStr => 'إنها ';
 }

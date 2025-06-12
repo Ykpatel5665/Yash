@@ -287,4 +287,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => 'Escolher aleatoriamente';
+
+  @override
+  String get itsStr => 'É ';
 }

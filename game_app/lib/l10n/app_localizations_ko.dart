@@ -287,4 +287,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => '무작위로 선택';
+
+  @override
+  String get itsStr => '이것은 ';
 }

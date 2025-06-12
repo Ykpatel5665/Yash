@@ -91,5 +91,6 @@
   "timesUpTitle": "Temps écoulé !",
   "ranOutOfTime": "Vous avez manqué de temps.",
   "dontShowAgain": "Ne plus demander",
-  "chooseRandomBtn": "Choisir au hasard"
+  "chooseRandomBtn": "Choisir au hasard",
+  "itsStr": "C'est "
 }

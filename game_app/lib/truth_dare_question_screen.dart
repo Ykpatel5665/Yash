@@ -203,7 +203,10 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            onPressed: () {
+                              SoundManager.playButtonSound();
+                              Navigator.of(dialogContext).pop();
+                            },
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: Colors.transparent,
@@ -459,8 +462,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                     Expanded(
                       child: Text(
                         widget.isTruth
-                            ? "It's " + AppLocalizations.of(context)!.truthBtn
-                            : "It's " + AppLocalizations.of(context)!.dareBtn,
+                            ? AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.truthBtn
+                            : AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.dareBtn,
                         style: GoogleFonts.baloo2(
                           fontSize: headerFontSize,
                           fontWeight: FontWeight.bold,

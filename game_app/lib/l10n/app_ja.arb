@@ -91,5 +91,6 @@
   "timesUpTitle": "時間切れ！",
   "ranOutOfTime": "時間がなくなりました。",
   "dontShowAgain": "今後は尋ねない",
-  "chooseRandomBtn": "ランダムに選ぶ"
+  "chooseRandomBtn": "ランダムに選ぶ",
+  "itsStr": "さて、"
 }

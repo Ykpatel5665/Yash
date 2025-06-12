@@ -287,4 +287,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get chooseRandomBtn => '随机选择';
+
+  @override
+  String get itsStr => '这是';
 }

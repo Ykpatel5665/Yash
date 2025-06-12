@@ -90,5 +90,6 @@
   "timesUpTitle": "时间到！",
   "ranOutOfTime": "你的时间用完了。",
   "dontShowAgain": "不再询问",
-  "chooseRandomBtn": "随机选择"
+  "chooseRandomBtn": "随机选择",
+  "itsStr": "这是"
 }

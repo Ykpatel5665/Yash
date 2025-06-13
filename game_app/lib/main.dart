@@ -426,6 +426,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
   AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
   bool useTimer = _lastUseTimer; // Use last value as default
   bool dontShowAgain = _dontShowGameSetupDialog;
+  bool soundEnabled = true; // Temporary state for sound checkbox
 
   final result = await showGeneralDialog<bool>(
     context: context,
@@ -705,7 +706,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                       value: useTimer,
                                       onChanged: (val) {
                                         setDialogState(() {
-                                          useTimer = val ?? true;
+                                          useTimer = val ?? false;
                                         });
                                       },
                                       activeColor: Colors.white,
@@ -751,6 +752,42 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     Expanded(
                                       child: Text(
                                         AppLocalizations.of(context)!.dontShowAgain,
+                                        style: GoogleFonts.baloo2(
+                                          color: Colors.white.withOpacity(0.92),
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Responsive space between checkboxes
+                              SizedBox(height: (screenSize.height * 0.010).clamp(12, 24)),
+                              // Add Haptics Enable/Disable checkbox (new, always last)
+                              InkWell(
+                                onTap: () {
+                                  setDialogState(() {
+                                    soundEnabled = !soundEnabled;
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Row(
+                                  children: [
+                                    Checkbox(
+                                      value: soundEnabled, // Default is true
+                                      onChanged: (val) {
+                                        setDialogState(() {
+                                          soundEnabled = val ?? true;
+                                        });
+                                      },
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Haptics', // Updated label for rich feel
                                         style: GoogleFonts.baloo2(
                                           color: Colors.white.withOpacity(0.92),
                                           fontWeight: FontWeight.w700,

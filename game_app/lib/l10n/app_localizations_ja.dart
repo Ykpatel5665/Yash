@@ -290,4 +290,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get itsStr => 'さて、';
+
+  @override
+  String get haptics => 'ハプティクス';
 }

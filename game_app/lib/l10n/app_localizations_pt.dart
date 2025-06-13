@@ -290,4 +290,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get itsStr => 'É ';
+
+  String get haptics => 'Hápticos';
 }

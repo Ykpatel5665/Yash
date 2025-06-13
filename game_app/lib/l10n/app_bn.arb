@@ -92,5 +92,6 @@
   "ranOutOfTime": "তোমার সময় শেষ হয়ে গেছে।",
   "dontShowAgain": "আর জিজ্ঞাসা করবেন না",
   "chooseRandomBtn": "এলোমেলোভাবে বেছে নিন",
-  "itsStr": "এটি "
+  "itsStr": "এটি ",
+  "haptics": "হ্যাপটিক্স"
 }

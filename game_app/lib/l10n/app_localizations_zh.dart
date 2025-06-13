@@ -290,4 +290,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get itsStr => '这是';
+
+  String get haptics => '触觉';
 }

@@ -290,4 +290,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get itsStr => 'إنها ';
+
+  String get haptics => 'اللمسات';
 }

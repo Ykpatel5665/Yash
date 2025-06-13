@@ -92,5 +92,6 @@
   "ranOutOfTime": "Vous avez manqué de temps.",
   "dontShowAgain": "Ne plus demander",
   "chooseRandomBtn": "Choisir au hasard",
-  "itsStr": "C'est "
+  "itsStr": "C'est ",
+  "haptics": "Haptique"
 }

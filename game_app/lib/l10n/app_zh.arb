@@ -91,5 +91,6 @@
   "ranOutOfTime": "你的时间用完了。",
   "dontShowAgain": "不再询问",
   "chooseRandomBtn": "随机选择",
-  "itsStr": "这是"
+  "itsStr": "这是",
+  "haptics": "触觉反馈"
 }

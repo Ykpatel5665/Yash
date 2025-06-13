@@ -92,5 +92,6 @@
   "ranOutOfTime": "आपका समय समाप्त हो गया।",
   "dontShowAgain": "फिर से न पूछें",
   "chooseRandomBtn": "यादृच्छिक चुनें",
-  "itsStr": "यह "
+  "itsStr": "यह ",
+  "haptics": "हैप्टिक्स"
 }

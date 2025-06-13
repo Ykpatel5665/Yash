@@ -92,5 +92,6 @@
   "ranOutOfTime": "لقد نفد وقتك.",
   "dontShowAgain": "لا تسأل مرة أخرى",
   "chooseRandomBtn": "اختر عشوائياً",
-  "itsStr": "إنها "
+  "itsStr": "إنها ",
+  "haptics": "اللمسات اللمسية"
 }

@@ -672,6 +672,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It\'s '**
   String get itsStr;
+
+  /// No description provided for @haptics.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptics'**
+  String get haptics;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

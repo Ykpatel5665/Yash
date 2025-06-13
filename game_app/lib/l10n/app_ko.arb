@@ -92,5 +92,6 @@
   "ranOutOfTime": "시간이 다 됐어요.",
   "dontShowAgain": "다시 묻지 않기",
   "chooseRandomBtn": "무작위로 선택",
-  "itsStr": "이것은 "
+  "itsStr": "이것은 ",
+  "haptics": "햅틱스"
 }

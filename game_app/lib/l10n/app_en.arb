@@ -92,5 +92,6 @@
   "ranOutOfTime": "You ran out of time.",
   "dontShowAgain": "Don't ask again",
   "chooseRandomBtn": "Choose randomly",
-  "itsStr": "It's "
+  "itsStr": "It's ",
+  "haptics": "Haptics"
 }

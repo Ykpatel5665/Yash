@@ -290,4 +290,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itsStr => 'It\'s ';
+
+  String get haptics => 'Haptics';
 }

@@ -290,4 +290,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get itsStr => '이것은 ';
+
+  String get haptics => '햅틱스';
 }

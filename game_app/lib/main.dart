@@ -787,7 +787,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        'Haptics', // Updated label for rich feel
+                                        AppLocalizations.of(context)!.haptics, // Localized label
                                         style: GoogleFonts.baloo2(
                                           color: Colors.white.withOpacity(0.92),
                                           fontWeight: FontWeight.w700,

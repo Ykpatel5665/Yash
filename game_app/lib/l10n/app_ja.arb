@@ -92,5 +92,6 @@
   "ranOutOfTime": "時間がなくなりました。",
   "dontShowAgain": "今後は尋ねない",
   "chooseRandomBtn": "ランダムに選ぶ",
-  "itsStr": "さて、"
+  "itsStr": "さて、",
+  "haptics": "ハプティクス"
 }

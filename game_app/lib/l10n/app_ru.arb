@@ -92,5 +92,6 @@
   "ranOutOfTime": "У вас закончилось время.",
   "dontShowAgain": "Больше не спрашивать",
   "chooseRandomBtn": "Выбрать случайно",
-  "itsStr": "Это "
+  "itsStr": "Это ",
+  "haptics": "Гаптика"
 }

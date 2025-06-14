@@ -21,6 +21,8 @@ class AddPlayersScreen extends StatefulWidget {
   final List<String>? selectedCategoryIds;
   final bool useTimer;
   final void Function(Locale) setLocale;
+  final bool hapticsEnabled;
+  final void Function(bool)? onHapticsChanged;
 
   const AddPlayersScreen({
     super.key,
@@ -29,6 +31,8 @@ class AddPlayersScreen extends StatefulWidget {
     this.selectedCategoryIds,
     required this.useTimer,
     required this.setLocale,
+    required this.hapticsEnabled,
+    this.onHapticsChanged,
   });
 
   @override
@@ -40,10 +44,12 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
   List<Player> _players = [];
   final FocusNode _textFieldFocusNode = FocusNode();
   static const String _playersPrefsKey = 'playerList';
+  late bool _hapticsEnabled;
 
   @override
   void initState() {
     super.initState();
+    _hapticsEnabled = widget.hapticsEnabled;
     _loadPlayers();
   }
 
@@ -104,6 +110,15 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
       _players.removeAt(index);
       _savePlayers();
     });
+  }
+
+  void _handleHapticsChanged(bool value) {
+    setState(() {
+      _hapticsEnabled = value;
+    });
+    if (widget.onHapticsChanged != null) {
+      widget.onHapticsChanged!(value);
+    }
   }
 
   @override
@@ -302,6 +317,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
                               useTimer: widget.useTimer,
                               setLocale: widget.setLocale,
+                              hapticsEnabled: _hapticsEnabled,
+                              onHapticsChanged: _handleHapticsChanged,
                             );
                             break;
                           case GameMode.auto:
@@ -310,6 +327,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               ageGroup: widget.ageGroup,
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
                               useTimer: widget.useTimer,
+                              hapticsEnabled: _hapticsEnabled,
+                              onHapticsChanged: _handleHapticsChanged,
                             );
                             break;
                           case GameMode.random:
@@ -319,6 +338,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               selectedCategoryIds: widget.selectedCategoryIds ?? [],
                               useTimer: widget.useTimer,
                               setLocale: widget.setLocale,
+                              hapticsEnabled: _hapticsEnabled,
+                              onHapticsChanged: _handleHapticsChanged,
                             );
                             break;
                         }

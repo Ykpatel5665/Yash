@@ -190,11 +190,16 @@ class _MyHomePageState extends State<MyHomePage> {
   // Track adult confirmation for this session
   bool _adultConfirmedThisSession = false;
 
+  // Add a new key for the 'Haptics' preference
+  final String _hapticsEnabledPrefsKey = 'hapticsEnabled';
+  bool _hapticsEnabled = true; // Default to true
+
   @override
   void initState() {
     super.initState();
     _loadSavedPreferences(); // Rename load function
     _loadDontShowGameSetupDialogPref();
+    _loadHapticsEnabledPref();
   }
 
   // Load saved game mode and age group, then convert to enums
@@ -245,6 +250,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // Load hapticsEnabled preference
+  Future<void> _loadHapticsEnabledPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _hapticsEnabled = prefs.getBool(_hapticsEnabledPrefsKey) ?? true;
+    });
+  }
+
   // Save game mode and age group enum names to SharedPreferences
   Future<void> _savePreferences(GameMode? mode, AgeGroup? ageGroup, {bool? useTimer}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -283,6 +296,15 @@ class _MyHomePageState extends State<MyHomePage> {
     await prefs.setBool(_dontShowGameSetupDialogKey, value);
     setState(() {
       _dontShowGameSetupDialog = value;
+    });
+  }
+
+  // Save hapticsEnabled preference
+  Future<void> _saveHapticsEnabledPref(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_hapticsEnabledPrefsKey, value);
+    setState(() {
+      _hapticsEnabled = value;
     });
   }
 
@@ -426,7 +448,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
   AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
   bool useTimer = _lastUseTimer; // Use last value as default
   bool dontShowAgain = _dontShowGameSetupDialog;
-  bool soundEnabled = true; // Temporary state for sound checkbox
+  bool soundEnabled = _hapticsEnabled; // Use loaded value as default
 
   final result = await showGeneralDialog<bool>(
     context: context,
@@ -860,6 +882,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                           });
                                           await _savePreferences(currentModeSelection, currentAgeSelection, useTimer: useTimer);
                                           await _saveDontShowGameSetupDialogPref(dontShowAgain);
+                                          await _saveHapticsEnabledPref(soundEnabled);
                                           Navigator.of(dialogPageContext).pop(true); // Return true on save
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -904,8 +927,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                   ),
                 ),
                 ),
-              ),
-          );
+                ),
+              );
         },
       );
     },
@@ -1077,6 +1100,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                   ageGroup: _selectedAgeGroupEnum!,
                                   useTimer: _lastUseTimer,
                                   setLocale: widget.setLocale,
+                                  hapticsEnabled: _hapticsEnabled,
                                 ),
                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                   const begin = Offset(1.0, 0.0);

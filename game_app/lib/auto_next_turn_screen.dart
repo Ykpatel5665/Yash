@@ -24,12 +24,18 @@ class AutoNextTurnScreen extends StatefulWidget {
   final AgeGroup ageGroup;
   final List<String> selectedCategoryIds;
   final bool useTimer;
-  const AutoNextTurnScreen(
-      {super.key,
-      required this.players,
-      required this.ageGroup,
-      required this.selectedCategoryIds,
-      required this.useTimer});
+  final bool hapticsEnabled;
+  final void Function(bool)? onHapticsChanged;
+
+  const AutoNextTurnScreen({
+    super.key,
+    required this.players,
+    required this.ageGroup,
+    required this.selectedCategoryIds,
+    required this.useTimer,
+    required this.hapticsEnabled,
+    this.onHapticsChanged,
+  });
 
   @override
   State<AutoNextTurnScreen> createState() => _AutoNextTurnScreenState();
@@ -39,7 +45,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   int _currentIndex = 0;
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
-  bool _isMuted = false; // State for volume button
   bool _scoreboardOpen = false;
   bool _pendingShowTruthDare =
       false; // Track if dialog should show after scoreboard
@@ -847,18 +852,17 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _buildIconButton(
-                                _isMuted ? Icons.volume_off : Icons.volume_up,
+                                widget.hapticsEnabled ? Icons.volume_up : Icons.volume_off,
                                 () {
-                                  SoundManager.playButtonSound();
-                                  setState(() {
-                                    _isMuted = !_isMuted;
-                                  });
+                                  if (widget.onHapticsChanged != null) {
+                                    widget.onHapticsChanged!(!widget.hapticsEnabled);
+                                  }
                                 },
                               ),
                               _buildIconButton(
                                 Icons.emoji_events_outlined,
                                 () {
-                                  SoundManager.playButtonSound();
+                                  if (widget.hapticsEnabled) SoundManager.playButtonSound();
                                   _showScoreboardDialog();
                                 },
                               ),
@@ -1077,6 +1081,6 @@ class _TruthDareDialog extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ); // <-- Properly close all widgets
   }
 }

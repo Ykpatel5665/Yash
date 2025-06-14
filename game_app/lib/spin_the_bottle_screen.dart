@@ -23,6 +23,8 @@ class SpinTheBottleScreen extends StatefulWidget {
   final List<String> selectedCategoryIds;
   final bool useTimer;
   final void Function(Locale) setLocale;
+  final bool hapticsEnabled;
+  final void Function(bool)? onHapticsChanged;
 
   const SpinTheBottleScreen({
     super.key,
@@ -31,6 +33,8 @@ class SpinTheBottleScreen extends StatefulWidget {
     required this.selectedCategoryIds,
     required this.useTimer,
     required this.setLocale,
+    required this.hapticsEnabled,
+    this.onHapticsChanged,
   });
 
   @override
@@ -46,7 +50,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   static const double _minAngularVelocity = 0.01; // Increased threshold to stop
   static const double _maxAngularVelocity = 1.5; // Allow harder/faster spins
   bool _isSpinning = false;
-  bool _isMuted = false;
   GamePhase _gamePhase = GamePhase.readyToSpin;
   int? _selectedPlayerIndex;
   Map<String, int> _playerScores = {};
@@ -1012,13 +1015,11 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           _buildIconButton(
-                            _isMuted ? Icons.volume_off : Icons.volume_up,
+                            widget.hapticsEnabled ? Icons.volume_up : Icons.volume_off,
                             () {
-                              SoundManager.playButtonSound();
-                              setState(() {
-                                _isMuted = !_isMuted;
-                              });
-                              // TODO: Implement actual volume control logic
+                              if (widget.onHapticsChanged != null) {
+                                widget.onHapticsChanged!(!widget.hapticsEnabled);
+                              }
                             },
                           ),
                           _buildIconButton(

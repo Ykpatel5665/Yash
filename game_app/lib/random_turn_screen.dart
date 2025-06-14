@@ -238,6 +238,8 @@ class RandomTurnScreen extends StatefulWidget {
   final List<String> selectedCategoryIds;
   final bool useTimer;
   final void Function(Locale) setLocale;
+  final bool hapticsEnabled;
+  final void Function(bool)? onHapticsChanged; // Add callback
 
   const RandomTurnScreen({
     super.key,
@@ -246,6 +248,8 @@ class RandomTurnScreen extends StatefulWidget {
     required this.selectedCategoryIds,
     required this.useTimer,
     required this.setLocale,
+    required this.hapticsEnabled,
+    this.onHapticsChanged,
   });
 
   @override
@@ -258,7 +262,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   final Random _random = Random();
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
-  bool _isMuted = false; // State for volume button
 
   // --- ADDED: Robust dialog and state management flags ---
   bool _isSpinning = false;
@@ -1022,18 +1025,17 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildIconButton(
-                          _isMuted ? Icons.volume_off : Icons.volume_up,
+                          widget.hapticsEnabled ? Icons.volume_up : Icons.volume_off,
                           () {
-                            SoundManager.playButtonSound();
-                            setState(() {
-                              _isMuted = !_isMuted;
-                            });
+                            if (widget.onHapticsChanged != null) {
+                              widget.onHapticsChanged!(!widget.hapticsEnabled);
+                            }
                           },
                         ),
                         _buildIconButton(
                           Icons.emoji_events_outlined,
                           () {
-                            SoundManager.playButtonSound();
+                            if (widget.hapticsEnabled) SoundManager.playButtonSound();
                             _showScoreboardDialog();
                           },
                         ),

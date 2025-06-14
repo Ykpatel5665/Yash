@@ -63,7 +63,8 @@ class CategorySelectionScreen extends StatefulWidget {
   final AgeGroup ageGroup;
   final bool useTimer;
   final void Function(Locale) setLocale;
-  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup, required this.useTimer, required this.setLocale});
+  final bool hapticsEnabled;
+  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup, required this.useTimer, required this.setLocale, required this.hapticsEnabled});
 
   @override
   State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
@@ -396,6 +397,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                   selectedCategoryIds: _selectedCategoryIds.toList(),
                                                   useTimer: widget.useTimer,
                                                   setLocale: widget.setLocale,
+                                                  hapticsEnabled: widget.hapticsEnabled,
                                                 ),
                                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                                   const begin = Offset(1.0, 0.0);
@@ -440,6 +442,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               selectedCategoryIds: _selectedCategoryIds.toList(),
                                               useTimer: widget.useTimer,
                                               setLocale: widget.setLocale,
+                                              hapticsEnabled: widget.hapticsEnabled,
                                             ),
                                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                               const begin = Offset(1.0, 0.0);

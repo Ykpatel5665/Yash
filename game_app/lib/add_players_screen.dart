@@ -230,7 +230,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                                 _addPlayer();
                               }
                             },
-                            child: Center(
+                            child: const Center(
                               child: Icon(Icons.add, size: 28, color: Colors.black),
                             ),
                           ),
@@ -250,16 +250,14 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               itemBuilder: (context, index) {
                                 if (index == _players.length) {
                                   // Extra space at the end (reduced)
-                                  return SizedBox(height: bottomButtonMinHeight + (screenHeight * 0.02).clamp(8, 18));
+                                  return const SizedBox(height: 8); // Use const for fixed height
                                 }
                                 return PlayerListTile(
                                   player: _players[index],
                                   onRemoveTap: () => _removePlayer(index),
                                 );
                               },
-                              separatorBuilder: (context, index) => SizedBox(
-                                height: (screenHeight * 0.012).clamp(6, 18), // Responsive vertical space between tiles
-                              ),
+                              separatorBuilder: (context, index) => const SizedBox(height: 8), // const is fine here
                             ),
                     ),
                   ),

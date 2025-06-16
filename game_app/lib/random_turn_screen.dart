@@ -17,7 +17,8 @@ import 'providers/sound_provider.dart';
 
 // Shared dialog constants and helpers
 const double kMaxCardWidth = 420.0;
-double getResponsiveCardPadding(double screenWidth) => (screenWidth * 0.06).clamp(16, 32);
+double getResponsiveCardPadding(double screenWidth) =>
+    (screenWidth * 0.06).clamp(16, 32);
 
 // --- Add the Whoopsie! _TruthDareDialog widget (copied and adapted from AutoNextTurnScreen) ---
 class _TruthDareDialog extends StatelessWidget {
@@ -370,7 +371,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               if (_remainingIndices.isEmpty) {
                 _lastPlayerFinished = true;
               } else {
-                _gameStarted = false; // Wait for user to press Start for next turn
+                _gameStarted =
+                    false; // Wait for user to press Start for next turn
               }
             });
           },
@@ -381,7 +383,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               if (_remainingIndices.isEmpty) {
                 _lastPlayerFinished = true;
               } else {
-                _gameStarted = false; // Wait for user to press Start for next turn
+                _gameStarted =
+                    false; // Wait for user to press Start for next turn
               }
             });
           },
@@ -448,8 +451,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         final double cardPadding = getResponsiveCardPadding(screenSize.width);
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
-        final double iconSize = (screenSize.width * 0.14).clamp(36, 60); // Responsive
-        final double maxDialogHeight = (screenSize.height * 0.7).clamp(320, 600);
+        final double iconSize =
+            (screenSize.width * 0.14).clamp(36, 60); // Responsive
+        final double maxDialogHeight =
+            (screenSize.height * 0.7).clamp(320, 600);
         return Dialog(
           backgroundColor: Colors.transparent,
           child: GameCard(
@@ -484,7 +489,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         maxLines: 2,
                         wrapWords: true,
                       ),
-                      SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)),
+                      SizedBox(
+                          height: (screenSize.height * 0.03).clamp(14, 32)),
                       Icon(
                         Icons.emoji_events_rounded,
                         color: Color(0xFFFFD700),
@@ -497,7 +503,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)),
+                      SizedBox(
+                          height: (screenSize.height * 0.03).clamp(14, 32)),
                       // Scrollable player list
                       Expanded(
                         child: SingleChildScrollView(
@@ -505,9 +512,11 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             children: [
                               ...widget.players.map((player) => Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: (screenSize.height * 0.008).clamp(4, 12)),
+                                        vertical: (screenSize.height * 0.008)
+                                            .clamp(4, 12)),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         AutoSizeText(
                                           player,
@@ -522,15 +531,22 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                         ),
                                         Container(
                                           padding: EdgeInsets.symmetric(
-                                            horizontal: (screenSize.width * 0.04).clamp(8, 20),
-                                            vertical: (screenSize.height * 0.008).clamp(4, 12),
+                                            horizontal:
+                                                (screenSize.width * 0.04)
+                                                    .clamp(8, 20),
+                                            vertical:
+                                                (screenSize.height * 0.008)
+                                                    .clamp(4, 12),
                                           ),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.13),
-                                            borderRadius: BorderRadius.circular(12),
+                                            color:
+                                                Colors.white.withOpacity(0.13),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
                                           child: AutoSizeText(
-                                            _playerScores[player]?.toString() ?? '0',
+                                            _playerScores[player]?.toString() ??
+                                                '0',
                                             style: GoogleFonts.baloo2(
                                               fontSize: fontSize,
                                               color: Colors.white,
@@ -548,7 +564,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: (screenSize.height * 0.09).clamp(40, 80)), // Space for floating button
+                      SizedBox(
+                          height: (screenSize.height * 0.09)
+                              .clamp(40, 80)), // Space for floating button
                     ],
                   ),
                   // Floating close button at the bottom
@@ -594,8 +612,10 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             padding: EdgeInsets.symmetric(
-                              vertical: (screenSize.height * 0.022).clamp(12, 28),
-                              horizontal: (screenSize.width * 0.08).clamp(18, 40),
+                              vertical:
+                                  (screenSize.height * 0.022).clamp(12, 28),
+                              horizontal:
+                                  (screenSize.width * 0.08).clamp(18, 40),
                             ),
                             textStyle: GoogleFonts.baloo2(
                               fontSize: buttonFontSize,
@@ -653,12 +673,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   Future<bool> _showQuitConfirmation() async {
     if (_quitDialogOpen) return false;
     // Set pending show dialog flag if dialog should resume
-    _pendingShowTruthDare = _gameStarted && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished;
+    _pendingShowTruthDare = _gameStarted &&
+        !_scoreboardOpen &&
+        !_quitDialogOpen &&
+        !_lastPlayerFinished;
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final double cardWidth = screenSize.width * 0.92;
     final double maxCardWidth = kMaxCardWidth;
-    final double cardPadding = getResponsiveCardPadding(screenSize.width); // Responsive
+    final double cardPadding =
+        getResponsiveCardPadding(screenSize.width); // Responsive
     final double titleFontSize =
         (screenSize.width * 0.08).clamp(24, 36); // Responsive
     final double iconSize =
@@ -677,190 +701,203 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
         (screenSize.height * 0.022).clamp(12, 28); // Responsive
 
     final result = await showGeneralDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 350),
-      pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        return Center(
-          child: Material(
-            type: MaterialType.transparency,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                child: Container(
-                  width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: cardPadding, vertical: cardPadding),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.32),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.quitGameTitle,
-                        style: GoogleFonts.baloo2(
-                          fontSize: titleFontSize, // Responsive
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4,
-                              color: Colors.white.withOpacity(0.3),
-                            ),
-                          ],
+          context: context,
+          barrierDismissible: false,
+          barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black54,
+          transitionDuration: const Duration(milliseconds: 350),
+          pageBuilder: (dialogContext, animation, secondaryAnimation) {
+            return Center(
+              child: Material(
+                type: MaterialType.transparency,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+                    child: Container(
+                      width:
+                          cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: cardPadding, vertical: cardPadding),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.32),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.25),
+                          width: 2.5,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: sectionSpacing), // Responsive
-                      Icon(
-                        Icons.sentiment_dissatisfied,
-                        color: Colors.white70,
-                        size: iconSize, // Responsive
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4.0,
-                            color: Colors.black.withAlpha((0.4 * 255).round()),
-                            offset: const Offset(1.0, 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            blurRadius: 12,
+                            spreadRadius: 1,
                           ),
                         ],
                       ),
-                      SizedBox(height: sectionSpacing), // Responsive
-                      Text(
-                        AppLocalizations.of(context)!.quitGameMessage,
-                        style: GoogleFonts.baloo2(
-                          fontSize: messageFontSize, // Responsive
-                          color: Colors.white.withOpacity(0.92),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: buttonRowSpacing), // Responsive
-                      Row(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF5B86E5),
-                                    Color(0xFF8F6ED5)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                          Text(
+                            AppLocalizations.of(context)!.quitGameTitle,
+                            style: GoogleFonts.baloo2(
+                              fontSize: titleFontSize, // Responsive
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4,
+                                  color: Colors.white.withOpacity(0.3),
                                 ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.18),
-                                    blurRadius: 16,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  SoundManager.playButtonSound(context: context);
-                                  Navigator.of(dialogContext).pop(false);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: buttonVerticalPadding),
-                                  minimumSize: const Size(0, 48),
-                                  textStyle: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: buttonFontSize,
-                                  ),
-                                ),
-                                child: Text(
-                                  AppLocalizations.of(context)!.no,
-                                  style: GoogleFonts.baloo2(
-                                    color: Colors.white.withOpacity(0.7),
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: buttonFontSize,
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
+                            textAlign: TextAlign.center,
                           ),
-                          SizedBox(width: buttonSpacing), // Responsive
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                SoundManager.playButtonSound(context: context);
-                                Navigator.of(dialogContext).pop(true);
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: buttonVerticalPadding),
-                                minimumSize: const Size(0, 48),
-                                textStyle: GoogleFonts.baloo2(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: buttonFontSize,
-                                ),
+                          SizedBox(height: sectionSpacing), // Responsive
+                          Icon(
+                            Icons.sentiment_dissatisfied,
+                            color: Colors.white70,
+                            size: iconSize, // Responsive
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4.0,
+                                color:
+                                    Colors.black.withAlpha((0.4 * 255).round()),
+                                offset: const Offset(1.0, 1.0),
                               ),
-                              child: Text(
-                                AppLocalizations.of(context)!.yes,
-                                style: GoogleFonts.baloo2(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: buttonFontSize,
-                                ),
-                              ),
+                            ],
+                          ),
+                          SizedBox(height: sectionSpacing), // Responsive
+                          Text(
+                            AppLocalizations.of(context)!.quitGameMessage,
+                            style: GoogleFonts.baloo2(
+                              fontSize: messageFontSize, // Responsive
+                              color: Colors.white.withOpacity(0.92),
+                              fontWeight: FontWeight.w500,
                             ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: buttonRowSpacing), // Responsive
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF5B86E5),
+                                        Color(0xFF8F6ED5)
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.18),
+                                        blurRadius: 16,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      SoundManager.playButtonSound(
+                                          context: context);
+                                      Navigator.of(dialogContext).pop(false);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: buttonVerticalPadding),
+                                      minimumSize: const Size(0, 48),
+                                      textStyle: GoogleFonts.baloo2(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: buttonFontSize,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.no,
+                                      style: GoogleFonts.baloo2(
+                                        color: Colors.white.withOpacity(0.7),
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: buttonFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: buttonSpacing), // Responsive
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    SoundManager.playButtonSound(
+                                        context: context);
+                                    Navigator.of(dialogContext).pop(true);
+                                  },
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: buttonVerticalPadding),
+                                    minimumSize: const Size(0, 48),
+                                    textStyle: GoogleFonts.baloo2(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: buttonFontSize,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.yes,
+                                    style: GoogleFonts.baloo2(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: buttonFontSize,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 0.3);
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        final offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    ) ?? false;
+            );
+          },
+          transitionBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 0.3);
+            const end = Offset.zero;
+            const curve = Curves.easeOutCubic;
+            final tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            final offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+        ) ??
+        false;
     _quitDialogOpen = false;
     // Resume dialog if needed
-    if (!result && mounted && ModalRoute.of(context)?.isCurrent == true && _pendingShowTruthDare) {
+    if (!result &&
+        mounted &&
+        ModalRoute.of(context)?.isCurrent == true &&
+        _pendingShowTruthDare) {
       _pendingShowTruthDare = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && ModalRoute.of(context)?.isCurrent == true && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+        if (mounted &&
+            ModalRoute.of(context)?.isCurrent == true &&
+            !_scoreboardOpen &&
+            !_quitDialogOpen &&
+            !_lastPlayerFinished) {
           _showTruthDareDialog();
         }
       });
@@ -894,7 +931,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
               if (shouldQuit) {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(setLocale: widget.setLocale)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MyHomePage(setLocale: widget.setLocale)),
                   (Route<dynamic> route) => false,
                 );
               }
@@ -903,7 +942,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
+          toolbarHeight:
+              (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
         ),
         extendBodyBehindAppBar: true,
         body: Container(
@@ -930,20 +970,27 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             children: [
                               PlayerCircle(
                                 players: widget.players,
-                                size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
-                                highlightedIndex: _isSpinning ? _highlightedIndex : _currentIndex,
+                                size: (screenWidth * 0.7)
+                                    .clamp(220.0, screenHeight * 0.55),
+                                highlightedIndex: _isSpinning
+                                    ? _highlightedIndex
+                                    : _currentIndex,
                                 animated: _isSpinning,
-                                animationDuration: const Duration(milliseconds: 1800),
-                                previousIndex: _isSpinning ? _previousIndex : null,
+                                animationDuration:
+                                    const Duration(milliseconds: 1800),
+                                previousIndex:
+                                    _isSpinning ? _previousIndex : null,
                                 colors: _playerColors,
                               ),
                               if (!_gameStarted && !_lastPlayerFinished)
                                 ClipOval(
                                   child: BackdropFilter(
-                                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                    filter:
+                                        ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                     child: Container(
                                       width: (screenWidth * 0.16).clamp(48, 70),
-                                      height: (screenWidth * 0.16).clamp(48, 70),
+                                      height:
+                                          (screenWidth * 0.16).clamp(48, 70),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         gradient: RadialGradient(
@@ -961,7 +1008,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.22),
+                                            color:
+                                                Colors.black.withOpacity(0.22),
                                             blurRadius: 12,
                                             spreadRadius: 1,
                                           ),
@@ -973,7 +1021,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                         child: InkWell(
                                           customBorder: const CircleBorder(),
                                           onTap: () {
-                                            SoundManager.playButtonSound(context: context);
+                                            SoundManager.playButtonSound(
+                                                context: context);
                                             setState(() {
                                               _gameStarted = true;
                                             });
@@ -981,25 +1030,30 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                           },
                                           child: Center(
                                             child: AutoSizeText(
-                                              AppLocalizations.of(context)!.start, // Use localization for 'Start'
+                                              AppLocalizations.of(context)!
+                                                  .start, // Use localization for 'Start'
                                               minFontSize: 10,
                                               maxLines: 1,
                                               overflow: TextOverflow.visible,
                                               wrapWords: false,
                                               style: GoogleFonts.baloo2(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: (screenWidth * 0.035).clamp(13, 18),
-                                                color: Colors.white.withOpacity(0.92),
+                                                fontSize: (screenWidth * 0.035)
+                                                    .clamp(13, 18),
+                                                color: Colors.white
+                                                    .withOpacity(0.92),
                                                 letterSpacing: 0.5,
                                                 shadows: [
                                                   Shadow(
                                                     blurRadius: 8,
-                                                    color: Colors.black.withOpacity(0.32),
+                                                    color: Colors.black
+                                                        .withOpacity(0.32),
                                                     offset: Offset(0, 2),
                                                   ),
                                                   Shadow(
                                                     blurRadius: 2,
-                                                    color: Colors.black.withOpacity(0.18),
+                                                    color: Colors.black
+                                                        .withOpacity(0.18),
                                                     offset: Offset(0, 0),
                                                   ),
                                                 ],
@@ -1027,12 +1081,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Consumer<SoundProvider>(
-                          builder: (context, soundProvider, child) => _buildIconButton(
-                            soundProvider.isSoundOn ? Icons.volume_up : Icons.volume_off,
+                          builder: (context, soundProvider, child) =>
+                              _buildIconButton(
+                            soundProvider.isSoundOn
+                                ? Icons.volume_up
+                                : Icons.volume_off,
                             () {
                               soundProvider.toggleSound();
                               if (widget.onHapticsChanged != null) {
-                                widget.onHapticsChanged!(soundProvider.isSoundOn);
+                                widget
+                                    .onHapticsChanged!(soundProvider.isSoundOn);
                               }
                             },
                           ),
@@ -1040,7 +1098,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         _buildIconButton(
                           Icons.emoji_events_outlined,
                           () {
-                            if (widget.hapticsEnabled) SoundManager.playButtonSound(context: context);
+                            if (widget.hapticsEnabled)
+                              SoundManager.playButtonSound(context: context);
                             _showScoreboardDialog();
                           },
                         ),
@@ -1053,7 +1112,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     Positioned(
                       left: horizontalPadding,
                       right: horizontalPadding,
-                      bottom: bottomPadding + 70, // Place above the bottom buttons row
+                      bottom: bottomPadding +
+                          70, // Place above the bottom buttons row
                       child: Column(
                         children: [
                           ElevatedButton(

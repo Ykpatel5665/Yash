@@ -795,17 +795,18 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                               // Responsive space between checkboxes
                               SizedBox(height: (screenSize.height * 0.010).clamp(12, 24)),
                               // Add Haptics Enable/Disable checkbox (new, always last)
-                              InkWell(
-                                onTap: () {
-                                  setDialogState(() {
-                                    soundEnabled = !soundEnabled;
-                                  });
-                                },
-                                borderRadius: BorderRadius.circular(8),
-                                child: Row(
-                                  children: [
-                                    Consumer<SoundProvider>(
-                                      builder: (context, soundProvider, child) => Checkbox(
+                              Consumer<SoundProvider>(
+                                builder: (context, soundProvider, child) => InkWell(
+                                  onTap: () {
+                                    soundProvider.setSound(!soundProvider.isSoundOn);
+                                    setDialogState(() {
+                                      soundEnabled = !soundProvider.isSoundOn;
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
                                         value: soundProvider.isSoundOn, // Default is true
                                         onChanged: (val) {
                                           soundProvider.setSound(val ?? true);
@@ -816,19 +817,19 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                         activeColor: Colors.white,
                                         checkColor: Colors.black,
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        AppLocalizations.of(context)!.haptics, // Localized label
-                                        style: GoogleFonts.baloo2(
-                                          color: Colors.white.withOpacity(0.92),
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 20,
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          AppLocalizations.of(context)!.haptics, // Localized label
+                                          style: GoogleFonts.baloo2(
+                                            color: Colors.white.withOpacity(0.92),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 20,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 18),

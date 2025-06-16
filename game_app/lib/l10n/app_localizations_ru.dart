@@ -291,5 +291,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get itsStr => 'Это ';
 
-  String get haptics => 'Тактильность';
+  @override
+  String get haptics => 'Гаптика';
 }

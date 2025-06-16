@@ -12,6 +12,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 import 'utils/sound_manager.dart';
+import 'package:provider/provider.dart';
+import 'providers/sound_provider.dart';
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -231,7 +233,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     // Cap velocity
     angularVelocity = angularVelocity.clamp(-_maxAngularVelocity, _maxAngularVelocity);
     if (angularVelocity.abs() > 0.1) {
-      SoundManager.playBottleSound();
+      SoundManager.playBottleSound(context: context);
       _startSpin(angularVelocity);
     }
     _lastPanPosition = null;
@@ -593,7 +595,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                SoundManager.playButtonSound();
+                                SoundManager.playButtonSound(context: context);
                                 Navigator.of(context).pop();
                               },
                               style: ElevatedButton.styleFrom(
@@ -781,7 +783,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  SoundManager.playButtonSound();
+                                  SoundManager.playButtonSound(context: context);
                                   Navigator.of(dialogContext).pop(false);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -813,7 +815,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           Expanded(
                             child: TextButton(
                               onPressed: () {
-                                SoundManager.playButtonSound();
+                                SoundManager.playButtonSound(context: context);
                                 Navigator.of(dialogContext).pop(true);
                               },
                               style: TextButton.styleFrom(
@@ -1014,25 +1016,28 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          _buildIconButton(
-                            widget.hapticsEnabled ? Icons.volume_up : Icons.volume_off,
-                            () {
-                              if (widget.onHapticsChanged != null) {
-                                widget.onHapticsChanged!(!widget.hapticsEnabled);
-                              }
-                            },
+                          Consumer<SoundProvider>(
+                            builder: (context, soundProvider, child) => _buildIconButton(
+                              soundProvider.isSoundOn ? Icons.volume_up : Icons.volume_off,
+                              () {
+                                soundProvider.toggleSound();
+                                if (widget.onHapticsChanged != null) {
+                                  widget.onHapticsChanged!(soundProvider.isSoundOn);
+                                }
+                              },
+                            ),
                           ),
                           _buildIconButton(
                             Icons.emoji_events_outlined,
                             () {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               _showScoreboardDialog();
                             },
                           ),
                           _buildIconButton(
                             Icons.play_circle_outline,
                             () {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               // TODO: Implement ad watching or premium feature logic
                             },
                           ),
@@ -1204,7 +1209,7 @@ class _TruthDareDialog extends StatelessWidget {
                           decoration: truthButtonDecoration,
                           child: ElevatedButton(
                             onPressed: () async {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               Navigator.of(context).pop('truth');
                             },
                             style: buttonStyle,
@@ -1223,7 +1228,7 @@ class _TruthDareDialog extends StatelessWidget {
                           decoration: dareButtonDecoration,
                           child: ElevatedButton(
                             onPressed: () async {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               Navigator.of(context).pop('dare');
                             },
                             style: buttonStyle,
@@ -1242,7 +1247,7 @@ class _TruthDareDialog extends StatelessWidget {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        SoundManager.playButtonSound();
+                        SoundManager.playButtonSound(context: context);
                         final random = math.Random();
                         final isTruth = random.nextBool();
                         Navigator.of(context).pop(isTruth ? 'truth' : 'dare');

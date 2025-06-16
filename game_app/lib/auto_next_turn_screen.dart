@@ -12,6 +12,8 @@ import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 import 'dart:math' as math; // Import math for random selection
 import 'utils/sound_manager.dart'; // Import SoundManager
+import 'package:provider/provider.dart';
+import 'providers/sound_provider.dart';
 
 // Shared dialog constants and helpers (copied from random_turn_screen.dart)
 const double kMaxCardWidth = 420.0;
@@ -303,7 +305,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            SoundManager.playButtonSound();
+                            SoundManager.playButtonSound(context: context);
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
@@ -506,7 +508,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   ),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      SoundManager.playButtonSound();
+                                      SoundManager.playButtonSound(context: context);
                                       Navigator.of(dialogContext).pop(false);
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -539,7 +541,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               Expanded(
                                 child: TextButton(
                                   onPressed: () {
-                                    SoundManager.playButtonSound();
+                                    SoundManager.playButtonSound(context: context);
                                     Navigator.of(dialogContext).pop(true);
                                   },
                                   style: TextButton.styleFrom(
@@ -773,7 +775,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
-                                    SoundManager.playButtonSound();
+                                    SoundManager.playButtonSound(context: context);
                                     setState(() {
                                       _currentIndex = 0;
                                       _lastPlayerFinished = false;
@@ -851,18 +853,24 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildIconButton(
-                                widget.hapticsEnabled ? Icons.volume_up : Icons.volume_off,
-                                () {
-                                  if (widget.onHapticsChanged != null) {
-                                    widget.onHapticsChanged!(!widget.hapticsEnabled);
-                                  }
-                                },
+                              Consumer<SoundProvider>(
+                                builder: (context, soundProvider, child) =>
+                                    _buildIconButton(
+                                  soundProvider.isSoundOn
+                                      ? Icons.volume_up
+                                      : Icons.volume_off,
+                                  () {
+                                    soundProvider.toggleSound();
+                                    if (widget.onHapticsChanged != null) {
+                                      widget.onHapticsChanged!(soundProvider.isSoundOn);
+                                    }
+                                  },
+                                ),
                               ),
                               _buildIconButton(
                                 Icons.emoji_events_outlined,
                                 () {
-                                  if (widget.hapticsEnabled) SoundManager.playButtonSound();
+                                  if (widget.hapticsEnabled) SoundManager.playButtonSound(context: context);
                                   _showScoreboardDialog();
                                 },
                               ),
@@ -1021,7 +1029,7 @@ class _TruthDareDialog extends StatelessWidget {
                           decoration: truthButtonDecoration,
                           child: ElevatedButton(
                             onPressed: () async {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               Navigator.of(context).pop('truth');
                             },
                             style: buttonStyle,
@@ -1040,7 +1048,7 @@ class _TruthDareDialog extends StatelessWidget {
                           decoration: dareButtonDecoration,
                           child: ElevatedButton(
                             onPressed: () async {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               Navigator.of(context).pop('dare');
                             },
                             style: buttonStyle,
@@ -1059,7 +1067,7 @@ class _TruthDareDialog extends StatelessWidget {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        SoundManager.playButtonSound();
+                        SoundManager.playButtonSound(context: context);
                         final random = math.Random();
                         final isTruth = random.nextBool();
                         Navigator.of(context).pop(isTruth ? 'truth' : 'dare');

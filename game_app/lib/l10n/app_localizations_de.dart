@@ -291,5 +291,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get itsStr => 'Es ist ';
 
+  @override
   String get haptics => 'Haptik';
 }

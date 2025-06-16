@@ -39,7 +39,7 @@ class CustomAppBarButton extends StatelessWidget {
           icon: Icon(icon, color: Colors.white, size: iconSize ?? iconSizeValue),
           tooltip: tooltip,
           onPressed: () {
-            SoundManager.playButtonSound();
+            SoundManager.playButtonSound(context: context);
             onPressed();
           },
         ),

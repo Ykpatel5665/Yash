@@ -80,7 +80,7 @@ class PrimaryButton extends StatelessWidget {
     Widget button = ElevatedButton(
       onPressed: enabled
           ? () {
-              SoundManager.playButtonSound();
+              SoundManager.playButtonSound(context: context);
               if (onPressed != null) onPressed!();
             }
           : null,

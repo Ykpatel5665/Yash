@@ -9,6 +9,8 @@ import 'l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/headers/app_header.dart';
 import 'utils/sound_manager.dart';
+import 'package:provider/provider.dart';
+import 'providers/sound_provider.dart';
 
 // Define Enums for selections
 enum GameMode {
@@ -77,7 +79,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SoundProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -559,6 +566,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
               ),
               );
             }
+          // END buildToggleButton
           final double iconSize = 32; // Fixed icon size
           final double fontSize = 14; // Fixed font size
 
@@ -796,15 +804,18 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                 borderRadius: BorderRadius.circular(8),
                                 child: Row(
                                   children: [
-                                    Checkbox(
-                                      value: soundEnabled, // Default is true
-                                      onChanged: (val) {
-                                        setDialogState(() {
-                                          soundEnabled = val ?? true;
-                                        });
-                                      },
-                                      activeColor: Colors.white,
-                                      checkColor: Colors.black,
+                                    Consumer<SoundProvider>(
+                                      builder: (context, soundProvider, child) => Checkbox(
+                                        value: soundProvider.isSoundOn, // Default is true
+                                        onChanged: (val) {
+                                          soundProvider.setSound(val ?? true);
+                                          setDialogState(() {
+                                            soundEnabled = val ?? true;
+                                          });
+                                        },
+                                        activeColor: Colors.white,
+                                        checkColor: Colors.black,
+                                      ),
                                     ),
                                     const SizedBox(width: 8),
                                     Expanded(
@@ -826,7 +837,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        SoundManager.playButtonSound();
+                                        SoundManager.playButtonSound(context: context);
                                         Navigator.of(dialogPageContext).pop(false); // Return false on cancel
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -873,7 +884,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                       ),
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          SoundManager.playButtonSound();
+                                          SoundManager.playButtonSound(context: context);
                                           setState(() {
                                             _selectedGameModeEnum = currentModeSelection;
                                             _selectedAgeGroupEnum = currentAgeSelection;
@@ -1015,7 +1026,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
             icon: const Icon(Icons.language),
             tooltip: AppLocalizations.of(context)!.changeLanguage,
             onPressed: () {
-              SoundManager.playButtonSound();
+              SoundManager.playButtonSound(context: context);
               _showLanguagePickerDialog(context);
             },
           ),
@@ -1121,13 +1132,13 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                       ),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton(AppLocalizations.of(context)!.addTruths, Icons.add, () {
-                        SoundManager.playButtonSound();
+                        SoundManager.playButtonSound(context: context);
                         print("Add Truths pressed");
                         // TODO: Navigate to Add Truths screen
                       }),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton(AppLocalizations.of(context)!.addDares, Icons.add, () {
-                        SoundManager.playButtonSound();
+                        SoundManager.playButtonSound(context: context);
                         print("Add Dares pressed");
                         // TODO: Navigate to Add Dares screen
                       }),
@@ -1147,7 +1158,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                               // TODO: Share pressed
                             }, tooltip: AppLocalizations.of(context)!.share),
                             _buildBottomBarButton(Icons.settings, () {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               _showModernGameSetupDialog(context);
                             }, tooltip: AppLocalizations.of(context)!.settings),
                           ],
@@ -1204,7 +1215,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
           ),
         ),
         onPressed: () {
-          SoundManager.playButtonSound();
+          SoundManager.playButtonSound(context: context);
           onPressed();
         }, // Restore button functionality
         child: Stack(
@@ -1265,7 +1276,7 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
             minimumSize: const Size(60, 60),
           ),
           onPressed: () {
-            SoundManager.playButtonSound();
+            SoundManager.playButtonSound(context: context);
             onPressed();
           },
           child: Icon(

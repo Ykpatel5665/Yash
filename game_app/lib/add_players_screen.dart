@@ -304,7 +304,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                         ),
                       ),
                       onPressed: () {
-                        SoundManager.playButtonSound();
+                        SoundManager.playButtonSound(context: context);
                         // Navigate based on the selected game mode
                         Widget nextScreen;
                         switch (widget.gameMode) {

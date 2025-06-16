@@ -55,7 +55,7 @@ class NeumorphicIconButton extends StatelessWidget {
       child: IconButton(
         icon: Icon(icon, size: responsiveIconSize, color: Colors.black),
         onPressed: () {
-          SoundManager.playButtonSound();
+          SoundManager.playButtonSound(context: context);
           onPressed();
         },
         splashRadius: responsiveSize / 2,

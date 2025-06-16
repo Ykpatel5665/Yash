@@ -431,7 +431,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                         ),
                                       ),
                                       onPressed: _selectedCategoryIds.isEmpty ? null : () async {
-                                        SoundManager.playButtonSound();
+                                        SoundManager.playButtonSound(context: context);
                                         await _saveLastPlayedCategories();
                                         Navigator.push(
                                           context,

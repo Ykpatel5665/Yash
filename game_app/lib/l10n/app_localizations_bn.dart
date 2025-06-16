@@ -291,5 +291,6 @@ class AppLocalizationsBn extends AppLocalizations {
   @override
   String get itsStr => 'এটি ';
 
+  @override
   String get haptics => 'হ্যাপটিক্স';
 }

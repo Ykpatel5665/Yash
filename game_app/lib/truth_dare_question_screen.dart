@@ -204,7 +204,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              SoundManager.playButtonSound();
+                              SoundManager.playButtonSound(context: context);
                               Navigator.of(dialogContext).pop();
                             },
                             style: ElevatedButton.styleFrom(
@@ -262,7 +262,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
   Future<void> _handleForfeit({bool isTimeout = false}) async {
     _timer?.cancel();
     _progressController.stop();
-    await SoundManager.playForfeitSound();
+    await SoundManager.playForfeitSound(context: context);
     await _showResultDialog(
       title: isTimeout ? AppLocalizations.of(context)!.timesUpTitle : AppLocalizations.of(context)!.oopsTitle,
       message: isTimeout ? AppLocalizations.of(context)!.ranOutOfTime : AppLocalizations.of(context)!.lostRound,
@@ -275,7 +275,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
   Future<void> _handleDone() async {
     _timer?.cancel();
     _progressController.stop();
-    await SoundManager.playCompletedSound();
+    await SoundManager.playCompletedSound(context: context);
     await _showResultDialog(
       title: AppLocalizations.of(context)!.congratsTitle,
       message: AppLocalizations.of(context)!.challengeCompleted,

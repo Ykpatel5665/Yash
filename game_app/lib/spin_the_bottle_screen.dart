@@ -493,47 +493,51 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
-                              ...widget.players.map((player) => Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: (screenSize.height * 0.008).clamp(4, 12)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        AutoSizeText(
-                                          player,
+                              ...(() {
+                                final sortedPlayers = [...widget.players];
+                                sortedPlayers.sort((a, b) => (_playerScores[b] ?? 0).compareTo(_playerScores[a] ?? 0));
+                                return sortedPlayers.map((player) => Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: (screenSize.height * 0.008).clamp(4, 12)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      AutoSizeText(
+                                        player,
+                                        style: GoogleFonts.baloo2(
+                                          fontSize: fontSize,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        minFontSize: 10,
+                                        maxLines: 2,
+                                        wrapWords: true,
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: (screenSize.width * 0.04).clamp(8, 20),
+                                          vertical: (screenSize.height * 0.008).clamp(4, 12),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.13),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: AutoSizeText(
+                                          _playerScores[player]?.toString() ?? '0',
                                           style: GoogleFonts.baloo2(
                                             fontSize: fontSize,
                                             color: Colors.white,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                           minFontSize: 10,
-                                          maxLines: 2,
+                                          maxLines: 1,
                                           wrapWords: true,
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: (screenSize.width * 0.04).clamp(8, 20),
-                                            vertical: (screenSize.height * 0.008).clamp(4, 12),
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.13),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: AutoSizeText(
-                                            _playerScores[player]?.toString() ?? '0',
-                                            style: GoogleFonts.baloo2(
-                                              fontSize: fontSize,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            minFontSize: 10,
-                                            maxLines: 1,
-                                            wrapWords: true,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
+                                      ),
+                                    ],
+                                  ),
+                                )).toList();
+                              })(),
                             ],
                           ),
                         ),

@@ -683,43 +683,33 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   }
 
   Future<bool> _showQuitConfirmation() async {
-    if (_quitDialogOpen) return false;
-    // Set pending show dialog flag if dialog should resume
-    _pendingShowTruthDare = _gameStarted &&
-        !_scoreboardOpen &&
-        !_quitDialogOpen &&
-        !_lastPlayerFinished;
     _quitDialogOpen = true;
-    final Size screenSize = MediaQuery.of(context).size;
-    final double cardWidth = screenSize.width * 0.92;
-    final double maxCardWidth = kMaxCardWidth;
-    final double cardPadding =
-        getResponsiveCardPadding(screenSize.width); // Responsive
-    final double titleFontSize =
-        (screenSize.width * 0.08).clamp(24, 36); // Responsive
-    final double iconSize =
-        (screenSize.width * 0.14).clamp(36, 60); // Responsive
-    final double messageFontSize =
-        (screenSize.width * 0.05).clamp(15, 22); // Responsive
-    final double buttonFontSize =
-        (screenSize.width * 0.055).clamp(16, 22); // Responsive
-    final double buttonSpacing =
-        (screenSize.width * 0.045).clamp(10, 22); // Responsive
-    final double sectionSpacing =
-        (screenSize.height * 0.03).clamp(14, 32); // Responsive
-    final double buttonRowSpacing =
-        (screenSize.height * 0.04).clamp(18, 40); // Responsive
-    final double buttonVerticalPadding =
-        (screenSize.height * 0.022).clamp(12, 28); // Responsive
-
-    final result = await showGeneralDialog<bool>(
+    final result = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
-          barrierLabel:
-              MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          barrierColor: Colors.black54,
-          transitionDuration: const Duration(milliseconds: 350),
-          pageBuilder: (dialogContext, animation, secondaryAnimation) {
+          builder: (dialogContext) {
+            final Size screenSize = MediaQuery.of(context).size;
+            final double cardWidth = screenSize.width * 0.92;
+            final double maxCardWidth = kMaxCardWidth;
+            final double cardPadding =
+                getResponsiveCardPadding(screenSize.width); // Responsive
+            final double titleFontSize =
+                (screenSize.width * 0.08).clamp(24, 36); // Responsive
+            final double iconSize =
+                (screenSize.width * 0.14).clamp(36, 60); // Responsive
+            final double messageFontSize =
+                (screenSize.width * 0.05).clamp(15, 22); // Responsive
+            final double buttonFontSize =
+                (screenSize.width * 0.055).clamp(16, 22); // Responsive
+            final double buttonSpacing =
+                (screenSize.width * 0.045).clamp(10, 22); // Responsive
+            final double sectionSpacing =
+                (screenSize.height * 0.03).clamp(14, 32); // Responsive
+            final double buttonRowSpacing =
+                (screenSize.height * 0.04).clamp(18, 40); // Responsive
+            final double buttonVerticalPadding =
+                (screenSize.height * 0.022).clamp(12, 28); // Responsive
+
             return Center(
               child: Material(
                 type: MaterialType.transparency,
@@ -873,29 +863,17 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                            ], // End of Row children
+                          ), // End of Row
+                        ], // End of Column children
+                      ), // End of Column
+                    ), // End of Padding
+                  ), // End of Material
+                ), // End of Center
               ),
-            );
-          },
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(0.0, 0.3);
-            const end = Offset.zero;
-            const curve = Curves.easeOutCubic;
-            final tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            final offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        ) ??
+              ); // End of dialog builder
+            },
+          ) ??
         false;
     _quitDialogOpen = false;
     // Resume dialog if needed
@@ -966,8 +944,6 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             builder: (context, constraints) {
               final double bottomPadding = constraints.maxHeight * 0.04;
               final double horizontalPadding = constraints.maxWidth * 0.07;
-              final double spacingLarge =
-                  (constraints.maxHeight * 0.06).clamp(24, 60);
               final double screenWidth = constraints.maxWidth;
               final double screenHeight = constraints.maxHeight;
               return Stack(

@@ -690,7 +690,12 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     child: buildToggleButton(
                                       label: AppLocalizations.of(context)!.kids,
                                       selected: currentAgeSelection == AgeGroup.kids,
-                                      onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.kids),
+                                      onTap: () {
+                                        setDialogState(() => currentAgeSelection = AgeGroup.kids);
+                                        setState(() {
+                                          _adultConfirmedThisSession = false;
+                                        });
+                                      },
                                       icon: Icons.child_care,
                                       selectedColor: const Color(0xFF4DD0E1).withOpacity(0.25),
                                       iconSize: iconSize,
@@ -701,7 +706,12 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     child: buildToggleButton(
                                       label: AppLocalizations.of(context)!.teen,
                                       selected: currentAgeSelection == AgeGroup.teen,
-                                      onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.teen),
+                                      onTap: () {
+                                        setDialogState(() => currentAgeSelection = AgeGroup.teen);
+                                        setState(() {
+                                          _adultConfirmedThisSession = false;
+                                        });
+                                      },
                                       icon: Icons.school,
                                       selectedColor: const Color(0xFF9575CD).withOpacity(0.25),
                                       iconSize: iconSize,
@@ -712,7 +722,21 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                                     child: buildToggleButton(
                                       label: AppLocalizations.of(context)!.adult,
                                       selected: currentAgeSelection == AgeGroup.adult,
-                                      onTap: () => setDialogState(() => currentAgeSelection = AgeGroup.adult),
+                                      onTap: () async {
+                                        if (!_adultConfirmedThisSession) {
+                                          final confirmed = await _showAdultConfirmationDialog(context);
+                                          if (confirmed) {
+                                            setState(() {
+                                              _adultConfirmedThisSession = true;
+                                            });
+                                            setDialogState(() {
+                                              currentAgeSelection = AgeGroup.adult;
+                                            });
+                                          }
+                                        } else {
+                                          setDialogState(() => currentAgeSelection = AgeGroup.adult);
+                                        }
+                                      },
                                       icon: Icons.person,
                                       selectedColor: const Color(0xFFBA68C8).withOpacity(0.25),
                                       iconSize: iconSize,
@@ -1086,24 +1110,22 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                         Icons.play_arrow,
                         () async {
                           bool proceed = true;
-                          if (_selectedAgeGroupEnum == AgeGroup.adult && !_adultConfirmedThisSession) {
+                          // If setup dialog is skipped and adult mode is saved, show confirmation
+                          if (_dontShowGameSetupDialog && _selectedAgeGroupEnum == AgeGroup.adult) {
                             proceed = await _showAdultConfirmationDialog(context);
-                            if (proceed) {
-                              setState(() {
-                                _adultConfirmedThisSession = true;
-                              });
-                            }
+                            if (!proceed) return;
+                            setState(() {
+                              _adultConfirmedThisSession = true;
+                            });
                           }
-                          // Only show dialog if user hasn't checked 'Don't show again'
                           bool needSetup = !_dontShowGameSetupDialog || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null;
                           if (needSetup) {
                             bool saved = await _showModernGameSetupDialog(context);
-                            // After dialog, check if preferences are set (user may have pressed cancel)
                             if (!saved || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
-                              return; // Do not proceed if user cancelled or did not save
+                              return;
                             }
                           }
-                          if (proceed && _selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
+                          if (_selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
                             Navigator.push(
                               context,
                               PageRouteBuilder(

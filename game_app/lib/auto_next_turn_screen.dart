@@ -151,6 +151,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     });
     await showDialog(
       context: context,
+      barrierDismissible: true, // Allow dismiss on tap outside
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
         final double maxCardWidth = 420;

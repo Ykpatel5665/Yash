@@ -446,6 +446,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     });
     await showDialog(
       context: context,
+      barrierDismissible: true, // Allow dismiss on tap outside
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
         final double cardPadding = getResponsiveCardPadding(screenSize.width);

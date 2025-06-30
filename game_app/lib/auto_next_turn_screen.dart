@@ -48,14 +48,14 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
   bool _scoreboardOpen = false;
-  bool _pendingShowTruthDare =
-      false; // Track if dialog should show after scoreboard
+  // Removed _pendingShowTruthDare logic: dialog only appears after Start button
   bool _quitDialogOpen = false; // Track if quit confirmation dialog is open
   bool _hasQuit = false; // Track if user has quit to prevent dialog on home
 
   int _pendingHighlightIndex = -1; // For transition animation
   bool _isAnimatingHighlight = false;
   late List<Color> _playerColors;
+  bool _gameStarted = false; // Show start button before each turn
 
   @override
   void initState() {
@@ -63,14 +63,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     for (final player in widget.players) {
       _playerScores[player] = 0;
     }
-    // --- ADDED: Shuffle the color palette at the start of the game ---
     _playerColors = PlayerCirclePainter.shuffleColors();
-    // Automatically show the Truth/Dare dialog after 2 seconds for the first player
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted && !_lastPlayerFinished && !_hasQuit) {
-        _showTruthOrDareDialog();
-      }
-    });
+    _gameStarted = false;
   }
 
   void _nextTurn() {
@@ -85,16 +79,12 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         _pendingHighlightIndex = _currentIndex + 1;
       });
       Future.delayed(const Duration(milliseconds: 1800), () {
-        // smoother and slower transition
         if (!mounted || _hasQuit) return;
         setState(() {
           _currentIndex = _pendingHighlightIndex;
           _isAnimatingHighlight = false;
+          _gameStarted = false; // Show start button for next player
         });
-        // Only show dialog if scoreboard is not open
-        if (mounted && !_lastPlayerFinished && !_scoreboardOpen && !_hasQuit) {
-          _showTruthOrDareDialog();
-        }
       });
     }
   }
@@ -116,27 +106,27 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   Future<void> _showTruthOrDareScreen(bool isTruth) async {
     final playerName = widget.players[_currentIndex];
-    final question =
-        await _getRandomQuestionFromJson(type: isTruth ? 'truth' : 'dare');
+    final question = await _getRandomQuestionFromJson(type: isTruth ? 'truth' : 'dare');
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TruthDareQuestionScreen(
           playerName: playerName,
-          questionText: question?.text ??
-              (isTruth ? 'No truth found.' : 'No dare found.'),
+          questionText: question?.text ?? (isTruth ? 'No truth found.' : 'No dare found.'),
           isTruth: isTruth,
           onDone: () {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
             Navigator.of(context).pop();
             setState(() {
               _nextTurn();
+              _gameStarted = false; // Show start button for next player
             });
           },
           onForfeit: () {
             Navigator.of(context).pop();
             setState(() {
               _nextTurn();
+              _gameStarted = false; // Show start button for next player
             });
           },
           useTimer: widget.useTimer,
@@ -151,7 +141,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     });
     await showDialog(
       context: context,
-      barrierDismissible: true, // Allow dismiss on tap outside
+      barrierDismissible: true,
       builder: (context) {
         final Size screenSize = MediaQuery.of(context).size;
         final double maxCardWidth = 420;
@@ -159,8 +149,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         final double fontSize = (screenSize.width * 0.045).clamp(16, 26);
         final double buttonFontSize = (screenSize.width * 0.035).clamp(13, 18);
         final double iconSize = (screenSize.width * 0.14).clamp(36, 60);
-        final double maxDialogHeight =
-            (screenSize.height * 0.7).clamp(320, 600);
+        final double maxDialogHeight = (screenSize.height * 0.7).clamp(320, 600);
         final localizations = AppLocalizations.of(context)!;
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -195,8 +184,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                         maxLines: 2,
                         wrapWords: true,
                       ),
-                      SizedBox(
-                          height: (screenSize.height * 0.03).clamp(14, 32)),
+                      SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)),
                       Icon(
                         Icons.emoji_events_rounded,
                         color: Color(0xFFFFD700),
@@ -209,82 +197,63 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                          height: (screenSize.height * 0.03).clamp(14, 32)),
+                      SizedBox(height: (screenSize.height * 0.03).clamp(14, 32)),
                       Expanded(
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
                               ...(() {
                                 final sortedPlayers = [...widget.players];
-                                sortedPlayers.sort((a, b) =>
-                                    (_playerScores[b] ?? 0)
-                                        .compareTo(_playerScores[a] ?? 0));
-                                return sortedPlayers
-                                    .map((player) => Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: (screenSize.height *
-                                                      0.008)
-                                                  .clamp(4, 12)),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              AutoSizeText(
-                                                player,
-                                                style: GoogleFonts.baloo2(
-                                                  fontSize: fontSize,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                minFontSize: 10,
-                                                maxLines: 2,
-                                                wrapWords: true,
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      (screenSize.width * 0.04)
-                                                          .clamp(8, 20),
-                                                  vertical:
-                                                      (screenSize.height *
-                                                              0.008)
-                                                          .clamp(4, 12),
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      Colors.white.withOpacity(0.13),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                child: AutoSizeText(
-                                                  _playerScores[player]?.toString() ??
-                                                      '0',
-                                                  style: GoogleFonts.baloo2(
-                                                    fontSize: fontSize,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  minFontSize: 10,
-                                                  maxLines: 1,
-                                                  wrapWords: true,
-                                                ),
-                                              ),
-                                            ],
+                                sortedPlayers.sort((a, b) => (_playerScores[b] ?? 0).compareTo(_playerScores[a] ?? 0));
+                                return sortedPlayers.map((player) => Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: (screenSize.height * 0.008).clamp(4, 12)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      AutoSizeText(
+                                        player,
+                                        style: GoogleFonts.baloo2(
+                                          fontSize: fontSize,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        minFontSize: 10,
+                                        maxLines: 2,
+                                        wrapWords: true,
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: (screenSize.width * 0.04).clamp(8, 20),
+                                          vertical: (screenSize.height * 0.008).clamp(4, 12),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.13),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: AutoSizeText(
+                                          _playerScores[player]?.toString() ?? '0',
+                                          style: GoogleFonts.baloo2(
+                                            fontSize: fontSize,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ))
-                                    .toList();
+                                          minFontSize: 10,
+                                          maxLines: 1,
+                                          wrapWords: true,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )).toList();
                               })(),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                          height: (screenSize.height * 0.09)
-                              .clamp(40, 80)), // Space for floating button
+                      SizedBox(height: (screenSize.height * 0.09).clamp(40, 80)),
                     ],
                   ),
-                  // Floating close button at the bottom
                   Positioned(
                     left: 0,
                     right: 0,
@@ -298,10 +267,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF5B86E5),
-                              Color(0xFF8F6ED5),
-                            ],
+                            colors: [Color(0xFF5B86E5), Color(0xFF8F6ED5)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -327,10 +293,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             padding: EdgeInsets.symmetric(
-                              vertical:
-                                  (screenSize.height * 0.022).clamp(12, 28),
-                              horizontal:
-                                  (screenSize.width * 0.08).clamp(18, 40),
+                              vertical: (screenSize.height * 0.022).clamp(12, 28),
+                              horizontal: (screenSize.width * 0.08).clamp(18, 40),
                             ),
                             textStyle: GoogleFonts.baloo2(
                               fontSize: buttonFontSize,
@@ -363,39 +327,14 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
             ),
           ),
         );
-      }, // End of builder
-    ); // End of showDialog
+      },
+    );
     setState(() {
       _scoreboardOpen = false;
     });
-    // Only show dialog if we are still on this screen and not in the process of popping
-    if (mounted &&
-        ModalRoute.of(context)?.isCurrent == true &&
-        (_pendingShowTruthDare ||
-            (!_lastPlayerFinished && !_pendingShowTruthDare)) &&
-        !_hasQuit) {
-      _pendingShowTruthDare = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted &&
-            !_lastPlayerFinished &&
-            !_scoreboardOpen &&
-            !_quitDialogOpen &&
-            !_hasQuit) {
-          _showTruthOrDareDialog();
-        }
-      });
-    }
   }
 
   Future<bool> _showQuitConfirmation() async {
-    // Track if the Truth/Dare dialog should resume after closing
-    final bool shouldResumeTruthDare = !_lastPlayerFinished &&
-        !_scoreboardOpen &&
-        !_quitDialogOpen &&
-        !_hasQuit;
-    if (shouldResumeTruthDare) {
-      _pendingShowTruthDare = true;
-    }
     _quitDialogOpen = true;
     final Size screenSize = MediaQuery.of(context).size;
     final result = await showGeneralDialog<bool>(
@@ -602,20 +541,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     _quitDialogOpen = false;
     if (result) {
       _hasQuit = true;
-      _pendingShowTruthDare = false;
-    }
-    // Resume Truth/Dare dialog if it was supposed to show and user said No
-    if (!result && mounted && _pendingShowTruthDare && !_hasQuit) {
-      _pendingShowTruthDare = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted &&
-            !_lastPlayerFinished &&
-            !_scoreboardOpen &&
-            !_quitDialogOpen &&
-            !_hasQuit) {
-          _showTruthOrDareDialog();
-        }
-      });
     }
     return result;
   }
@@ -662,10 +587,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
 
   Future<void> _showTruthOrDareDialog() async {
     if (_scoreboardOpen || _quitDialogOpen || _hasQuit) {
-      _pendingShowTruthDare = true;
       return; // Prevent dialog if scoreboard or quit dialog is open or user has quit
     }
-    _pendingShowTruthDare = false;
     final playerName = widget.players[_currentIndex];
     final result = await showGeneralDialog(
       context: context,
@@ -702,7 +625,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   @override
   void deactivate() {
     // Prevent dialog from showing if navigating away (e.g., Home pressed)
-    _pendingShowTruthDare = false;
     super.deactivate();
   }
 
@@ -753,29 +675,29 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final double bottomPadding = constraints.maxHeight * 0.04;
-                    final double horizontalPadding =
-                        constraints.maxWidth * 0.07;
-                    final double spacingLarge =
-                        (constraints.maxHeight * 0.06).clamp(24, 60);
+                    final double horizontalPadding = constraints.maxWidth * 0.07;
+                    final double spacingLarge = (constraints.maxHeight * 0.06).clamp(24, 60);
                     final double screenWidth = constraints.maxWidth;
                     final double screenHeight = constraints.maxHeight;
                     return Column(
                       children: [
                         Expanded(
                           child: Center(
-                            child: PlayerCircle(
-                              players: widget.players,
-                              size: (screenWidth * 0.7)
-                                  .clamp(220.0, screenHeight * 0.55),
-                              highlightedIndex: _isAnimatingHighlight
-                                  ? _pendingHighlightIndex
-                                  : _currentIndex,
-                              animated: true,
-                              animationDuration:
-                                  const Duration(milliseconds: 1800),
-                              previousIndex:
-                                  _isAnimatingHighlight ? _currentIndex : null,
-                              colors: _playerColors,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                PlayerCircle(
+                                  players: widget.players,
+                                  size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
+                                  highlightedIndex: _isAnimatingHighlight ? _pendingHighlightIndex : _currentIndex,
+                                  animated: true,
+                                  animationDuration: const Duration(milliseconds: 1800),
+                                  previousIndex: _isAnimatingHighlight ? _currentIndex : null,
+                                  colors: _playerColors,
+                                ),
+                                if (!_gameStarted && !_lastPlayerFinished)
+                                  _buildStartButton(screenWidth, screenHeight),
+                              ],
                             ),
                           ),
                         ),
@@ -790,32 +712,21 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                     setState(() {
                                       _currentIndex = 0;
                                       _lastPlayerFinished = false;
-                                      _playerColors =
-                                          PlayerCirclePainter.shuffleColors();
+                                      _playerColors = PlayerCirclePainter.shuffleColors();
                                       _hasQuit = false; // Reset quit flag on restart
-                                      Future.delayed(const Duration(seconds: 2),
-                                          () {
-                                        if (mounted &&
-                                            !_lastPlayerFinished &&
-                                            !_hasQuit) {
-                                          _showTruthOrDareDialog();
-                                        }
-                                      });
+                                      _gameStarted = false;
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black,
                                     foregroundColor: Colors.white,
                                     padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          (screenWidth * 0.18).clamp(32, 60),
-                                      vertical:
-                                          (screenHeight * 0.025).clamp(14, 28),
+                                      horizontal: (screenWidth * 0.18).clamp(32, 60),
+                                      vertical: (screenHeight * 0.025).clamp(14, 28),
                                     ),
                                     textStyle: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          (screenWidth * 0.045).clamp(15, 22),
+                                      fontSize: (screenWidth * 0.045).clamp(15, 22),
                                       color: Colors.white,
                                     ),
                                     shape: RoundedRectangleBorder(
@@ -832,8 +743,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                     wrapWords: false,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          (screenWidth * 0.045).clamp(15, 22),
+                                      fontSize: (screenWidth * 0.045).clamp(15, 22),
                                       color: Colors.white,
                                     ),
                                     textAlign: TextAlign.center,
@@ -841,10 +751,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                 ),
                                 SizedBox(height: spacingLarge * 0.7),
                                 AutoSizeText(
-                                  AppLocalizations.of(context)!
-                                      .allPlayersHadTurn,
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white),
+                                  AppLocalizations.of(context)!.allPlayersHadTurn,
+                                  style: TextStyle(fontSize: 18, color: Colors.white),
                                   minFontSize: 10,
                                   maxLines: 2,
                                   wrapWords: true,
@@ -893,6 +801,90 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                   },
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+  }
+
+  // Start button widget (EXACT copy from random_turn_screen.dart)
+  Widget _buildStartButton(double screenWidth, double screenHeight) {
+    // This is a direct copy of the circular, dark, semi-transparent button from random_turn_screen.dart
+    return ClipOval(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+        child: Container(
+          width: (screenWidth * 0.16).clamp(48, 70),
+          height: (screenWidth * 0.16).clamp(48, 70),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                Colors.black.withOpacity(0.22),
+                Colors.black.withOpacity(0.10),
+                Colors.transparent
+              ],
+              center: Alignment.topLeft,
+              radius: 0.95,
+            ),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.22),
+              width: 1.6,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.22),
+                blurRadius: 12,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () {
+                SoundManager.playButtonSound(context: context);
+                setState(() {
+                  _gameStarted = true;
+                });
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_lastPlayerFinished && !_scoreboardOpen && !_quitDialogOpen && !_hasQuit) {
+                    _showTruthOrDareDialog();
+                  }
+                });
+              },
+              child: Center(
+                child: AutoSizeText(
+                  AppLocalizations.of(context)!.start,
+                  minFontSize: 10,
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  wrapWords: false,
+                  style: GoogleFonts.baloo2(
+                    fontWeight: FontWeight.bold,
+                    fontSize: (screenWidth * 0.035).clamp(13, 18),
+                    color: Colors.white.withOpacity(0.92),
+                    letterSpacing: 0.5,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 8,
+                        color: Colors.black.withOpacity(0.32),
+                        offset: Offset(0, 2),
+                      ),
+                      Shadow(
+                        blurRadius: 2,
+                        color: Colors.black.withOpacity(0.18),
+                        offset: Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
           ),
         ),

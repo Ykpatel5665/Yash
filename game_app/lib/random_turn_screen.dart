@@ -977,9 +977,9 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                     filter:
                                         ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                     child: Container(
-                                      width: (screenWidth * 0.16).clamp(48, 70),
+                                      width: (screenWidth * 0.16).clamp(48.0, 120.0),
                                       height:
-                                          (screenWidth * 0.16).clamp(48, 70),
+                                          (screenWidth * 0.16).clamp(48.0, 120.0),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         gradient: RadialGradient(
@@ -1021,14 +1021,14 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                             child: AutoSizeText(
                                               AppLocalizations.of(context)!
                                                   .start, // Use localization for 'Start'
-                                              minFontSize: 10,
+                                              minFontSize: 12,
                                               maxLines: 1,
                                               overflow: TextOverflow.visible,
                                               wrapWords: false,
                                               style: GoogleFonts.baloo2(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: (screenWidth * 0.035)
-                                                    .clamp(13, 18),
+                                                fontSize: (screenWidth * 0.045)
+                                                    .clamp(16.0, 28.0),
                                                 color: Colors.white
                                                     .withOpacity(0.92),
                                                 letterSpacing: 0.5,

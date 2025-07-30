@@ -3,7 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
+
 import 'category_selection_screen.dart';
+import 'services/category_db_service.dart';
+import 'services/category_api_service.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -75,16 +79,36 @@ extension AgeGroupExtension on AgeGroup {
   }
 }
 
+
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
+
+  // Pre-fetch categories if DB is empty (background)
+  _prefetchCategoriesIfNeeded();
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => SoundProvider(),
       child: const MyApp(),
     ),
   );
+}
+
+void _prefetchCategoriesIfNeeded() async {
+  try {
+    // Check for any age group, e.g., 'kids' (assuming at least one group always needed)
+    final existing = await CategoryDbService.getCategoriesByAgeGroup('kids');
+    if (existing.isEmpty) {
+      final apiCats = await CategoryApiService.fetchCategories();
+      await CategoryDbService.insertCategories(apiCats);
+    }
+  } catch (e) {
+    // Ignore errors, app will fallback to API fetch on category screen if needed
+  }
 }
 
 class MyApp extends StatefulWidget {

@@ -11,7 +11,7 @@ import 'l10n/app_localizations.dart';
 import 'widgets/headers/app_header.dart';
 import 'utils/sound_manager.dart';
 import 'models/category_model.dart';
-import 'services/category_api_service.dart';
+// import 'services/category_api_service.dart';
 import 'services/category_db_service.dart';
 
 // Static Category lists hatai didha, have dynamic fetch thase
@@ -39,8 +39,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   final Set<String> _selectedCategoryIds = {};
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
-  bool _loading = true;
-  String? _error;
+  // No loading/error needed, DB fetch is instant
 
   @override
   void initState() {
@@ -69,54 +68,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   }
 
   Future<void> _fetchCategories() async {
+    // Only fetch from DB, DB is always up-to-date from main.dart
+    List<CategoryModel> dbCats = await CategoryDbService.getCategoriesByAgeGroup(widget.ageGroup.name);
     setState(() {
-      _loading = true;
-      _error = null;
+      _categories = dbCats;
     });
-    try {
-      // Try DB first
-      List<CategoryModel> dbCats =
-          await CategoryDbService.getCategoriesByAgeGroup(widget.ageGroup.name);
-      // ...existing code...
-      if (dbCats.isNotEmpty) {
-        setState(() {
-          _categories = dbCats;
-          _loading = false;
-        });
-        return;
-      }
-      // Only fetch from API if DB is empty
-      List<CategoryModel> apiCats = await CategoryApiService.fetchCategories();
-      // ...existing code...
-      // Store all categories in DB (no filter, no delete)
-      await CategoryDbService.insertCategories(apiCats);
-      // ...existing code...
-      // Map enum to API age group string
-      String apiAgeGroup;
-      switch (widget.ageGroup) {
-        case AgeGroup.kids:
-          apiAgeGroup = 'Kids';
-          break;
-        case AgeGroup.teen:
-          apiAgeGroup = 'Teens';
-          break;
-        case AgeGroup.adult:
-          apiAgeGroup = 'Adults';
-          break;
-      }
-      // Now filter for current age group
-      final filtered = apiCats.where((c) => c.ageGroup == apiAgeGroup).toList();
-      // ...existing code...
-      setState(() {
-        _categories = filtered;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _loading = false;
-      });
-    }
   }
 
   // Use emoji from API for category icon
@@ -272,11 +228,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   boxShadow: [],
                 ),
                 child: SafeArea(
-                  child: _loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _error != null
-                          ? Center(child: Text('Error: \\$_error'))
-                          : LayoutBuilder(
+                  child: LayoutBuilder(
                               builder: (context, constraints) {
                                 Widget categoryList = Padding(
                                   padding: EdgeInsets.only(

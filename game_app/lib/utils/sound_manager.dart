@@ -5,6 +5,12 @@ import 'package:provider/provider.dart';
 import '../providers/sound_provider.dart';
 
 class SoundManager {
+  // Stop bottle sound (for spin end)
+  static void stopBottleSound() {
+    // TODO: Implement actual stop logic for bottle sound
+    // Example: if using audioplayers, call stop() on the player instance
+    // For now, this is a placeholder
+  }
   static final AudioPlayer _player = AudioPlayer();
 
   static Future<void> play(String asset, {BuildContext? context}) async {

@@ -59,6 +59,10 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   // Variables for gesture handling
   Offset? _lastPanPosition; // Store the last pan position
+  double? _dragStartAngle; // Angle at drag start
+  double? _dragPrevAngle; // Previous angle during drag
+  DateTime? _dragStartTime; // For velocity calculation
+  DateTime? _dragPrevTime;
 
   // Flags for dialog and game state management
   bool _scoreboardOpen = false;
@@ -180,64 +184,63 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   void _onPanStart(DragStartDetails details) {
     if (_gamePhase != GamePhase.readyToSpin) return;
     _stopSpin();
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Offset center = renderBox.size.center(Offset.zero);
     _lastPanPosition = details.localPosition;
+    _dragStartAngle = math.atan2(details.localPosition.dy - center.dy, details.localPosition.dx - center.dx);
+    _dragPrevAngle = _dragStartAngle;
+    _dragStartTime = DateTime.now();
+    _dragPrevTime = _dragStartTime;
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
     if (_gamePhase != GamePhase.readyToSpin || _lastPanPosition == null) return;
-
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final Offset center = renderBox.size.center(Offset.zero);
-
-    final double previousAngle = math.atan2(
-        _lastPanPosition!.dy - center.dy, _lastPanPosition!.dx - center.dx);
-    final double currentGestureAngle = math.atan2(
-        details.localPosition.dy - center.dy,
-        details.localPosition.dx - center.dx);
-
-    double deltaAngle = currentGestureAngle - previousAngle;
-
+    final double prevAngle = _dragPrevAngle ?? 0.0;
+    final double currentAngle = math.atan2(details.localPosition.dy - center.dy, details.localPosition.dx - center.dx);
+    double deltaAngle = currentAngle - prevAngle;
     if (deltaAngle > math.pi) {
       deltaAngle -= 2 * math.pi;
     } else if (deltaAngle < -math.pi) {
       deltaAngle += 2 * math.pi;
     }
-
     setState(() {
       _currentAngle += deltaAngle;
     });
-
     _lastPanPosition = details.localPosition;
+    _dragPrevAngle = currentAngle;
+    _dragPrevTime = DateTime.now();
   }
 
   void _onPanEnd(DragEndDetails details) {
     if (_gamePhase != GamePhase.readyToSpin || _lastPanPosition == null) {
       _lastPanPosition = null;
+      _dragStartAngle = null;
+      _dragPrevAngle = null;
+      _dragStartTime = null;
+      _dragPrevTime = null;
       return;
     }
-
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset center = renderBox.size.center(Offset.zero);
-
-    final Offset pixelsPerSecond = details.velocity.pixelsPerSecond;
-    final Offset r = _lastPanPosition! - center;
-
-    if (r.distanceSquared == 0) {
-      _lastPanPosition = null;
-      return;
+    // Calculate angular velocity based on last drag movement
+    double velocity = 0.0;
+    if (_dragPrevAngle != null && _dragStartAngle != null && _dragPrevTime != null && _dragStartTime != null) {
+      final double angleDiff = _dragPrevAngle! - _dragStartAngle!;
+      final double timeDiff = _dragPrevTime!.difference(_dragStartTime!).inMilliseconds / 1000.0;
+      if (timeDiff > 0.0) {
+        velocity = angleDiff / timeDiff;
+      }
     }
-
-    // Calculate angular velocity (radians per second)
-    double angularVelocity =
-        (r.dx * pixelsPerSecond.dy - r.dy * pixelsPerSecond.dx) /
-            r.distanceSquared;
-    // Cap velocity
-    angularVelocity = angularVelocity.clamp(-_maxAngularVelocity, _maxAngularVelocity);
-    if (angularVelocity.abs() > 0.1) {
-      SoundManager.playBottleSound(context: context);
-      _startSpin(angularVelocity);
+    // Clamp velocity
+    velocity = velocity.clamp(-_maxAngularVelocity, _maxAngularVelocity);
+    if (velocity.abs() > 0.1) {
+      _startSpin(velocity);
     }
     _lastPanPosition = null;
+    _dragStartAngle = null;
+    _dragPrevAngle = null;
+    _dragStartTime = null;
+    _dragPrevTime = null;
   }
 
   void _startSpin(double initialAngularVelocity) {
@@ -248,7 +251,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       return;
     }
     final random = math.Random();
-    final double randomBonus = random.nextDouble() * 0.5; // 0 to 0.5
+    final double randomBonus = random.nextDouble() * 0.3; // Slight randomness
     final double velocityWithRandom = initialAngularVelocity.isNegative
       ? initialAngularVelocity - randomBonus
       : initialAngularVelocity + randomBonus;
@@ -259,6 +262,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       _angularVelocity = velocityWithRandom;
       _spinStartTime = null; // Will be set on first tick
     });
+    SoundManager.playBottleSound(context: context); // Start sound here
     _spinTicker.start();
   }
 
@@ -275,20 +279,15 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
       } else if (_currentAngle >= 2 * math.pi) {
         _currentAngle -= 2 * math.pi;
       }
-      // Apply friction
-      if (_angularVelocity > 0) {
-        _angularVelocity -= _friction;
-        if (_angularVelocity < 0) _angularVelocity = 0;
-      } else if (_angularVelocity < 0) {
-        _angularVelocity += _friction;
-        if (_angularVelocity > 0) _angularVelocity = 0;
-      }
+      // Apply friction (realistic)
+      _angularVelocity *= 0.98;
       // Calculate elapsed spin time
       final spinElapsed = elapsed - (_spinStartTime ?? elapsed);
       // Stop if velocity is low AND minimum duration reached
       if (_angularVelocity.abs() < _minAngularVelocity && spinElapsed >= _minSpinDuration) {
         _isSpinning = false;
         _spinTicker.stop();
+        SoundManager.stopBottleSound(); // Stop sound when spin ends
         _onSpinComplete();
       } else if (_angularVelocity.abs() < _minAngularVelocity && spinElapsed < _minSpinDuration) {
         // Keep spinning slowly until min duration
@@ -870,6 +869,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
         _isSpinning = false;
         _angularVelocity = 0.0;
       });
+      SoundManager.stopBottleSound(); // Always stop sound
     }
   }
 

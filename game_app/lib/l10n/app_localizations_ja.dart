@@ -12,7 +12,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTitle => '真実か挑戦か';
 
   @override
-  String get continueBtn => '続ける!';
+  String get continueBtn => '続ける';
 
   @override
   String get gameSetup => 'ゲーム設定';
@@ -124,90 +124,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'はすでに追加されています！';
-
-  @override
-  String get categoryFunny => '面白い';
-
-  @override
-  String get categoryFamily => '家族';
-
-  @override
-  String get categorySchool => '学校';
-
-  @override
-  String get categoryCartoons => 'アニメ';
-
-  @override
-  String get categoryGames => 'ゲーム';
-
-  @override
-  String get categoryAnimals => '動物';
-
-  @override
-  String get categoryFood => '食べ物';
-
-  @override
-  String get categoryImagination => '想像力';
-
-  @override
-  String get categoryChallenges => 'チャレンジ';
-
-  @override
-  String get categoryHobbies => '趣味';
-
-  @override
-  String get categoryFriends => '友達';
-
-  @override
-  String get categoryMusic => '音楽';
-
-  @override
-  String get categoryMovies => '映画';
-
-  @override
-  String get categoryTech => 'テクノロジー';
-
-  @override
-  String get categoryDreams => '夢';
-
-  @override
-  String get categoryEmbarrassing => '恥ずかしい';
-
-  @override
-  String get categoryStyle => 'スタイル';
-
-  @override
-  String get categoryAdventure => '冒険';
-
-  @override
-  String get categoryRelationships => '関係';
-
-  @override
-  String get categoryParty => 'パーティー';
-
-  @override
-  String get categoryWork => '仕事';
-
-  @override
-  String get categoryTravel => '旅行';
-
-  @override
-  String get categoryDeep => '深い';
-
-  @override
-  String get categoryWild => 'ワイルド';
-
-  @override
-  String get categoryFlirty => 'フラーティー';
-
-  @override
-  String get categoryChildhood => '子供時代';
-
-  @override
-  String get categoryPopculture => 'ポップカルチャー';
-
-  @override
-  String get categoryPersonal => '個人的';
 
   @override
   String get spinTitle => 'ボトルを回す';

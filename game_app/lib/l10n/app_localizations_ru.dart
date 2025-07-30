@@ -12,7 +12,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appTitle => 'Правда или действие';
 
   @override
-  String get continueBtn => 'Продолжить!';
+  String get continueBtn => 'Продолжить';
 
   @override
   String get gameSetup => 'Настройка игры';
@@ -124,90 +124,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'уже добавлен!';
-
-  @override
-  String get categoryFunny => 'Смешной';
-
-  @override
-  String get categoryFamily => 'Семья';
-
-  @override
-  String get categorySchool => 'Школа';
-
-  @override
-  String get categoryCartoons => 'Мультфильмы';
-
-  @override
-  String get categoryGames => 'Игры';
-
-  @override
-  String get categoryAnimals => 'Животные';
-
-  @override
-  String get categoryFood => 'Еда';
-
-  @override
-  String get categoryImagination => 'Воображение';
-
-  @override
-  String get categoryChallenges => 'Испытания';
-
-  @override
-  String get categoryHobbies => 'Хобби';
-
-  @override
-  String get categoryFriends => 'Друзья';
-
-  @override
-  String get categoryMusic => 'Музыка';
-
-  @override
-  String get categoryMovies => 'Фильмы';
-
-  @override
-  String get categoryTech => 'Технологии';
-
-  @override
-  String get categoryDreams => 'Мечты';
-
-  @override
-  String get categoryEmbarrassing => 'Смущающий';
-
-  @override
-  String get categoryStyle => 'Стиль';
-
-  @override
-  String get categoryAdventure => 'Приключение';
-
-  @override
-  String get categoryRelationships => 'Отношения';
-
-  @override
-  String get categoryParty => 'Вечеринка';
-
-  @override
-  String get categoryWork => 'Работа';
-
-  @override
-  String get categoryTravel => 'Путешествие';
-
-  @override
-  String get categoryDeep => 'Глубокий';
-
-  @override
-  String get categoryWild => 'Дикий';
-
-  @override
-  String get categoryFlirty => 'Флиртующий';
-
-  @override
-  String get categoryChildhood => 'Детство';
-
-  @override
-  String get categoryPopculture => 'Поп-культура';
-
-  @override
-  String get categoryPersonal => 'Личное';
 
   @override
   String get spinTitle => 'Крутить бутылку';

@@ -12,7 +12,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => '真心话大冒险';
 
   @override
-  String get continueBtn => '继续!';
+  String get continueBtn => '继续';
 
   @override
   String get gameSetup => '游戏设置';
@@ -124,90 +124,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get alreadyAdded => '已添加！';
-
-  @override
-  String get categoryFunny => '有趣';
-
-  @override
-  String get categoryFamily => '家庭';
-
-  @override
-  String get categorySchool => '学校';
-
-  @override
-  String get categoryCartoons => '卡通';
-
-  @override
-  String get categoryGames => '游戏';
-
-  @override
-  String get categoryAnimals => '动物';
-
-  @override
-  String get categoryFood => '食物';
-
-  @override
-  String get categoryImagination => '想象力';
-
-  @override
-  String get categoryChallenges => '挑战';
-
-  @override
-  String get categoryHobbies => '爱好';
-
-  @override
-  String get categoryFriends => '朋友';
-
-  @override
-  String get categoryMusic => '音乐';
-
-  @override
-  String get categoryMovies => '电影';
-
-  @override
-  String get categoryTech => '科技';
-
-  @override
-  String get categoryDreams => '梦想';
-
-  @override
-  String get categoryEmbarrassing => '尴尬';
-
-  @override
-  String get categoryStyle => '风格';
-
-  @override
-  String get categoryAdventure => '冒险';
-
-  @override
-  String get categoryRelationships => '关系';
-
-  @override
-  String get categoryParty => '派对';
-
-  @override
-  String get categoryWork => '工作';
-
-  @override
-  String get categoryTravel => '旅行';
-
-  @override
-  String get categoryDeep => '深刻';
-
-  @override
-  String get categoryWild => '狂野';
-
-  @override
-  String get categoryFlirty => '调情';
-
-  @override
-  String get categoryChildhood => '童年';
-
-  @override
-  String get categoryPopculture => '流行文化';
-
-  @override
-  String get categoryPersonal => '个人';
 
   @override
   String get spinTitle => '转瓶子';

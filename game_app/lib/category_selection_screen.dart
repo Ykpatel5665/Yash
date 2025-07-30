@@ -119,81 +119,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     }
   }
 
-  // Map category key to icon (simple mapping, fallback to default)
-  IconData getCategoryIcon(String key) {
-    switch (key) {
-      case 'Funny & Silly':
-        return Icons.emoji_emotions;
-      case 'Cartoons & Characters':
-        return Icons.animation;
-      case 'Animals & Sounds':
-        return Icons.pets;
-      case 'Superheroes & Powers':
-        return Icons.flash_on;
-      case 'Sing & Dance':
-        return Icons.music_video;
-      case 'School & Friends':
-        return Icons.school;
-      case 'Food & Snacks':
-        return Icons.fastfood;
-      case 'Family Time':
-        return Icons.family_restroom;
-      case 'Make Believe':
-        return Icons.auto_fix_high;
-      case 'Adventure & Travel':
-        return Icons.travel_explore;
-      case 'Love & Crushes':
-        return Icons.favorite;
-      case 'School Life':
-        return Icons.menu_book;
-      case 'Embarrassing Moments':
-        return Icons.sentiment_very_dissatisfied;
-      case 'Phone & Social Media':
-        return Icons.phone_iphone;
-      case 'Friends & Drama':
-        return Icons.groups;
-      case 'Family & Home':
-        return Icons.home;
-      case 'Dreams & Goals':
-        return Icons.auto_awesome;
-      case 'Music & Movies':
-        return Icons.movie;
-      case 'Random Fun':
-        return Icons.casino;
-      case 'Quick Challenges':
-        return Icons.flash_auto;
-      case 'Dating & Flirting':
-        return Icons.favorite_border;
-      case 'Work & Office':
-        return Icons.work;
-      case 'Embarrassing Stories':
-        return Icons.mood_bad;
-      case 'Secrets & Lies':
-        return Icons.lock;
-      case 'Relationships':
-        return Icons.volunteer_activism;
-      case 'Deep Thoughts':
-        return Icons.psychology;
-      case 'Life Experiences':
-        return Icons.public;
-      case 'Wild Dares':
-        return Icons.whatshot;
-      case 'Party Mode':
-        return Icons.celebration;
-      case 'Spicy & Flirty':
-        return Icons.local_fire_department;
-      case 'Adult Confessions':
-        return Icons.wine_bar;
-      case 'Bedroom Secrets':
-        return Icons.bed;
-      case 'Naughty Dares':
-        return Icons.mood;
-      case 'Drunken Shenanigans':
-        return Icons.sports_bar;
-      default:
-        return Icons.category;
-    }
-  }
+  // Use emoji from API for category icon
 
   // --- Game Setup Dialog Style Toggle Button (copied from main.dart) ---
   Widget buildCategoryToggleButton({
@@ -297,81 +223,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         (size.height * 0.09).clamp(48, 90); // replaces 69
     final double continueFontSize = (size.width * 0.06).clamp(18, 28);
 
-    // Helper to map category key to ARB key
-    String? _categoryKeyToArbKey(String key) {
-      switch (key) {
-        case 'Funny & Silly':
-          return 'categoryFunnySilly';
-        case 'Cartoons & Characters':
-          return 'categoryCartoonsCharacters';
-        case 'Animals & Sounds':
-          return 'categoryAnimalsSounds';
-        case 'Superheroes & Powers':
-          return 'categorySuperheroesPowers';
-        case 'Sing & Dance':
-          return 'categorySingDance';
-        case 'School & Friends':
-          return 'categorySchoolFriends';
-        case 'Food & Snacks':
-          return 'categoryFoodSnacks';
-        case 'Family Time':
-          return 'categoryFamilyTime';
-        case 'Make Believe':
-          return 'categoryMakeBelieve';
-        case 'Adventure & Travel':
-          return 'categoryAdventureTravel';
-        case 'Love & Crushes':
-          return 'categoryLoveCrushes';
-        case 'School Life':
-          return 'categorySchoolLife';
-        case 'Embarrassing Moments':
-          return 'categoryEmbarrassingMoments';
-        case 'Phone & Social Media':
-          return 'categoryPhoneSocialMedia';
-        case 'Friends & Drama':
-          return 'categoryFriendsDrama';
-        case 'Family & Home':
-          return 'categoryFamilyHome';
-        case 'Dreams & Goals':
-          return 'categoryDreamsGoals';
-        case 'Music & Movies':
-          return 'categoryMusicMovies';
-        case 'Random Fun':
-          return 'categoryRandomFun';
-        case 'Quick Challenges':
-          return 'categoryQuickChallenges';
-        case 'Dating & Flirting':
-          return 'categoryDatingFlirting';
-        case 'Work & Office':
-          return 'categoryWorkOffice';
-        case 'Embarrassing Stories':
-          return 'categoryEmbarrassingStories';
-        case 'Secrets & Lies':
-          return 'categorySecretsLies';
-        case 'Relationships':
-          return 'categoryRelationships';
-        case 'Deep Thoughts':
-          return 'categoryDeepThoughts';
-        case 'Life Experiences':
-          return 'categoryLifeExperiences';
-        case 'Wild Dares':
-          return 'categoryWildDares';
-        case 'Party Mode':
-          return 'categoryPartyMode';
-        case 'Spicy & Flirty':
-          return 'categorySpicyFlirty';
-        case 'Adult Confessions':
-          return 'categoryAdultConfessions';
-        case 'Bedroom Secrets':
-          return 'categoryBedroomSecrets';
-        case 'Naughty Dares':
-          return 'categoryNaughtyDares';
-        case 'Drunken Shenanigans':
-          return 'categoryDrunkenShenanigans';
-        default:
-          return null;
-      }
-    }
+    // Removed _categoryKeyToArbKey: no longer needed after switching to API labels only
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -452,29 +304,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                       final cat = _categories[idx];
                                       final bool selected = _selectedCategoryIds
                                           .contains(cat.key);
-                                      final iconData = getCategoryIcon(cat.key);
-                                      // Use localized label from ARB if available, else fallback to current locale, else English, else key
-                                      String? localizedLabel;
-                                      final localeCode =
-                                          Localizations.localeOf(context)
-                                              .languageCode;
-                                      final arbKey =
-                                          _categoryKeyToArbKey(cat.key);
-                                      if (arbKey != null) {
-                                        final loc =
-                                            AppLocalizations.of(context)!;
-                                        // Use a safer approach: check if the property exists
-                                        try {
-                                          final value =
-                                              (loc as dynamic).toJson()[arbKey];
-                                          if (value is String)
-                                            localizedLabel = value;
-                                        } catch (_) {}
-                                      }
-                                      localizedLabel ??=
-                                          cat.labels[localeCode] ??
-                                              cat.labels['en'] ??
-                                              cat.key;
+                                      // Use only API's labels and emoji for multilingual support
+                                      final localeCode = Localizations.localeOf(context).languageCode;
+                                      final label = cat.labels[localeCode] ?? cat.labels['en'] ?? cat.key;
                                       return Padding(
                                         padding: EdgeInsets.symmetric(
                                             vertical: (MediaQuery.of(context)
@@ -484,25 +316,19 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                     .clamp(4, 16) /
                                                 2),
                                         child: ToggleButton(
-                                          label: localizedLabel,
+                                          label: '${cat.emoji} $label',
                                           selected: selected,
                                           onTap: () {
                                             setState(() {
                                               if (selected) {
-                                                _selectedCategoryIds
-                                                    .remove(cat.key);
+                                                _selectedCategoryIds.remove(cat.key);
                                               } else {
-                                                _selectedCategoryIds
-                                                    .add(cat.key);
+                                                _selectedCategoryIds.add(cat.key);
                                               }
                                             });
                                           },
-                                          icon: iconData,
-                                          iconSize: (MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.08)
-                                              .clamp(26, 36),
+                                          icon: null,
+                                          iconSize: 0,
                                           fontSize: (MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -814,5 +640,3 @@ class _AnimatedButtonState extends State<_AnimatedButton>
     );
   }
 }
-
-

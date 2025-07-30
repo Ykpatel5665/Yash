@@ -12,7 +12,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appTitle => 'Wahrheit oder Pflicht';
 
   @override
-  String get continueBtn => 'Weiter!';
+  String get continueBtn => 'Weiter';
 
   @override
   String get gameSetup => 'Spiel einrichten';
@@ -124,90 +124,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'ist bereits hinzugefügt!';
-
-  @override
-  String get categoryFunny => 'Lustig';
-
-  @override
-  String get categoryFamily => 'Familie';
-
-  @override
-  String get categorySchool => 'Schule';
-
-  @override
-  String get categoryCartoons => 'Cartoons';
-
-  @override
-  String get categoryGames => 'Spiele';
-
-  @override
-  String get categoryAnimals => 'Tiere';
-
-  @override
-  String get categoryFood => 'Essen';
-
-  @override
-  String get categoryImagination => 'Fantasie';
-
-  @override
-  String get categoryChallenges => 'Herausforderungen';
-
-  @override
-  String get categoryHobbies => 'Hobbys';
-
-  @override
-  String get categoryFriends => 'Freunde';
-
-  @override
-  String get categoryMusic => 'Musik';
-
-  @override
-  String get categoryMovies => 'Filme';
-
-  @override
-  String get categoryTech => 'Technik';
-
-  @override
-  String get categoryDreams => 'Träume';
-
-  @override
-  String get categoryEmbarrassing => 'Peinlich';
-
-  @override
-  String get categoryStyle => 'Stil';
-
-  @override
-  String get categoryAdventure => 'Abenteuer';
-
-  @override
-  String get categoryRelationships => 'Beziehungen';
-
-  @override
-  String get categoryParty => 'Party';
-
-  @override
-  String get categoryWork => 'Arbeit';
-
-  @override
-  String get categoryTravel => 'Reisen';
-
-  @override
-  String get categoryDeep => 'Tiefgründig';
-
-  @override
-  String get categoryWild => 'Wild';
-
-  @override
-  String get categoryFlirty => 'Flirtend';
-
-  @override
-  String get categoryChildhood => 'Kindheit';
-
-  @override
-  String get categoryPopculture => 'Popkultur';
-
-  @override
-  String get categoryPersonal => 'Persönlich';
 
   @override
   String get spinTitle => 'Flasche drehen';

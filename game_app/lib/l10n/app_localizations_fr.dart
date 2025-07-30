@@ -12,7 +12,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'Action ou Vérité';
 
   @override
-  String get continueBtn => 'Continuer!';
+  String get continueBtn => 'Continuer';
 
   @override
   String get gameSetup => 'Configuration du jeu';
@@ -124,90 +124,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'est déjà ajouté !';
-
-  @override
-  String get categoryFunny => 'Drôle';
-
-  @override
-  String get categoryFamily => 'Famille';
-
-  @override
-  String get categorySchool => 'École';
-
-  @override
-  String get categoryCartoons => 'Dessins animés';
-
-  @override
-  String get categoryGames => 'Jeux';
-
-  @override
-  String get categoryAnimals => 'Animaux';
-
-  @override
-  String get categoryFood => 'Nourriture';
-
-  @override
-  String get categoryImagination => 'Imagination';
-
-  @override
-  String get categoryChallenges => 'Défis';
-
-  @override
-  String get categoryHobbies => 'Loisirs';
-
-  @override
-  String get categoryFriends => 'Amis';
-
-  @override
-  String get categoryMusic => 'Musique';
-
-  @override
-  String get categoryMovies => 'Films';
-
-  @override
-  String get categoryTech => 'Technologie';
-
-  @override
-  String get categoryDreams => 'Rêves';
-
-  @override
-  String get categoryEmbarrassing => 'Gênant';
-
-  @override
-  String get categoryStyle => 'Style';
-
-  @override
-  String get categoryAdventure => 'Aventure';
-
-  @override
-  String get categoryRelationships => 'Relations';
-
-  @override
-  String get categoryParty => 'Fête';
-
-  @override
-  String get categoryWork => 'Travail';
-
-  @override
-  String get categoryTravel => 'Voyage';
-
-  @override
-  String get categoryDeep => 'Profond';
-
-  @override
-  String get categoryWild => 'Sauvage';
-
-  @override
-  String get categoryFlirty => 'Séduisant';
-
-  @override
-  String get categoryChildhood => 'Enfance';
-
-  @override
-  String get categoryPopculture => 'Pop culture';
-
-  @override
-  String get categoryPersonal => 'Personnel';
 
   @override
   String get spinTitle => 'Tourner la bouteille';

@@ -12,7 +12,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get appTitle => 'ট্রুথ অর ডেয়ার';
 
   @override
-  String get continueBtn => 'চালিয়ে যান!';
+  String get continueBtn => 'চালিয়ে যান';
 
   @override
   String get gameSetup => 'গেম সেটআপ';
@@ -124,90 +124,6 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'ইতিমধ্যে যোগ করা হয়েছে!';
-
-  @override
-  String get categoryFunny => 'মজার';
-
-  @override
-  String get categoryFamily => 'পরিবার';
-
-  @override
-  String get categorySchool => 'স্কুল';
-
-  @override
-  String get categoryCartoons => 'কার্টুন';
-
-  @override
-  String get categoryGames => 'গেমস';
-
-  @override
-  String get categoryAnimals => 'প্রাণী';
-
-  @override
-  String get categoryFood => 'খাবার';
-
-  @override
-  String get categoryImagination => 'কল্পনা';
-
-  @override
-  String get categoryChallenges => 'চ্যালেঞ্জ';
-
-  @override
-  String get categoryHobbies => 'শখ';
-
-  @override
-  String get categoryFriends => 'বন্ধু';
-
-  @override
-  String get categoryMusic => 'সঙ্গীত';
-
-  @override
-  String get categoryMovies => 'ছবি';
-
-  @override
-  String get categoryTech => 'প্রযুক্তি';
-
-  @override
-  String get categoryDreams => 'স্বপ্ন';
-
-  @override
-  String get categoryEmbarrassing => 'লজ্জাজনক';
-
-  @override
-  String get categoryStyle => 'স্টাইল';
-
-  @override
-  String get categoryAdventure => 'অ্যাডভেঞ্চার';
-
-  @override
-  String get categoryRelationships => 'সম্পর্ক';
-
-  @override
-  String get categoryParty => 'পার্টি';
-
-  @override
-  String get categoryWork => 'কাজ';
-
-  @override
-  String get categoryTravel => 'ভ্রমণ';
-
-  @override
-  String get categoryDeep => 'গভীর';
-
-  @override
-  String get categoryWild => 'বন্য';
-
-  @override
-  String get categoryFlirty => 'ফ্লার্টি';
-
-  @override
-  String get categoryChildhood => 'শৈশব';
-
-  @override
-  String get categoryPopculture => 'পপ সংস্কৃতি';
-
-  @override
-  String get categoryPersonal => 'ব্যক্তিগত';
 
   @override
   String get spinTitle => 'বোতল ঘোরান';

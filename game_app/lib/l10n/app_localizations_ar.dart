@@ -12,7 +12,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appTitle => 'لعبة الصراحة أو التحدي';
 
   @override
-  String get continueBtn => 'استمر!';
+  String get continueBtn => 'استمر';
 
   @override
   String get gameSetup => 'إعداد اللعبة';
@@ -124,90 +124,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'تمت الإضافة بالفعل!';
-
-  @override
-  String get categoryFunny => 'مضحك';
-
-  @override
-  String get categoryFamily => 'عائلة';
-
-  @override
-  String get categorySchool => 'مدرسة';
-
-  @override
-  String get categoryCartoons => 'رسوم متحركة';
-
-  @override
-  String get categoryGames => 'ألعاب';
-
-  @override
-  String get categoryAnimals => 'حيوانات';
-
-  @override
-  String get categoryFood => 'طعام';
-
-  @override
-  String get categoryImagination => 'خيال';
-
-  @override
-  String get categoryChallenges => 'تحديات';
-
-  @override
-  String get categoryHobbies => 'هوايات';
-
-  @override
-  String get categoryFriends => 'أصدقاء';
-
-  @override
-  String get categoryMusic => 'موسيقى';
-
-  @override
-  String get categoryMovies => 'أفلام';
-
-  @override
-  String get categoryTech => 'تقنية';
-
-  @override
-  String get categoryDreams => 'أحلام';
-
-  @override
-  String get categoryEmbarrassing => 'محرج';
-
-  @override
-  String get categoryStyle => 'أسلوب';
-
-  @override
-  String get categoryAdventure => 'مغامرة';
-
-  @override
-  String get categoryRelationships => 'علاقات';
-
-  @override
-  String get categoryParty => 'حفلة';
-
-  @override
-  String get categoryWork => 'عمل';
-
-  @override
-  String get categoryTravel => 'سفر';
-
-  @override
-  String get categoryDeep => 'عميق';
-
-  @override
-  String get categoryWild => 'بري';
-
-  @override
-  String get categoryFlirty => 'غزلي';
-
-  @override
-  String get categoryChildhood => 'طفولة';
-
-  @override
-  String get categoryPopculture => 'ثقافة شعبية';
-
-  @override
-  String get categoryPersonal => 'شخصي';
 
   @override
   String get spinTitle => 'تدوير الزجاجة';

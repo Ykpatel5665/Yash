@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Truth or Dare';
 
   @override
-  String get continueBtn => 'Continue!';
+  String get continueBtn => 'Continue';
 
   @override
   String get gameSetup => 'Game Setup';
@@ -124,90 +124,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'is already added!';
-
-  @override
-  String get categoryFunny => 'Funny';
-
-  @override
-  String get categoryFamily => 'Family';
-
-  @override
-  String get categorySchool => 'School';
-
-  @override
-  String get categoryCartoons => 'Cartoons';
-
-  @override
-  String get categoryGames => 'Games';
-
-  @override
-  String get categoryAnimals => 'Animals';
-
-  @override
-  String get categoryFood => 'Food';
-
-  @override
-  String get categoryImagination => 'Imagination';
-
-  @override
-  String get categoryChallenges => 'Challenges';
-
-  @override
-  String get categoryHobbies => 'Hobbies';
-
-  @override
-  String get categoryFriends => 'Friends';
-
-  @override
-  String get categoryMusic => 'Music';
-
-  @override
-  String get categoryMovies => 'Movies';
-
-  @override
-  String get categoryTech => 'Tech';
-
-  @override
-  String get categoryDreams => 'Dreams';
-
-  @override
-  String get categoryEmbarrassing => 'Embarrassing';
-
-  @override
-  String get categoryStyle => 'Style';
-
-  @override
-  String get categoryAdventure => 'Adventure';
-
-  @override
-  String get categoryRelationships => 'Relationships';
-
-  @override
-  String get categoryParty => 'Party';
-
-  @override
-  String get categoryWork => 'Work';
-
-  @override
-  String get categoryTravel => 'Travel';
-
-  @override
-  String get categoryDeep => 'Deep';
-
-  @override
-  String get categoryWild => 'Wild';
-
-  @override
-  String get categoryFlirty => 'Flirty';
-
-  @override
-  String get categoryChildhood => 'Childhood';
-
-  @override
-  String get categoryPopculture => 'Pop Culture';
-
-  @override
-  String get categoryPersonal => 'Personal';
 
   @override
   String get spinTitle => 'Spin the Bottle';

@@ -12,7 +12,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Verdad o Reto';
 
   @override
-  String get continueBtn => '¡Continuar!';
+  String get continueBtn => 'Continuar';
 
   @override
   String get gameSetup => 'Configuración del juego';
@@ -124,90 +124,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'ya está agregado';
-
-  @override
-  String get categoryFunny => 'Divertido';
-
-  @override
-  String get categoryFamily => 'Familia';
-
-  @override
-  String get categorySchool => 'Escuela';
-
-  @override
-  String get categoryCartoons => 'Caricaturas';
-
-  @override
-  String get categoryGames => 'Juegos';
-
-  @override
-  String get categoryAnimals => 'Animales';
-
-  @override
-  String get categoryFood => 'Comida';
-
-  @override
-  String get categoryImagination => 'Imaginación';
-
-  @override
-  String get categoryChallenges => 'Desafíos';
-
-  @override
-  String get categoryHobbies => 'Pasatiempos';
-
-  @override
-  String get categoryFriends => 'Amigos';
-
-  @override
-  String get categoryMusic => 'Música';
-
-  @override
-  String get categoryMovies => 'Películas';
-
-  @override
-  String get categoryTech => 'Tecnología';
-
-  @override
-  String get categoryDreams => 'Sueños';
-
-  @override
-  String get categoryEmbarrassing => 'Vergonzoso';
-
-  @override
-  String get categoryStyle => 'Estilo';
-
-  @override
-  String get categoryAdventure => 'Aventura';
-
-  @override
-  String get categoryRelationships => 'Relaciones';
-
-  @override
-  String get categoryParty => 'Fiesta';
-
-  @override
-  String get categoryWork => 'Trabajo';
-
-  @override
-  String get categoryTravel => 'Viajar';
-
-  @override
-  String get categoryDeep => 'Profundo';
-
-  @override
-  String get categoryWild => 'Salvaje';
-
-  @override
-  String get categoryFlirty => 'Coqueto';
-
-  @override
-  String get categoryChildhood => 'Infancia';
-
-  @override
-  String get categoryPopculture => 'Cultura pop';
-
-  @override
-  String get categoryPersonal => 'Personal';
 
   @override
   String get spinTitle => 'Girar la botella';

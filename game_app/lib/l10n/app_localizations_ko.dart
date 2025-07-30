@@ -12,7 +12,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTitle => '진실 혹은 도전';
 
   @override
-  String get continueBtn => '계속!';
+  String get continueBtn => '계속';
 
   @override
   String get gameSetup => '게임 설정';
@@ -124,90 +124,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get alreadyAdded => '이미 추가되었습니다!';
-
-  @override
-  String get categoryFunny => '재미있는';
-
-  @override
-  String get categoryFamily => '가족';
-
-  @override
-  String get categorySchool => '학교';
-
-  @override
-  String get categoryCartoons => '만화';
-
-  @override
-  String get categoryGames => '게임';
-
-  @override
-  String get categoryAnimals => '동물';
-
-  @override
-  String get categoryFood => '음식';
-
-  @override
-  String get categoryImagination => '상상력';
-
-  @override
-  String get categoryChallenges => '도전';
-
-  @override
-  String get categoryHobbies => '취미';
-
-  @override
-  String get categoryFriends => '친구';
-
-  @override
-  String get categoryMusic => '음악';
-
-  @override
-  String get categoryMovies => '영화';
-
-  @override
-  String get categoryTech => '기술';
-
-  @override
-  String get categoryDreams => '꿈';
-
-  @override
-  String get categoryEmbarrassing => '당황스러운';
-
-  @override
-  String get categoryStyle => '스타일';
-
-  @override
-  String get categoryAdventure => '모험';
-
-  @override
-  String get categoryRelationships => '관계';
-
-  @override
-  String get categoryParty => '파티';
-
-  @override
-  String get categoryWork => '일';
-
-  @override
-  String get categoryTravel => '여행';
-
-  @override
-  String get categoryDeep => '깊은';
-
-  @override
-  String get categoryWild => '야생';
-
-  @override
-  String get categoryFlirty => '플러티';
-
-  @override
-  String get categoryChildhood => '어린 시절';
-
-  @override
-  String get categoryPopculture => '대중문화';
-
-  @override
-  String get categoryPersonal => '개인적인';
 
   @override
   String get spinTitle => '병 돌리기';

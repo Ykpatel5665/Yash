@@ -12,7 +12,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appTitle => 'सच या साहस';
 
   @override
-  String get continueBtn => 'जारी रखें!';
+  String get continueBtn => 'जारी रखें';
 
   @override
   String get gameSetup => 'गेम सेटअप';
@@ -124,90 +124,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get alreadyAdded => 'पहले से जोड़ा गया है!';
-
-  @override
-  String get categoryFunny => 'मजेदार';
-
-  @override
-  String get categoryFamily => 'परिवार';
-
-  @override
-  String get categorySchool => 'स्कूल';
-
-  @override
-  String get categoryCartoons => 'कार्टून';
-
-  @override
-  String get categoryGames => 'खेल';
-
-  @override
-  String get categoryAnimals => 'जानवर';
-
-  @override
-  String get categoryFood => 'भोजन';
-
-  @override
-  String get categoryImagination => 'कल्पना';
-
-  @override
-  String get categoryChallenges => 'चुनौतियाँ';
-
-  @override
-  String get categoryHobbies => 'शौक';
-
-  @override
-  String get categoryFriends => 'दोस्त';
-
-  @override
-  String get categoryMusic => 'संगीत';
-
-  @override
-  String get categoryMovies => 'फिल्में';
-
-  @override
-  String get categoryTech => 'टेक्नोलॉजी';
-
-  @override
-  String get categoryDreams => 'सपने';
-
-  @override
-  String get categoryEmbarrassing => 'शर्मनाक';
-
-  @override
-  String get categoryStyle => 'स्टाइल';
-
-  @override
-  String get categoryAdventure => 'साहसिक';
-
-  @override
-  String get categoryRelationships => 'रिश्ते';
-
-  @override
-  String get categoryParty => 'पार्टी';
-
-  @override
-  String get categoryWork => 'काम';
-
-  @override
-  String get categoryTravel => 'यात्रा';
-
-  @override
-  String get categoryDeep => 'गहरा';
-
-  @override
-  String get categoryWild => 'जंगली';
-
-  @override
-  String get categoryFlirty => 'फ्लर्टी';
-
-  @override
-  String get categoryChildhood => 'बचपन';
-
-  @override
-  String get categoryPopculture => 'पॉप संस्कृति';
-
-  @override
-  String get categoryPersonal => 'व्यक्तिगत';
 
   @override
   String get spinTitle => 'बोतल घुमाएँ';

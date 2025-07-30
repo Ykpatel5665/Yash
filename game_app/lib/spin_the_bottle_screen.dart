@@ -49,7 +49,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   double _currentAngle = 0.0;
   late final Ticker _spinTicker;
   double _angularVelocity = 0.0; // radians per tick
-  static const double _friction = 0.020; // Increased friction for faster stop
   static const double _minAngularVelocity = 0.01; // Increased threshold to stop
   static const double _maxAngularVelocity = 1.5; // Allow harder/faster spins
   bool _isSpinning = false;

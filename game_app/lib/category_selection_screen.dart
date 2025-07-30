@@ -22,10 +22,17 @@ class CategorySelectionScreen extends StatefulWidget {
   final bool useTimer;
   final void Function(Locale) setLocale;
   final bool hapticsEnabled;
-  const CategorySelectionScreen({super.key, required this.gameMode, required this.ageGroup, required this.useTimer, required this.setLocale, required this.hapticsEnabled});
+  const CategorySelectionScreen(
+      {super.key,
+      required this.gameMode,
+      required this.ageGroup,
+      required this.useTimer,
+      required this.setLocale,
+      required this.hapticsEnabled});
 
   @override
-  State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
+  State<CategorySelectionScreen> createState() =>
+      _CategorySelectionScreenState();
 }
 
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
@@ -49,7 +56,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     if (ids != null) {
       setState(() {
         _lastPlayedCategoryIds = ids.toSet();
-        _selectedCategoryIds.addAll(_lastPlayedCategoryIds); // Preselect last played
+        _selectedCategoryIds
+            .addAll(_lastPlayedCategoryIds); // Preselect last played
       });
     }
   }
@@ -67,7 +75,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     });
     try {
       // Try DB first
-      List<CategoryModel> dbCats = await CategoryDbService.getCategoriesByAgeGroup(widget.ageGroup.name);
+      List<CategoryModel> dbCats =
+          await CategoryDbService.getCategoriesByAgeGroup(widget.ageGroup.name);
       // ...existing code...
       if (dbCats.isNotEmpty) {
         setState(() {
@@ -94,8 +103,6 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         case AgeGroup.adult:
           apiAgeGroup = 'Adults';
           break;
-        default:
-          apiAgeGroup = widget.ageGroup.name;
       }
       // Now filter for current age group
       final filtered = apiCats.where((c) => c.ageGroup == apiAgeGroup).toList();
@@ -105,7 +112,6 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         _loading = false;
       });
     } catch (e) {
-      print('Category fetch error: $e');
       setState(() {
         _error = e.toString();
         _loading = false;
@@ -206,18 +212,25 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final double cardPadding = 14.0;
     final double effectiveIconSize = iconSize ?? 32;
     final double effectiveFontSize = fontSize ?? 18;
-    final Color defaultSelectedColor = const Color(0xFF5B86E5).withOpacity(0.25);
+    final Color defaultSelectedColor =
+        const Color(0xFF5B86E5).withOpacity(0.25);
     final Color defaultUnselectedColor = Colors.white.withOpacity(0.13);
-    final Color borderColor = selected ? (selectedColor ?? defaultSelectedColor) : Colors.transparent;
-    final Color bgColor = selected ? (selectedColor ?? defaultSelectedColor) : (unselectedColor ?? defaultUnselectedColor);
-    final Color textColor = selected ? Colors.white : Colors.white.withOpacity(0.92);
-    final Color iconColor = selected ? Colors.white : Colors.white.withOpacity(0.92);
+    final Color borderColor =
+        selected ? (selectedColor ?? defaultSelectedColor) : Colors.transparent;
+    final Color bgColor = selected
+        ? (selectedColor ?? defaultSelectedColor)
+        : (unselectedColor ?? defaultUnselectedColor);
+    final Color textColor =
+        selected ? Colors.white : Colors.white.withOpacity(0.92);
+    final Color iconColor =
+        selected ? Colors.white : Colors.white.withOpacity(0.92);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       width: cardWidth > maxCardWidth ? maxCardWidth : cardWidth,
-      padding: EdgeInsets.symmetric(vertical: cardPadding, horizontal: cardPadding + 2),
+      padding: EdgeInsets.symmetric(
+          vertical: cardPadding, horizontal: cardPadding + 2),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),
@@ -263,7 +276,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 180),
               child: selected
-                  ? const Icon(Icons.check_circle, color: Colors.white, size: 24, key: ValueKey('check'))
+                  ? const Icon(Icons.check_circle,
+                      color: Colors.white, size: 24, key: ValueKey('check'))
                   : const SizedBox(width: 24, key: ValueKey('empty')),
             ),
           ],
@@ -275,51 +289,90 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double appBarHeight = (size.height * 0.12).clamp(64, 120); // Responsive
-    final double continueBtnHeight = (size.height * 0.08).clamp(48, 70); // Responsive
-    final double bottomPadding = (size.height * 0.09).clamp(48, 90); // replaces 69
+    final double appBarHeight =
+        (size.height * 0.12).clamp(64, 120); // Responsive
+    final double continueBtnHeight =
+        (size.height * 0.08).clamp(48, 70); // Responsive
+    final double bottomPadding =
+        (size.height * 0.09).clamp(48, 90); // replaces 69
     final double continueFontSize = (size.width * 0.06).clamp(18, 28);
 
     // Helper to map category key to ARB key
     String? _categoryKeyToArbKey(String key) {
       switch (key) {
-        case 'Funny & Silly': return 'categoryFunnySilly';
-        case 'Cartoons & Characters': return 'categoryCartoonsCharacters';
-        case 'Animals & Sounds': return 'categoryAnimalsSounds';
-        case 'Superheroes & Powers': return 'categorySuperheroesPowers';
-        case 'Sing & Dance': return 'categorySingDance';
-        case 'School & Friends': return 'categorySchoolFriends';
-        case 'Food & Snacks': return 'categoryFoodSnacks';
-        case 'Family Time': return 'categoryFamilyTime';
-        case 'Make Believe': return 'categoryMakeBelieve';
-        case 'Adventure & Travel': return 'categoryAdventureTravel';
-        case 'Love & Crushes': return 'categoryLoveCrushes';
-        case 'School Life': return 'categorySchoolLife';
-        case 'Embarrassing Moments': return 'categoryEmbarrassingMoments';
-        case 'Phone & Social Media': return 'categoryPhoneSocialMedia';
-        case 'Friends & Drama': return 'categoryFriendsDrama';
-        case 'Family & Home': return 'categoryFamilyHome';
-        case 'Dreams & Goals': return 'categoryDreamsGoals';
-        case 'Music & Movies': return 'categoryMusicMovies';
-        case 'Random Fun': return 'categoryRandomFun';
-        case 'Quick Challenges': return 'categoryQuickChallenges';
-        case 'Dating & Flirting': return 'categoryDatingFlirting';
-        case 'Work & Office': return 'categoryWorkOffice';
-        case 'Embarrassing Stories': return 'categoryEmbarrassingStories';
-        case 'Secrets & Lies': return 'categorySecretsLies';
-        case 'Relationships': return 'categoryRelationships';
-        case 'Deep Thoughts': return 'categoryDeepThoughts';
-        case 'Life Experiences': return 'categoryLifeExperiences';
-        case 'Wild Dares': return 'categoryWildDares';
-        case 'Party Mode': return 'categoryPartyMode';
-        case 'Spicy & Flirty': return 'categorySpicyFlirty';
-        case 'Adult Confessions': return 'categoryAdultConfessions';
-        case 'Bedroom Secrets': return 'categoryBedroomSecrets';
-        case 'Naughty Dares': return 'categoryNaughtyDares';
-        case 'Drunken Shenanigans': return 'categoryDrunkenShenanigans';
-        default: return null;
+        case 'Funny & Silly':
+          return 'categoryFunnySilly';
+        case 'Cartoons & Characters':
+          return 'categoryCartoonsCharacters';
+        case 'Animals & Sounds':
+          return 'categoryAnimalsSounds';
+        case 'Superheroes & Powers':
+          return 'categorySuperheroesPowers';
+        case 'Sing & Dance':
+          return 'categorySingDance';
+        case 'School & Friends':
+          return 'categorySchoolFriends';
+        case 'Food & Snacks':
+          return 'categoryFoodSnacks';
+        case 'Family Time':
+          return 'categoryFamilyTime';
+        case 'Make Believe':
+          return 'categoryMakeBelieve';
+        case 'Adventure & Travel':
+          return 'categoryAdventureTravel';
+        case 'Love & Crushes':
+          return 'categoryLoveCrushes';
+        case 'School Life':
+          return 'categorySchoolLife';
+        case 'Embarrassing Moments':
+          return 'categoryEmbarrassingMoments';
+        case 'Phone & Social Media':
+          return 'categoryPhoneSocialMedia';
+        case 'Friends & Drama':
+          return 'categoryFriendsDrama';
+        case 'Family & Home':
+          return 'categoryFamilyHome';
+        case 'Dreams & Goals':
+          return 'categoryDreamsGoals';
+        case 'Music & Movies':
+          return 'categoryMusicMovies';
+        case 'Random Fun':
+          return 'categoryRandomFun';
+        case 'Quick Challenges':
+          return 'categoryQuickChallenges';
+        case 'Dating & Flirting':
+          return 'categoryDatingFlirting';
+        case 'Work & Office':
+          return 'categoryWorkOffice';
+        case 'Embarrassing Stories':
+          return 'categoryEmbarrassingStories';
+        case 'Secrets & Lies':
+          return 'categorySecretsLies';
+        case 'Relationships':
+          return 'categoryRelationships';
+        case 'Deep Thoughts':
+          return 'categoryDeepThoughts';
+        case 'Life Experiences':
+          return 'categoryLifeExperiences';
+        case 'Wild Dares':
+          return 'categoryWildDares';
+        case 'Party Mode':
+          return 'categoryPartyMode';
+        case 'Spicy & Flirty':
+          return 'categorySpicyFlirty';
+        case 'Adult Confessions':
+          return 'categoryAdultConfessions';
+        case 'Bedroom Secrets':
+          return 'categoryBedroomSecrets';
+        case 'Naughty Dares':
+          return 'categoryNaughtyDares';
+        case 'Drunken Shenanigans':
+          return 'categoryDrunkenShenanigans';
+        default:
+          return null;
       }
     }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppHeader(
@@ -375,52 +428,86 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                               builder: (context, constraints) {
                                 Widget categoryList = Padding(
                                   padding: EdgeInsets.only(
-                                    top: (MediaQuery.of(context).size.height * 0.012).clamp(4, 16),
-                                    left: (MediaQuery.of(context).size.width * 0.07).clamp(18, 36),
-                                    right: (MediaQuery.of(context).size.width * 0.07).clamp(18, 36),
+                                    top: (MediaQuery.of(context).size.height *
+                                            0.012)
+                                        .clamp(4, 16),
+                                    left: (MediaQuery.of(context).size.width *
+                                            0.07)
+                                        .clamp(18, 36),
+                                    right: (MediaQuery.of(context).size.width *
+                                            0.07)
+                                        .clamp(18, 36),
                                     // Only a little extra space so last item is visible above the button
-                                    bottom: bottomPadding + continueBtnHeight * 0.5,
+                                    bottom:
+                                        bottomPadding + continueBtnHeight * 0.5,
                                   ),
                                   child: ListView.builder(
-                                    itemCount: _categories.length + 1, // Add one for the extra space
+                                    itemCount: _categories.length +
+                                        1, // Add one for the extra space
                                     itemBuilder: (context, idx) {
                                       if (idx == _categories.length) {
                                         // Add extra space at the end
                                         return const SizedBox(height: 32);
                                       }
                                       final cat = _categories[idx];
-                                      final bool selected = _selectedCategoryIds.contains(cat.key);
+                                      final bool selected = _selectedCategoryIds
+                                          .contains(cat.key);
                                       final iconData = getCategoryIcon(cat.key);
                                       // Use localized label from ARB if available, else fallback to current locale, else English, else key
                                       String? localizedLabel;
-                                      final localeCode = Localizations.localeOf(context).languageCode;
-                                      final arbKey = _categoryKeyToArbKey(cat.key);
+                                      final localeCode =
+                                          Localizations.localeOf(context)
+                                              .languageCode;
+                                      final arbKey =
+                                          _categoryKeyToArbKey(cat.key);
                                       if (arbKey != null) {
-                                        final loc = AppLocalizations.of(context)!;
+                                        final loc =
+                                            AppLocalizations.of(context)!;
                                         // Use a safer approach: check if the property exists
                                         try {
-                                          final value = (loc as dynamic).toJson()[arbKey];
-                                          if (value is String) localizedLabel = value;
+                                          final value =
+                                              (loc as dynamic).toJson()[arbKey];
+                                          if (value is String)
+                                            localizedLabel = value;
                                         } catch (_) {}
                                       }
-                                      localizedLabel ??= cat.labels[localeCode] ?? cat.labels['en'] ?? cat.key;
+                                      localizedLabel ??=
+                                          cat.labels[localeCode] ??
+                                              cat.labels['en'] ??
+                                              cat.key;
                                       return Padding(
-                                        padding: EdgeInsets.symmetric(vertical: (MediaQuery.of(context).size.height * 0.012).clamp(4, 16) / 2),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: (MediaQuery.of(context)
+                                                            .size
+                                                            .height *
+                                                        0.012)
+                                                    .clamp(4, 16) /
+                                                2),
                                         child: ToggleButton(
                                           label: localizedLabel,
                                           selected: selected,
                                           onTap: () {
                                             setState(() {
                                               if (selected) {
-                                                _selectedCategoryIds.remove(cat.key);
+                                                _selectedCategoryIds
+                                                    .remove(cat.key);
                                               } else {
-                                                _selectedCategoryIds.add(cat.key);
+                                                _selectedCategoryIds
+                                                    .add(cat.key);
                                               }
                                             });
                                           },
                                           icon: iconData,
-                                          iconSize: (MediaQuery.of(context).size.width * 0.08).clamp(26, 36),
-                                          fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
+                                          iconSize: (MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.08)
+                                              .clamp(26, 36),
+                                          fontSize: (MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.06)
+                                              .clamp(16, 26),
                                         ),
                                       );
 // ...existing code...
@@ -437,15 +524,20 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                       right: 0,
                                       bottom: 0,
                                       child: Padding(
-                                        padding: EdgeInsets.only(bottom: bottomPadding), // Responsive
+                                        padding: EdgeInsets.only(
+                                            bottom:
+                                                bottomPadding), // Responsive
                                         child: Center(
                                           child: Container(
-                                            width: (size.width * 0.75).clamp(220, 420), // Responsive
+                                            width: (size.width * 0.75)
+                                                .clamp(220, 420), // Responsive
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(50),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black.withAlpha((0.3 * 255).round()),
+                                                  color: Colors.black.withAlpha(
+                                                      (0.3 * 255).round()),
                                                   blurRadius: 10.0,
                                                   spreadRadius: 1.0,
                                                   offset: const Offset(0, 5),
@@ -453,34 +545,66 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               ],
                                             ),
                                             child: _AnimatedButton(
-                                              enabled: _selectedCategoryIds.isNotEmpty,
-                                              onTap: _selectedCategoryIds.isEmpty
+                                              enabled: _selectedCategoryIds
+                                                  .isNotEmpty,
+                                              onTap: _selectedCategoryIds
+                                                      .isEmpty
                                                   ? null
                                                   : () async {
                                                       await _saveLastPlayedCategories();
                                                       Navigator.push(
                                                         context,
                                                         PageRouteBuilder(
-                                                          pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
-                                                            gameMode: widget.gameMode,
-                                                            ageGroup: widget.ageGroup,
-                                                            selectedCategoryIds: _selectedCategoryIds.toList(),
-                                                            useTimer: widget.useTimer,
-                                                            setLocale: widget.setLocale,
-                                                            hapticsEnabled: widget.hapticsEnabled,
+                                                          pageBuilder: (context,
+                                                                  animation,
+                                                                  secondaryAnimation) =>
+                                                              AddPlayersScreen(
+                                                            gameMode:
+                                                                widget.gameMode,
+                                                            ageGroup:
+                                                                widget.ageGroup,
+                                                            selectedCategoryIds:
+                                                                _selectedCategoryIds
+                                                                    .toList(),
+                                                            useTimer:
+                                                                widget.useTimer,
+                                                            setLocale: widget
+                                                                .setLocale,
+                                                            hapticsEnabled: widget
+                                                                .hapticsEnabled,
                                                           ),
-                                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                                            const begin = Offset(1.0, 0.0);
-                                                            const end = Offset.zero;
-                                                            const curve = Curves.easeOutCubic;
-                                                            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                                            final offsetAnimation = animation.drive(tween);
+                                                          transitionsBuilder:
+                                                              (context,
+                                                                  animation,
+                                                                  secondaryAnimation,
+                                                                  child) {
+                                                            const begin =
+                                                                Offset(
+                                                                    1.0, 0.0);
+                                                            const end =
+                                                                Offset.zero;
+                                                            const curve = Curves
+                                                                .easeOutCubic;
+                                                            final tween = Tween(
+                                                                    begin:
+                                                                        begin,
+                                                                    end: end)
+                                                                .chain(CurveTween(
+                                                                    curve:
+                                                                        curve));
+                                                            final offsetAnimation =
+                                                                animation.drive(
+                                                                    tween);
                                                             return SlideTransition(
-                                                              position: offsetAnimation,
+                                                              position:
+                                                                  offsetAnimation,
                                                               child: child,
                                                             );
                                                           },
-                                                          transitionDuration: const Duration(milliseconds: 400),
+                                                          transitionDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      400),
                                                         ),
                                                       );
                                                     },
@@ -488,63 +612,122 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: Colors.black,
                                                   foregroundColor: Colors.white,
-                                                  minimumSize: Size((size.width * 0.75).clamp(220, 420), continueBtnHeight), // Responsive
-                                                  padding: EdgeInsets.symmetric(vertical: (size.height * 0.014).clamp(8, 18)), // Responsive
+                                                  minimumSize: Size(
+                                                      (size.width * 0.75)
+                                                          .clamp(220, 420),
+                                                      continueBtnHeight), // Responsive
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: (size.height *
+                                                              0.014)
+                                                          .clamp(8,
+                                                              18)), // Responsive
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(50),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
                                                   ),
                                                   elevation: 0,
-                                                  shadowColor: Colors.transparent,
+                                                  shadowColor:
+                                                      Colors.transparent,
                                                   textStyle: GoogleFonts.baloo2(
-                                                    fontSize: continueFontSize, // Responsive
+                                                    fontSize:
+                                                        continueFontSize, // Responsive
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                onPressed: _selectedCategoryIds.isEmpty ? null : () async {
-                                                  SoundManager.playButtonSound(context: context);
-                                                  await _saveLastPlayedCategories();
-                                                  Navigator.push(
-                                                    context,
-                                                    PageRouteBuilder(
-                                                      pageBuilder: (context, animation, secondaryAnimation) => AddPlayersScreen(
-                                                        gameMode: widget.gameMode,
-                                                        ageGroup: widget.ageGroup,
-                                                        selectedCategoryIds: _selectedCategoryIds.toList(),
-                                                        useTimer: widget.useTimer,
-                                                        setLocale: widget.setLocale,
-                                                        hapticsEnabled: widget.hapticsEnabled,
-                                                      ),
-                                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                                        const begin = Offset(1.0, 0.0);
-                                                        const end = Offset.zero;
-                                                        const curve = Curves.easeOutCubic;
-                                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                                        final offsetAnimation = animation.drive(tween);
-                                                        return SlideTransition(
-                                                          position: offsetAnimation,
-                                                          child: child,
+                                                onPressed: _selectedCategoryIds
+                                                        .isEmpty
+                                                    ? null
+                                                    : () async {
+                                                        SoundManager
+                                                            .playButtonSound(
+                                                                context:
+                                                                    context);
+                                                        await _saveLastPlayedCategories();
+                                                        Navigator.push(
+                                                          context,
+                                                          PageRouteBuilder(
+                                                            pageBuilder: (context,
+                                                                    animation,
+                                                                    secondaryAnimation) =>
+                                                                AddPlayersScreen(
+                                                              gameMode: widget
+                                                                  .gameMode,
+                                                              ageGroup: widget
+                                                                  .ageGroup,
+                                                              selectedCategoryIds:
+                                                                  _selectedCategoryIds
+                                                                      .toList(),
+                                                              useTimer: widget
+                                                                  .useTimer,
+                                                              setLocale: widget
+                                                                  .setLocale,
+                                                              hapticsEnabled: widget
+                                                                  .hapticsEnabled,
+                                                            ),
+                                                            transitionsBuilder:
+                                                                (context,
+                                                                    animation,
+                                                                    secondaryAnimation,
+                                                                    child) {
+                                                              const begin =
+                                                                  Offset(
+                                                                      1.0, 0.0);
+                                                              const end =
+                                                                  Offset.zero;
+                                                              const curve = Curves
+                                                                  .easeOutCubic;
+                                                              final tween = Tween(
+                                                                      begin:
+                                                                          begin,
+                                                                      end: end)
+                                                                  .chain(CurveTween(
+                                                                      curve:
+                                                                          curve));
+                                                              final offsetAnimation =
+                                                                  animation
+                                                                      .drive(
+                                                                          tween);
+                                                              return SlideTransition(
+                                                                position:
+                                                                    offsetAnimation,
+                                                                child: child,
+                                                              );
+                                                            },
+                                                            transitionDuration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        400),
+                                                          ),
                                                         );
                                                       },
-                                                      transitionDuration: const Duration(milliseconds: 400),
-                                                    ),
-                                                  );
-                                                },
                                                 child: Stack(
                                                   alignment: Alignment.center,
                                                   children: [
                                                     Align(
-                                                      alignment: Alignment.center,
+                                                      alignment:
+                                                          Alignment.center,
                                                       child: Text(
-                                                        AppLocalizations.of(context)!.continueBtn,
-                                                        style: GoogleFonts.baloo2(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: continueFontSize,
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .continueBtn,
+                                                        style:
+                                                            GoogleFonts.baloo2(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize:
+                                                              continueFontSize,
                                                           color: Colors.white,
                                                           shadows: [
                                                             Shadow(
                                                               blurRadius: 8,
-                                                              color: Colors.black.withOpacity(0.25),
-                                                              offset: const Offset(0, 2),
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.25),
+                                                              offset:
+                                                                  const Offset(
+                                                                      0, 2),
                                                             ),
                                                           ],
                                                         ),
@@ -578,30 +761,45 @@ class _AnimatedButton extends StatefulWidget {
   final Widget child;
   final bool enabled;
   final VoidCallback? onTap;
-  const _AnimatedButton({required this.child, required this.enabled, required this.onTap, Key? key}) : super(key: key);
+  const _AnimatedButton(
+      {required this.child,
+      required this.enabled,
+      required this.onTap,
+      Key? key})
+      : super(key: key);
   @override
   State<_AnimatedButton> createState() => _AnimatedButtonState();
 }
-class _AnimatedButtonState extends State<_AnimatedButton> with SingleTickerProviderStateMixin {
+
+class _AnimatedButtonState extends State<_AnimatedButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnim;
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 120), lowerBound: 1, upperBound: 1.07);
+    _controller = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 120),
+        lowerBound: 1,
+        upperBound: 1.07);
     _scaleAnim = _controller.drive(Tween(begin: 1.0, end: 1.07));
   }
+
   void _onTapDown(_) {
     if (widget.enabled) _controller.forward();
   }
+
   void _onTapUp(_) {
     if (widget.enabled) _controller.reverse();
   }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -617,79 +815,4 @@ class _AnimatedButtonState extends State<_AnimatedButton> with SingleTickerProvi
   }
 }
 
-// Add this mapping at the end of the file (or in a suitable place):
-const Map<String, String> _categoryIdToKey = {
-  'KIDS_FUNNY': 'categoryFunny',
-  'KIDS_FAMILY': 'categoryFamily',
-  'KIDS_SCHOOL': 'categorySchool',
-  'KIDS_CARTOONS': 'categoryCartoons',
-  'KIDS_GAMES': 'categoryGames',
-  'KIDS_ANIMALS': 'categoryAnimals',
-  'KIDS_FOOD': 'categoryFood',
-  'KIDS_IMAGINATION': 'categoryImagination',
-  'KIDS_CHALLENGES': 'categoryChallenges',
-  'KIDS_HOBBIES': 'categoryHobbies',
-  'TEENS_FRIENDS': 'categoryFriends',
-  'TEENS_SCHOOL': 'categorySchool',
-  'TEENS_MUSIC': 'categoryMusic',
-  'TEENS_MOVIES': 'categoryMovies',
-  'TEENS_TECH': 'categoryTech',
-  'TEENS_HOBBIES': 'categoryHobbies',
-  'TEENS_DREAMS': 'categoryDreams',
-  'TEENS_EMBARRASSING': 'categoryEmbarrassing',
-  'TEENS_STYLE': 'categoryStyle',
-  'TEENS_ADVENTURE': 'categoryAdventure',
-  'ADULTS_RELATIONSHIPS': 'categoryRelationships',
-  'ADULTS_PARTY': 'categoryParty',
-  'ADULTS_WORK': 'categoryWork',
-  'ADULTS_TRAVEL': 'categoryTravel',
-  'ADULTS_DEEP': 'categoryDeep',
-  'ADULTS_WILD': 'categoryWild',
-  'ADULTS_FLIRTY': 'categoryFlirty',
-  'ADULTS_CHILDHOOD': 'categoryChildhood',
-  'ADULTS_POPCULTURE': 'categoryPopculture',
-  'ADULTS_PERSONAL': 'categoryPersonal',
-};
 
-String _localizedCategoryLabel(BuildContext context, String id, String fallback) {
-  final loc = AppLocalizations.of(context)!;
-  final key = _categoryIdToKey[id];
-  if (key == null) return fallback;
-  // Use a try/catch in case the getter is missing (e.g., not yet added to ARB)
-  try {
-    switch (key) {
-      case 'categoryFunny': return loc.categoryFunny;
-      case 'categoryFamily': return loc.categoryFamily;
-      case 'categorySchool': return loc.categorySchool;
-      case 'categoryCartoons': return loc.categoryCartoons;
-      case 'categoryGames': return loc.categoryGames;
-      case 'categoryAnimals': return loc.categoryAnimals;
-      case 'categoryFood': return loc.categoryFood;
-      case 'categoryImagination': return loc.categoryImagination;
-      case 'categoryChallenges': return loc.categoryChallenges;
-      case 'categoryHobbies': return loc.categoryHobbies;
-      case 'categoryFriends': return loc.categoryFriends;
-      case 'categoryMusic': return loc.categoryMusic;
-      case 'categoryMovies': return loc.categoryMovies;
-      case 'categoryTech': return loc.categoryTech;
-      case 'categoryDreams': return loc.categoryDreams;
-      case 'categoryEmbarrassing': return loc.categoryEmbarrassing;
-      case 'categoryStyle': return loc.categoryStyle;
-      case 'categoryAdventure': return loc.categoryAdventure;
-      case 'categoryRelationships': return loc.categoryRelationships;
-      case 'categoryParty': return loc.categoryParty;
-      case 'categoryWork': return loc.categoryWork;
-      case 'categoryTravel': return loc.categoryTravel;
-      case 'categoryDeep': return loc.categoryDeep;
-      case 'categoryWild': return loc.categoryWild;
-      case 'categoryFlirty': return loc.categoryFlirty;
-      case 'categoryChildhood': return loc.categoryChildhood;
-      case 'categoryPopculture': return loc.categoryPopculture;
-      case 'categoryPersonal': return loc.categoryPersonal;
-      default:
-        return fallback;
-    }
-  } catch (_) {
-    return fallback;
-  }
-}

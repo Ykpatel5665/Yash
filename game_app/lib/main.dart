@@ -217,36 +217,29 @@ class _MyHomePageState extends State<MyHomePage> {
       _savedAgeGroupString = prefs.getString(_ageGroupPrefsKey);
       _lastUseTimer = prefs.getBool(_useTimerPrefsKey) ?? true; // Load useTimer, default true
 
+      // Always force defaults if nothing saved or conversion fails
       if (_savedGameModeString != null) {
         try {
           _selectedGameModeEnum =
               GameMode.values.firstWhere((e) => e.name == _savedGameModeString);
         } catch (e) {
-          print("Error converting saved game mode: $e");
-          _selectedGameModeEnum = GameMode.spin; // Default if conversion fails
+          _selectedGameModeEnum = GameMode.spin;
         }
       } else {
-        _selectedGameModeEnum = GameMode.spin; // Default if nothing saved
+        _selectedGameModeEnum = GameMode.spin;
       }
 
       if (_savedAgeGroupString != null) {
-        // Convert saved age group string
         try {
           _selectedAgeGroupEnum =
               AgeGroup.values.firstWhere((e) => e.name == _savedAgeGroupString);
         } catch (e) {
-          print("Error converting saved age group: $e");
-          // Keep _selectedAgeGroupEnum null if conversion fails, let dialog handle default
+          _selectedAgeGroupEnum = AgeGroup.kids;
         }
+      } else {
+        _selectedAgeGroupEnum = AgeGroup.kids;
       }
-      // else: _selectedAgeGroupEnum remains null if nothing saved
-
-      // If either preference was saved, assume user wanted to save last time
     });
-    print(
-        "Loaded saved mode string: $_savedGameModeString, Enum: $_selectedGameModeEnum");
-    print(
-        "Loaded saved age group string: $_savedAgeGroupString, Enum: $_selectedAgeGroupEnum");
   }
 
   // Load 'Don't show again' preference
@@ -1156,13 +1149,11 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton(AppLocalizations.of(context)!.addTruths, Icons.add, () {
                         SoundManager.playButtonSound(context: context);
-                        print("Add Truths pressed");
                         // TODO: Navigate to Add Truths screen
                       }),
                       SizedBox(height: screenHeight * 0.05),
                       _buildStyledButton(AppLocalizations.of(context)!.addDares, Icons.add, () {
                         SoundManager.playButtonSound(context: context);
-                        print("Add Dares pressed");
                         // TODO: Navigate to Add Dares screen
                       }),
                       const Spacer(),

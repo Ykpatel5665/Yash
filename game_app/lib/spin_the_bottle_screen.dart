@@ -174,9 +174,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
     selectedIndex = selectedIndex % playerCount;
 
-    print(
-        "Final Angle (Tip rel UP): $positiveNormalizedTipAngle, Selected Index (by Tip): $selectedIndex");
-
+    // ...existing code...
     return selectedIndex;
   }
 

@@ -316,7 +316,23 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                     .clamp(4, 16) /
                                                 2),
                                         child: ToggleButton(
-                                          label: '${cat.emoji} $label',
+                                          label: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(cat.emoji, style: TextStyle(fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26))),
+                                              const SizedBox(width: 10),
+                                              Flexible(
+                                                child: Text(label,
+                                                    overflow: TextOverflow.visible,
+                                                    style: GoogleFonts.baloo2(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
+                                                      color: selected ? Colors.white : Colors.white.withOpacity(0.92),
+                                                      letterSpacing: 0.5,
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
                                           selected: selected,
                                           onTap: () {
                                             setState(() {

@@ -933,7 +933,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
               final double buttonRowHorizontalPadding = screenWidth * 0.05;
               final double buttonBottomPadding = screenHeight * 0.05;
               final double wheelSize =
-                  (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55);
+                  (screenWidth * 0.7).clamp(220.0, (screenHeight * 0.55).toDouble());
               return Stack(
                 children: [
                   // Centered wheel

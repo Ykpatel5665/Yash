@@ -1,3 +1,5 @@
+import 'services/question_db_service.dart';
+import 'services/question_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +42,63 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
   // No loading/error needed, DB fetch is instant
+
+  /// Prefetches truth and dare questions for selected categories if not already in DB.
+  Future<void> _prefetchQuestionsForSelectedCategories() async {
+    final dbService = QuestionDbService();
+    final language = Localizations.localeOf(context).languageCode;
+    // Map AgeGroup enum to correct API string
+    String apiAgeGroup;
+    switch (widget.ageGroup) {
+      case AgeGroup.kids:
+        apiAgeGroup = 'Kids';
+        break;
+      case AgeGroup.teen:
+        apiAgeGroup = 'Teens';
+        break;
+      case AgeGroup.adult:
+        apiAgeGroup = 'Adults';
+        break;
+    }
+    for (final catId in _selectedCategoryIds) {
+      // Check for Truth questions
+      final truthQuestions = await dbService.getQuestions(
+        type: 'truth',
+        selectedCategories: [catId],
+        ageGroup: apiAgeGroup,
+        language: language,
+      );
+      if (truthQuestions.isEmpty) {
+        final truths = await QuestionApiService.fetchQuestions(
+          ageGroup: apiAgeGroup,
+          category: catId,
+          language: language,
+          type: 'truth',
+        );
+        if (truths.isNotEmpty) {
+          await dbService.insertQuestions(truths);
+        }
+      }
+      // Check for Dare questions
+      final dareQuestions = await dbService.getQuestions(
+        type: 'dare',
+        selectedCategories: [catId],
+        ageGroup: apiAgeGroup,
+        language: language,
+      );
+      if (dareQuestions.isEmpty) {
+        final dares = await QuestionApiService.fetchQuestions(
+          ageGroup: apiAgeGroup,
+          category: catId,
+          language: language,
+          type: 'dare',
+        );
+        if (dares.isNotEmpty) {
+          await dbService.insertQuestions(dares);
+        }
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -341,11 +400,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                             child: _AnimatedButton(
                                               enabled: _selectedCategoryIds
                                                   .isNotEmpty,
-                                              onTap: _selectedCategoryIds
-                                                      .isEmpty
+                                              onTap: _selectedCategoryIds.isEmpty
                                                   ? null
                                                   : () async {
                                                       await _saveLastPlayedCategories();
+                                                      await _prefetchQuestionsForSelectedCategories();
                                                       Navigator.push(
                                                         context,
                                                         PageRouteBuilder(
@@ -429,15 +488,12 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                onPressed: _selectedCategoryIds
-                                                        .isEmpty
+                                                onPressed: _selectedCategoryIds.isEmpty
                                                     ? null
                                                     : () async {
-                                                        SoundManager
-                                                            .playButtonSound(
-                                                                context:
-                                                                    context);
+                                                        SoundManager.playButtonSound(context: context);
                                                         await _saveLastPlayedCategories();
+                                                        await _prefetchQuestionsForSelectedCategories();
                                                         Navigator.push(
                                                           context,
                                                           PageRouteBuilder(
@@ -445,53 +501,25 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                                     animation,
                                                                     secondaryAnimation) =>
                                                                 AddPlayersScreen(
-                                                              gameMode: widget
-                                                                  .gameMode,
-                                                              ageGroup: widget
-                                                                  .ageGroup,
-                                                              selectedCategoryIds:
-                                                                  _selectedCategoryIds
-                                                                      .toList(),
-                                                              useTimer: widget
-                                                                  .useTimer,
-                                                              setLocale: widget
-                                                                  .setLocale,
-                                                              hapticsEnabled: widget
-                                                                  .hapticsEnabled,
+                                                              gameMode: widget.gameMode,
+                                                              ageGroup: widget.ageGroup,
+                                                              selectedCategoryIds: _selectedCategoryIds.toList(),
+                                                              useTimer: widget.useTimer,
+                                                              setLocale: widget.setLocale,
+                                                              hapticsEnabled: widget.hapticsEnabled,
                                                             ),
-                                                            transitionsBuilder:
-                                                                (context,
-                                                                    animation,
-                                                                    secondaryAnimation,
-                                                                    child) {
-                                                              const begin =
-                                                                  Offset(
-                                                                      1.0, 0.0);
-                                                              const end =
-                                                                  Offset.zero;
-                                                              const curve = Curves
-                                                                  .easeOutCubic;
-                                                              final tween = Tween(
-                                                                      begin:
-                                                                          begin,
-                                                                      end: end)
-                                                                  .chain(CurveTween(
-                                                                      curve:
-                                                                          curve));
-                                                              final offsetAnimation =
-                                                                  animation
-                                                                      .drive(
-                                                                          tween);
+                                                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                              const begin = Offset(1.0, 0.0);
+                                                              const end = Offset.zero;
+                                                              const curve = Curves.easeOutCubic;
+                                                              final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                                              final offsetAnimation = animation.drive(tween);
                                                               return SlideTransition(
-                                                                position:
-                                                                    offsetAnimation,
+                                                                position: offsetAnimation,
                                                                 child: child,
                                                               );
                                                             },
-                                                            transitionDuration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        400),
+                                                            transitionDuration: const Duration(milliseconds: 400),
                                                           ),
                                                         );
                                                       },

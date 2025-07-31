@@ -50,7 +50,7 @@ class QuestionDbService {
           'category': q.category,
           'ageGroup': normalizedAgeGroup,
           'type': q.type,
-          'language': q.language ?? 'en',
+          'language': q.language,
           'attempt': 0,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,

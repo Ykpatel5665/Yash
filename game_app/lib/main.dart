@@ -356,17 +356,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 end: Alignment.bottomRight,
               ),
               border: Border.all(
-                color: Colors.white
-                    .withOpacity(0.8), // Slightly transparent white border
+                color: Colors.white.withOpacity(0.8), // Slightly transparent white border
                 width: 3.0, // Thick border
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black
-                      .withAlpha(80), // Lowered alpha
+                  color: Colors.black.withAlpha(80), // Lowered alpha
                   blurRadius: 6.0, // Reduced blur
                   spreadRadius: 1.0, // Reduced spread
-                  offset: const Offset(0, 4), // Reduced offset
+                  offset: Offset(0, 4), // Reduced offset
                 ),
               ],
             );
@@ -1122,64 +1120,59 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                       ),
                       SizedBox(height: screenHeight * 0.06),
 
-                      _buildStyledButton(
-                        AppLocalizations.of(context)!.startGame,
-                        Icons.play_arrow,
-                        () async {
-                          bool proceed = true;
-                          // If setup dialog is skipped and adult mode is saved, show confirmation
-                          if (_dontShowGameSetupDialog && _selectedAgeGroupEnum == AgeGroup.adult) {
-                            proceed = await _showAdultConfirmationDialog(context);
-                            if (!proceed) return;
-                            setState(() {
-                              _adultConfirmedThisSession = true;
-                            });
-                          }
-                          bool needSetup = !_dontShowGameSetupDialog || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null;
-                          if (needSetup) {
-                            bool saved = await _showModernGameSetupDialog(context);
-                            if (!saved || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
-                              return;
-                            }
-                          }
-                          if (_selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
-                                  gameMode: _selectedGameModeEnum!,
-                                  ageGroup: _selectedAgeGroupEnum!,
-                                  useTimer: _lastUseTimer,
-                                  setLocale: widget.setLocale,
-                                  hapticsEnabled: _hapticsEnabled,
-                                ),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  const begin = Offset(1.0, 0.0);
-                                  const end = Offset.zero;
-                                  const curve = Curves.ease;
-                                  final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                  final offsetAnimation = animation.drive(tween);
-                                  return SlideTransition(
-                                    position: offsetAnimation,
-                                    child: child,
-                                  );
-                                },
-                                transitionDuration: const Duration(milliseconds: 300),
-                              ),
-                            );
-                          }
-                        },
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: _buildStyledButton(
+                            AppLocalizations.of(context)!.startGame,
+                            Icons.play_arrow,
+                            () async {
+                              bool proceed = true;
+                              // If setup dialog is skipped and adult mode is saved, show confirmation
+                              if (_dontShowGameSetupDialog && _selectedAgeGroupEnum == AgeGroup.adult) {
+                                proceed = await _showAdultConfirmationDialog(context);
+                                if (!proceed) return;
+                                setState(() {
+                                  _adultConfirmedThisSession = true;
+                                });
+                              }
+                              bool needSetup = !_dontShowGameSetupDialog || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null;
+                              if (needSetup) {
+                                bool saved = await _showModernGameSetupDialog(context);
+                                if (!saved || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
+                                  return;
+                                }
+                              }
+                              if (_selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
+                                      gameMode: _selectedGameModeEnum!,
+                                      ageGroup: _selectedAgeGroupEnum!,
+                                      useTimer: _lastUseTimer,
+                                      setLocale: widget.setLocale,
+                                      hapticsEnabled: _hapticsEnabled,
+                                    ),
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      const begin = Offset(1.0, 0.0);
+                                      const end = Offset.zero;
+                                      const curve = Curves.ease;
+                                      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                      final offsetAnimation = animation.drive(tween);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration: const Duration(milliseconds: 300),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       ),
-                      SizedBox(height: screenHeight * 0.05),
-                      _buildStyledButton(AppLocalizations.of(context)!.addTruths, Icons.add, () {
-                        SoundManager.playButtonSound(context: context);
-                        // TODO: Navigate to Add Truths screen
-                      }),
-                      SizedBox(height: screenHeight * 0.05),
-                      _buildStyledButton(AppLocalizations.of(context)!.addDares, Icons.add, () {
-                        SoundManager.playButtonSound(context: context);
-                        // TODO: Navigate to Add Dares screen
-                      }),
                       const Spacer(),
                       // ... (keep existing bottom bar) ...
                       Padding(

@@ -15,6 +15,7 @@ import 'utils/sound_manager.dart';
 import 'models/category_model.dart';
 // import 'services/category_api_service.dart';
 import 'services/category_db_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 // Static Category lists hatai didha, have dynamic fetch thase
 
@@ -69,6 +70,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         language: language,
       );
       if (truthQuestions.isEmpty) {
+        Fluttertoast.showToast(
+          msg: 'Syncing...',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
         final truths = await QuestionApiService.fetchQuestions(
           ageGroup: apiAgeGroup,
           category: catId,
@@ -87,6 +93,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         language: language,
       );
       if (dareQuestions.isEmpty) {
+        Fluttertoast.showToast(
+          msg: 'Syncing...',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
         final dares = await QuestionApiService.fetchQuestions(
           ageGroup: apiAgeGroup,
           category: catId,

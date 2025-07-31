@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'truth_dare_data.dart';
 import 'truth_dare_question_screen.dart';
+import 'services/question_db_service.dart';
 import 'main.dart'; // For AgeGroup enum
 import 'widgets/cards/game_card.dart';
 import 'custom_appbar_button.dart';
@@ -90,6 +91,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   }
 
   Future<Question?> _getRandomQuestionFromJson({required String type}) async {
+    final language = Localizations.localeOf(context).languageCode;
     final questions = await loadQuestions(
       type: type,
       selectedCategories: widget.selectedCategoryIds,
@@ -98,10 +100,17 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
           : widget.ageGroup.name == 'teen'
               ? 'Teens'
               : 'Adults',
+      language: language,
     );
     if (questions.isEmpty) return null;
     questions.shuffle();
-    return questions.first;
+    final question = questions.first;
+    // Increment attempt in DB
+    try {
+      final dbService = QuestionDbService();
+      await dbService.incrementAttempt(question.text);
+    } catch (_) {}
+    return question;
   }
 
   Future<void> _showTruthOrDareScreen(bool isTruth) async {

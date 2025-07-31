@@ -88,7 +88,7 @@ flutter:
   assets:
     - assets/ # Make assets folder available
     - assets/bottle.png
-    - assets/questions.json
+    # - assets/questions.json
     - assets/spinning.svg
     - assets/bottlesound.mp3
     - assets/buttonsound.mp3

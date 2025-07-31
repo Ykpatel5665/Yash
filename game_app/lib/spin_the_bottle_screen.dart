@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart'; // Import for question logic
 import 'truth_dare_question_screen.dart';
+import 'services/question_db_service.dart';
 import 'custom_appbar_button.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'l10n/app_localizations.dart';
@@ -295,6 +296,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
 
   // --- Truth/Dare Action Handlers ---
   Future<Question?> _getRandomQuestionFromJson({required String type}) async {
+    final language = Localizations.localeOf(context).languageCode;
     final questions = await loadQuestions(
       type: type,
       selectedCategories: widget.selectedCategoryIds,
@@ -303,10 +305,17 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
           : widget.ageGroup.name == 'teen'
               ? 'Teens'
               : 'Adults',
+      language: language,
     );
     if (questions.isEmpty) return null;
     questions.shuffle();
-    return questions.first;
+    final question = questions.first;
+    // Increment attempt in DB
+    try {
+      final dbService = QuestionDbService();
+      await dbService.incrementAttempt(question.text);
+    } catch (_) {}
+    return question;
   }
 
   void _onTruthSelected() async {

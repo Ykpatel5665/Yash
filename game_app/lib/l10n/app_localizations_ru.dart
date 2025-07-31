@@ -209,4 +209,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get haptics => 'Гаптика';
+
+  @override
+  String get consentTitle => 'Требуется согласие 18+';
+  @override
+  String get consentWarning => 'Некоторые выбранные категории содержат материалы для взрослых. Вы должны подтвердить, что вам 18+ и вы согласны играть.';
+  @override
+  String get consentQuestion => 'Вы согласны играть с материалами для взрослых?';
 }

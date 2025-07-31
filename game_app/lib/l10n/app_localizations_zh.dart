@@ -209,4 +209,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get haptics => '触觉反馈';
+
+  @override
+  String get consentTitle => '需要18+同意';
+
+  @override
+  String get consentWarning => '某些选定类别包含成人内容。您必须确认您已年满18岁并同意参与游戏。';
+
+  @override
+  String get consentQuestion => '您同意参与包含成人内容的游戏吗？';
 }

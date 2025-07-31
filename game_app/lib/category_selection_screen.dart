@@ -39,12 +39,145 @@ class CategorySelectionScreen extends StatefulWidget {
 }
 
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
+  // List of adult category keys that require consent
+  static const Set<String> _consentRequiredAdultCategories = {
+    'Spicy & Flirty',
+    'Adult Confessions',
+    'Bedroom Secrets',
+    'Naughty Dares',
+    'Drunken Shenanigans',
+  };
+
+  bool _consentGiven = false;
+
+  Future<bool> _showConsentDialog() async {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double dialogPadding = screenSize.width * 0.05;
+    final BoxDecoration dialogDecoration = BoxDecoration(
+      borderRadius: BorderRadius.circular(15.0),
+      gradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 103, 58, 183), // Deep Purple
+          Color.fromARGB(255, 233, 30, 99), // Pink
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      border: Border.all(
+        color: Colors.white.withOpacity(0.8),
+        width: 3.0,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(80),
+          blurRadius: 6.0,
+          spreadRadius: 1.0,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+    final TextStyle titleStyle = GoogleFonts.baloo2(
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+      color: Colors.white,
+      shadows: [
+        Shadow(
+          blurRadius: 2.0,
+          color: Colors.black.withAlpha(60),
+          offset: const Offset(1.0, 1.0),
+        ),
+      ],
+    );
+    final TextStyle contentStyle = GoogleFonts.baloo2(
+      fontSize: 16,
+      color: Colors.white.withOpacity(0.9),
+    );
+    final localizations = AppLocalizations.of(context)!;
+    return await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (BuildContext confirmDialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          content: Container(
+            padding: EdgeInsets.all(dialogPadding),
+            decoration: dialogDecoration,
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Center(
+                    child: Text(
+                      localizations.consentTitle, // Consent dialog title
+                      style: titleStyle,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    localizations.consentWarning, // Consent warning
+                    style: contentStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    localizations.consentQuestion, // Consent question
+                    style: contentStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white70,
+                        ),
+                        child: Text(
+                          localizations.cancel,
+                          style: GoogleFonts.baloo2(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () {
+                          Navigator.of(confirmDialogContext).pop(false);
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 103, 58, 183),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        ),
+                        child: Text(
+                          localizations.continueStr,
+                          style: GoogleFonts.baloo2(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () {
+                          Navigator.of(confirmDialogContext).pop(true);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    ) ?? false;
+  }
   final Set<String> _selectedCategoryIds = {};
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
   // No loading/error needed, DB fetch is instant
 
-  /// Prefetches truth and dare questions for selected categories if not already in DB.
+  /// Prefetches truth and dare questions for selected categories if not already in DB, using parallel API calls.
   Future<void> _prefetchQuestionsForSelectedCategories() async {
     final dbService = QuestionDbService();
     final language = Localizations.localeOf(context).languageCode;
@@ -61,52 +194,56 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         apiAgeGroup = 'Adults';
         break;
     }
+
+    List<Future<void>> futures = [];
     for (final catId in _selectedCategoryIds) {
-      // Check for Truth questions
-      final truthQuestions = await dbService.getQuestions(
+      futures.add(_fetchAndInsertIfNeeded(dbService, apiAgeGroup, language, catId));
+    }
+    if (futures.isNotEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Syncing...',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+      await Future.wait(futures);
+    }
+  }
+
+  Future<void> _fetchAndInsertIfNeeded(QuestionDbService dbService, String apiAgeGroup, String language, String catId) async {
+    // Check for Truth questions
+    final truthQuestions = await dbService.getQuestions(
+      type: 'truth',
+      selectedCategories: [catId],
+      ageGroup: apiAgeGroup,
+      language: language,
+    );
+    if (truthQuestions.isEmpty) {
+      final truths = await QuestionApiService.fetchQuestions(
+        ageGroup: apiAgeGroup,
+        category: catId,
+        language: language,
         type: 'truth',
-        selectedCategories: [catId],
-        ageGroup: apiAgeGroup,
-        language: language,
       );
-      if (truthQuestions.isEmpty) {
-        Fluttertoast.showToast(
-          msg: 'Syncing...',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-        final truths = await QuestionApiService.fetchQuestions(
-          ageGroup: apiAgeGroup,
-          category: catId,
-          language: language,
-          type: 'truth',
-        );
-        if (truths.isNotEmpty) {
-          await dbService.insertQuestions(truths);
-        }
+      if (truths.isNotEmpty) {
+        await dbService.insertQuestions(truths);
       }
-      // Check for Dare questions
-      final dareQuestions = await dbService.getQuestions(
-        type: 'dare',
-        selectedCategories: [catId],
+    }
+    // Check for Dare questions
+    final dareQuestions = await dbService.getQuestions(
+      type: 'dare',
+      selectedCategories: [catId],
+      ageGroup: apiAgeGroup,
+      language: language,
+    );
+    if (dareQuestions.isEmpty) {
+      final dares = await QuestionApiService.fetchQuestions(
         ageGroup: apiAgeGroup,
+        category: catId,
         language: language,
+        type: 'dare',
       );
-      if (dareQuestions.isEmpty) {
-        Fluttertoast.showToast(
-          msg: 'Syncing...',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
-        final dares = await QuestionApiService.fetchQuestions(
-          ageGroup: apiAgeGroup,
-          category: catId,
-          language: language,
-          type: 'dare',
-        );
-        if (dares.isNotEmpty) {
-          await dbService.insertQuestions(dares);
-        }
+      if (dares.isNotEmpty) {
+        await dbService.insertQuestions(dares);
       }
     }
   }
@@ -414,6 +551,15 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               onTap: _selectedCategoryIds.isEmpty
                                                   ? null
                                                   : () async {
+                                                      // Check if any selected category requires consent
+                                                      final needsConsent = _selectedCategoryIds.any((id) => _consentRequiredAdultCategories.contains(id));
+                                                      if (needsConsent && !_consentGiven) {
+                                                        final consent = await _showConsentDialog();
+                                                        if (!consent) return;
+                                                        setState(() {
+                                                          _consentGiven = true;
+                                                        });
+                                                      }
                                                       await _saveLastPlayedCategories();
                                                       await _prefetchQuestionsForSelectedCategories();
                                                       Navigator.push(
@@ -502,6 +648,15 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                 onPressed: _selectedCategoryIds.isEmpty
                                                     ? null
                                                     : () async {
+                                                        // Check if any selected category requires consent
+                                                        final needsConsent = _selectedCategoryIds.any((id) => _consentRequiredAdultCategories.contains(id));
+                                                        if (needsConsent && !_consentGiven) {
+                                                          final consent = await _showConsentDialog();
+                                                          if (!consent) return;
+                                                          setState(() {
+                                                            _consentGiven = true;
+                                                          });
+                                                        }
                                                         SoundManager.playButtonSound(context: context);
                                                         await _saveLastPlayedCategories();
                                                         await _prefetchQuestionsForSelectedCategories();

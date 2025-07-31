@@ -209,4 +209,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get haptics => 'اللمسات اللمسية';
+
+  @override
+  String get consentTitle => 'موافقة 18+';
+
+  @override
+  String get consentWarning => 'بعض الفئات المختارة تحتوي على محتوى للبالغين. يجب أن تؤكد أنك فوق 18 عامًا وتوافق على اللعب.';
+
+  @override
+  String get consentQuestion => 'هل توافق على اللعب بمحتوى للبالغين؟';
 }

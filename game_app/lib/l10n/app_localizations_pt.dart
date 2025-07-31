@@ -209,4 +209,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get haptics => 'Háptica';
+
+  @override
+  String get consentTitle => 'Consentimento 18+ necessário';
+
+  @override
+  String get consentWarning => 'Algumas categorias selecionadas contêm conteúdo adulto. Você deve confirmar que tem mais de 18 anos e consentir em jogar.';
+
+  @override
+  String get consentQuestion => 'Você consente em jogar com conteúdo adulto?';
 }

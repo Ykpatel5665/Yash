@@ -510,6 +510,21 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Haptics'**
   String get haptics;
+
+  /// Title for 18+ consent dialog.
+  /// In en, this message translates to:
+  /// **'18+ Consent Required'**
+  String get consentTitle;
+
+  /// Warning for 18+ consent dialog.
+  /// In en, this message translates to:
+  /// **'Some selected categories contain mature content. You must confirm you are 18+ and consent to play.'**
+  String get consentWarning;
+
+  /// Question for 18+ consent dialog.
+  /// In en, this message translates to:
+  /// **'Do you consent to play with mature content?'**
+  String get consentQuestion;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

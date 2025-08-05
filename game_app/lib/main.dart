@@ -6,7 +6,8 @@ import 'dart:ui';
 
 import 'category_selection_screen.dart';
 import 'services/category_db_service.dart';
-import 'services/category_api_service.dart';
+import 'models/category_model.dart';
+import 'utils/connectivity_helper.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
@@ -79,16 +80,15 @@ extension AgeGroupExtension on AgeGroup {
   }
 }
 
-
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
+  await Future.delayed(
+      const Duration(seconds: 2)); // Ensures splash stays for 2s
 
-  // Pre-fetch categories if DB is empty (background)
-  _prefetchCategoriesIfNeeded();
+  print('[main] App starting, calling syncCategoriesFromApiIfNeeded...');
+  await CategoryDbService.syncCategoriesFromApiIfNeeded();
+  print('[main] Finished syncCategoriesFromApiIfNeeded, launching app...');
 
   runApp(
     ChangeNotifierProvider(
@@ -98,18 +98,7 @@ void main() async {
   );
 }
 
-void _prefetchCategoriesIfNeeded() async {
-  try {
-    // Check for any age group, e.g., 'kids' (assuming at least one group always needed)
-    final existing = await CategoryDbService.getCategoriesByAgeGroup('kids');
-    if (existing.isEmpty) {
-      final apiCats = await CategoryApiService.fetchCategories();
-      await CategoryDbService.insertCategories(apiCats);
-    }
-  } catch (e) {
-    // Ignore errors, app will fallback to API fetch on category screen if needed
-  }
-}
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -202,6 +191,150 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isCheckingCategories = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkCategoriesAndShowDialogIfNeeded();
+  }
+
+  Future<void> _checkCategoriesAndShowDialogIfNeeded() async {
+    if (_isCheckingCategories) return;
+    _isCheckingCategories = true;
+    List<CategoryModel> dbCats = await CategoryDbService.getCategoriesByAgeGroup('kids');
+    if (dbCats.isEmpty) {
+      bool hasConnection = await ConnectivityHelper.hasInternetConnection();
+      if (!hasConnection) {
+        await _showNoInternetDialog();
+      } else {
+        await CategoryDbService.syncCategoriesFromApiIfNeeded();
+      }
+    }
+    _isCheckingCategories = false;
+  }
+
+  Future<void> _showNoInternetDialog() async {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double dialogPadding = screenSize.width * 0.05;
+    final BoxDecoration dialogDecoration = BoxDecoration(
+      borderRadius: BorderRadius.circular(15.0),
+      gradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 103, 58, 183),
+          Color.fromARGB(255, 233, 30, 99),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      border: Border.all(
+        color: Colors.white.withOpacity(0.8),
+        width: 3.0,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(80),
+          blurRadius: 6.0,
+          spreadRadius: 1.0,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+    final TextStyle titleStyle = TextStyle(
+      fontFamily: 'Baloo2',
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+      color: Colors.white,
+      shadows: [
+        Shadow(
+          blurRadius: 2.0,
+          color: Colors.black.withAlpha(60),
+          offset: const Offset(1.0, 1.0),
+        ),
+      ],
+    );
+    final TextStyle contentStyle = TextStyle(
+      fontFamily: 'Baloo2',
+      fontSize: 16,
+      color: Colors.white.withOpacity(0.9),
+    );
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          content: Container(
+            padding: EdgeInsets.all(dialogPadding),
+            decoration: dialogDecoration,
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Center(
+                    child: Icon(Icons.wifi_off_rounded,
+                        color: Colors.white, size: 48),
+                  ),
+                  const SizedBox(height: 15),
+                  Center(
+                    child: Text(
+                      'No Internet Connection',
+                      style: titleStyle,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Please check your internet connection and try again.',
+                    style: contentStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 22),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.18),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            textStyle: TextStyle(
+                                fontFamily: 'Baloo2',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          ),
+                          onPressed: () async {
+                            Navigator.of(dialogContext).pop();
+                            // After dialog closes, re-check internet and fetch categories if online
+                            bool hasConnection = await ConnectivityHelper.hasInternetConnection();
+                            if (hasConnection) {
+                              List<CategoryModel> dbCats = await CategoryDbService.getCategoriesByAgeGroup('kids');
+                              if (dbCats.isEmpty) {
+                                await CategoryDbService.syncCategoriesFromApiIfNeeded();
+                              }
+                            } else {
+                              await _showNoInternetDialog();
+                            }
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
   // Update state variables to use enums
   GameMode? _selectedGameModeEnum; // Holds the selected enum
   AgeGroup? _selectedAgeGroupEnum; // Holds the selected age group enum
@@ -239,7 +372,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _savedGameModeString = prefs.getString(_gameModePrefsKey);
       _savedAgeGroupString = prefs.getString(_ageGroupPrefsKey);
-      _lastUseTimer = prefs.getBool(_useTimerPrefsKey) ?? true; // Load useTimer, default true
+      _lastUseTimer = prefs.getBool(_useTimerPrefsKey) ??
+          true; // Load useTimer, default true
 
       // Always force defaults if nothing saved or conversion fails
       if (_savedGameModeString != null) {
@@ -270,7 +404,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _loadDontShowGameSetupDialogPref() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _dontShowGameSetupDialog = prefs.getBool(_dontShowGameSetupDialogKey) ?? false;
+      _dontShowGameSetupDialog =
+          prefs.getBool(_dontShowGameSetupDialogKey) ?? false;
     });
   }
 
@@ -283,7 +418,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Save game mode and age group enum names to SharedPreferences
-  Future<void> _savePreferences(GameMode? mode, AgeGroup? ageGroup, {bool? useTimer}) async {
+  Future<void> _savePreferences(GameMode? mode, AgeGroup? ageGroup,
+      {bool? useTimer}) async {
     final prefs = await SharedPreferences.getInstance();
     if (_saveSelection) {
       if (mode != null) {
@@ -336,38 +472,39 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<bool> _showAdultConfirmationDialog(BuildContext context) async {
     // Use a different context name to avoid conflict with the outer dialog context
     final result = await showDialog<bool>(
-          context: context,
-          barrierDismissible: false, // User must tap button!
-          barrierColor: Colors.black54, // Dim the background
-          builder: (BuildContext confirmDialogContext) {
-            final Size screenSize = MediaQuery.of(confirmDialogContext).size;
-            final double dialogPadding = screenSize.width * 0.05;
+      context: context,
+      barrierDismissible: false, // User must tap button!
+      barrierColor: Colors.black54, // Dim the background
+      builder: (BuildContext confirmDialogContext) {
+        final Size screenSize = MediaQuery.of(confirmDialogContext).size;
+        final double dialogPadding = screenSize.width * 0.05;
 
-            // Define styles consistent with the app's theme but with different colors
-            final BoxDecoration dialogDecoration = BoxDecoration(
-              borderRadius: BorderRadius.circular(15.0),
-              gradient: const LinearGradient(
-                colors: [
-                  // Use a different gradient - e.g., Deep Purple to Pink
-                  Color.fromARGB(255, 103, 58, 183), // Deep Purple
-                  Color.fromARGB(255, 233, 30, 99), // Pink
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.8), // Slightly transparent white border
-                width: 3.0, // Thick border
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(80), // Lowered alpha
-                  blurRadius: 6.0, // Reduced blur
-                  spreadRadius: 1.0, // Reduced spread
-                  offset: Offset(0, 4), // Reduced offset
-                ),
-              ],
-            );
+        // Define styles consistent with the app's theme but with different colors
+        final BoxDecoration dialogDecoration = BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          gradient: const LinearGradient(
+            colors: [
+              // Use a different gradient - e.g., Deep Purple to Pink
+              Color.fromARGB(255, 103, 58, 183), // Deep Purple
+              Color.fromARGB(255, 233, 30, 99), // Pink
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(
+            color: Colors.white
+                .withOpacity(0.8), // Slightly transparent white border
+            width: 3.0, // Thick border
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(80), // Lowered alpha
+              blurRadius: 6.0, // Reduced blur
+              spreadRadius: 1.0, // Reduced spread
+              offset: Offset(0, 4), // Reduced offset
+            ),
+          ],
+        );
 
             final TextStyle titleStyle = GoogleFonts.baloo2(
               fontWeight: FontWeight.bold,
@@ -465,26 +602,26 @@ class _MyHomePageState extends State<MyHomePage> {
   // --- End ADULT confirmation dialog ---
 
   // --- Modern Game Setup Dialog (Glassmorphism, Animated, Responsive) ---
-Future<bool> _showModernGameSetupDialog(BuildContext context) async {
-  GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
-  AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
-  bool useTimer = _lastUseTimer; // Use last value as default
-  bool dontShowAgain = _dontShowGameSetupDialog;
-  bool soundEnabled = _hapticsEnabled; // Use loaded value as default
+  Future<bool> _showModernGameSetupDialog(BuildContext context) async {
+    GameMode currentModeSelection = _selectedGameModeEnum ?? GameMode.spin;
+    AgeGroup currentAgeSelection = _selectedAgeGroupEnum ?? AgeGroup.kids;
+    bool useTimer = _lastUseTimer; // Use last value as default
+    bool dontShowAgain = _dontShowGameSetupDialog;
+    bool soundEnabled = _hapticsEnabled; // Use loaded value as default
 
-  final result = await showGeneralDialog<bool>(
-    context: context,
-    barrierDismissible: true,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black54,
-    transitionDuration: const Duration(milliseconds: 350),
-    pageBuilder: (dialogPageContext, animation, secondaryAnimation) {
-      return StatefulBuilder(
-        builder: (context, setDialogState) {
-          final Size screenSize = MediaQuery.of(context).size;
-          final double cardWidth = screenSize.width * 0.92;
-          final double maxCardWidth = 420;
-          final double cardPadding = 24.0;
+    final result = await showGeneralDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (dialogPageContext, animation, secondaryAnimation) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final Size screenSize = MediaQuery.of(context).size;
+            final double cardWidth = screenSize.width * 0.92;
+            final double maxCardWidth = 420;
+            final double cardPadding = 24.0;
 
           Widget buildToggleButton({
             required String label,
@@ -581,9 +718,10 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
               ),
               );
             }
-          // END buildToggleButton
-          final double iconSize = 32; // Fixed icon size
-          final double fontSize = 14; // Fixed font size
+
+            // END buildToggleButton
+            final double iconSize = 32; // Fixed icon size
+            final double fontSize = 14; // Fixed font size
 
           return Center(
             child: Material(
@@ -987,16 +1125,17 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
         const begin = Offset(0.0, 0.3);
         const end = Offset.zero;
         const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         final offsetAnimation = animation.drive(tween);
         return SlideTransition(
           position: offsetAnimation,
           child: child,
         );
       },
-  );
-  return result == true;
-}
+    );
+    return result == true;
+  }
 
   void _showLanguagePickerDialog(BuildContext context) {
     showDialog(
@@ -1029,8 +1168,10 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
     );
   }
 
-  Widget _buildLanguageTile(BuildContext context, String code, String label, String flag) {
-    final bool isSelected = Localizations.localeOf(context).languageCode == code;
+  Widget _buildLanguageTile(
+      BuildContext context, String code, String label, String flag) {
+    final bool isSelected =
+        Localizations.localeOf(context).languageCode == code;
     return Container(
       decoration: isSelected
           ? BoxDecoration(
@@ -1060,7 +1201,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
+        toolbarHeight:
+            (MediaQuery.of(context).size.height * 0.12).clamp(64, 120),
         actions: [
           IconButton(
             icon: const Icon(Icons.language),
@@ -1129,43 +1271,58 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
                             () async {
                               bool proceed = true;
                               // If setup dialog is skipped and adult mode is saved, show confirmation
-                              if (_dontShowGameSetupDialog && _selectedAgeGroupEnum == AgeGroup.adult) {
-                                proceed = await _showAdultConfirmationDialog(context);
+                              if (_dontShowGameSetupDialog &&
+                                  _selectedAgeGroupEnum == AgeGroup.adult) {
+                                proceed =
+                                    await _showAdultConfirmationDialog(context);
                                 if (!proceed) return;
                                 setState(() {
                                   _adultConfirmedThisSession = true;
                                 });
                               }
-                              bool needSetup = !_dontShowGameSetupDialog || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null;
+                              bool needSetup = !_dontShowGameSetupDialog ||
+                                  _selectedGameModeEnum == null ||
+                                  _selectedAgeGroupEnum == null;
                               if (needSetup) {
-                                bool saved = await _showModernGameSetupDialog(context);
-                                if (!saved || _selectedGameModeEnum == null || _selectedAgeGroupEnum == null) {
+                                bool saved =
+                                    await _showModernGameSetupDialog(context);
+                                if (!saved ||
+                                    _selectedGameModeEnum == null ||
+                                    _selectedAgeGroupEnum == null) {
                                   return;
                                 }
                               }
-                              if (_selectedGameModeEnum != null && _selectedAgeGroupEnum != null) {
+                              if (_selectedGameModeEnum != null &&
+                                  _selectedAgeGroupEnum != null) {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) => CategorySelectionScreen(
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        CategorySelectionScreen(
                                       gameMode: _selectedGameModeEnum!,
                                       ageGroup: _selectedAgeGroupEnum!,
                                       useTimer: _lastUseTimer,
                                       setLocale: widget.setLocale,
                                       hapticsEnabled: _hapticsEnabled,
                                     ),
-                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
                                       const begin = Offset(1.0, 0.0);
                                       const end = Offset.zero;
                                       const curve = Curves.ease;
-                                      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                      final offsetAnimation = animation.drive(tween);
+                                      final tween =
+                                          Tween(begin: begin, end: end)
+                                              .chain(CurveTween(curve: curve));
+                                      final offsetAnimation =
+                                          animation.drive(tween);
                                       return SlideTransition(
                                         position: offsetAnimation,
                                         child: child,
                                       );
                                     },
-                                    transitionDuration: const Duration(milliseconds: 300),
+                                    transitionDuration:
+                                        const Duration(milliseconds: 300),
                                   ),
                                 );
                               }
@@ -1207,17 +1364,22 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
   }
 
   // Adjust the _buildStyledButton function to ensure the icon stays aligned to the left
-  Widget _buildStyledButton(String text, IconData iconData, VoidCallback onPressed) {
+  Widget _buildStyledButton(
+      String text, IconData iconData, VoidCallback onPressed) {
     final Color shadowColor = Colors.black.withAlpha((0.3 * 255).round());
     final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;
     final double buttonWidth = screenWidth * 0.75;
-    final double buttonHeight = (screenSize.height * 0.08).clamp(50, 80); // Ensure a responsive height
-    final double fontSize = (screenSize.width * 0.05).clamp(16, 24); // Responsive font size
-    final double iconSize = (screenSize.width * 0.08).clamp(24, 36); // Responsive icon size
+    final double buttonHeight =
+        (screenSize.height * 0.08).clamp(50, 80); // Ensure a responsive height
+    final double fontSize =
+        (screenSize.width * 0.05).clamp(16, 24); // Responsive font size
+    final double iconSize =
+        (screenSize.width * 0.08).clamp(24, 36); // Responsive icon size
 
     // Use the localized 'Start Game' for comparison in all languages
-    final String localizedStartGame = AppLocalizations.of(context)!.startGame.trim().toLowerCase();
+    final String localizedStartGame =
+        AppLocalizations.of(context)!.startGame.trim().toLowerCase();
     final bool isStartGame = (text.trim().toLowerCase() == localizedStartGame);
     final Color bgColor = isStartGame ? Colors.white : Colors.black;
     final Color fgColor = isStartGame ? Colors.black : Colors.white;
@@ -1238,7 +1400,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent, // Use transparent to keep the container's color
+          backgroundColor: Colors
+              .transparent, // Use transparent to keep the container's color
           shadowColor: Colors.transparent,
           padding: EdgeInsets.zero, // Remove padding to align with container
           shape: RoundedRectangleBorder(
@@ -1254,7 +1417,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 16.0), // Add spacing between icon and edge
+                padding: const EdgeInsets.only(
+                    left: 16.0), // Add spacing between icon and edge
                 child: Icon(iconData, size: iconSize, color: fgColor),
               ),
             ),
@@ -1276,7 +1440,8 @@ Future<bool> _showModernGameSetupDialog(BuildContext context) async {
   }
 
   // Keep _buildBottomBarButton
-  Widget _buildBottomBarButton(IconData icon, VoidCallback onPressed, {String? tooltip}) {
+  Widget _buildBottomBarButton(IconData icon, VoidCallback onPressed,
+      {String? tooltip}) {
     final Color shadowColor =
         Colors.black.withAlpha((0.3 * 255).round()); // Consistent shadow
 

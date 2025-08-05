@@ -49,6 +49,7 @@ dependencies:
   path: ^1.9.1
 
   fluttertoast: ^8.2.4 # For showing toast messages
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_test:

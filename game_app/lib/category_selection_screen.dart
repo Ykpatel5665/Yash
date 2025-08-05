@@ -15,6 +15,7 @@ import 'utils/sound_manager.dart';
 import 'models/category_model.dart';
 // import 'services/category_api_service.dart';
 import 'services/category_db_service.dart';
+import 'utils/connectivity_helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 // Static Category lists hatai didha, have dynamic fetch thase
@@ -39,6 +40,124 @@ class CategorySelectionScreen extends StatefulWidget {
 }
 
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
+  Future<void> _showNoInternetDialogForQuestions() async {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double dialogPadding = screenSize.width * 0.05;
+    final BoxDecoration dialogDecoration = BoxDecoration(
+      borderRadius: BorderRadius.circular(15.0),
+      gradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 103, 58, 183),
+          Color.fromARGB(255, 233, 30, 99),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      border: Border.all(
+        color: Colors.white.withOpacity(0.8),
+        width: 3.0,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(80),
+          blurRadius: 6.0,
+          spreadRadius: 1.0,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+    final TextStyle titleStyle = TextStyle(
+      fontFamily: 'Baloo2',
+      fontWeight: FontWeight.bold,
+      fontSize: 22,
+      color: Colors.white,
+      shadows: [
+        Shadow(
+          blurRadius: 2.0,
+          color: Colors.black.withAlpha(60),
+          offset: const Offset(1.0, 1.0),
+        ),
+      ],
+    );
+    final TextStyle contentStyle = TextStyle(
+      fontFamily: 'Baloo2',
+      fontSize: 16,
+      color: Colors.white.withOpacity(0.9),
+    );
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          content: Container(
+            padding: EdgeInsets.all(dialogPadding),
+            decoration: dialogDecoration,
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Center(
+                    child: Icon(Icons.wifi_off_rounded,
+                        color: Colors.white, size: 48),
+                  ),
+                  const SizedBox(height: 15),
+                  Center(
+                    child: Text(
+                      'No Internet Connection',
+                      style: titleStyle,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Please check your internet connection and try again.',
+                    style: contentStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 22),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.18),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            textStyle: TextStyle(
+                                fontFamily: 'Baloo2',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          ),
+                          onPressed: () async {
+                            Navigator.of(dialogContext).pop();
+                            // After dialog closes, re-check internet and try again
+                            bool hasConnection = await ConnectivityHelper.hasInternetConnection();
+                            if (hasConnection) {
+                              await _prefetchQuestionsForSelectedCategories();
+                            } else {
+                              await _showNoInternetDialogForQuestions();
+                            }
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
   // List of adult category keys that require consent
   static const Set<String> _consentRequiredAdultCategories = {
     'Spicy & Flirty',
@@ -172,13 +291,20 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       },
     ) ?? false;
   }
+
   final Set<String> _selectedCategoryIds = {};
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
-  // No loading/error needed, DB fetch is instant
+  bool _isLoading = false;
 
   /// Prefetches truth and dare questions for selected categories if not already in DB, using parallel API calls.
   Future<void> _prefetchQuestionsForSelectedCategories() async {
+    // Check for internet connection before fetching questions
+    bool hasConnection = await ConnectivityHelper.hasInternetConnection();
+    if (!hasConnection) {
+      await _showNoInternetDialogForQuestions();
+      return;
+    }
     final dbService = QuestionDbService();
     final language = Localizations.localeOf(context).languageCode;
     // Map AgeGroup enum to correct API string
@@ -197,7 +323,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
     List<Future<void>> futures = [];
     for (final catId in _selectedCategoryIds) {
-      futures.add(_fetchAndInsertIfNeeded(dbService, apiAgeGroup, language, catId));
+      futures.add(
+          _fetchAndInsertIfNeeded(dbService, apiAgeGroup, language, catId));
     }
     if (futures.isNotEmpty) {
       Fluttertoast.showToast(
@@ -209,7 +336,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     }
   }
 
-  Future<void> _fetchAndInsertIfNeeded(QuestionDbService dbService, String apiAgeGroup, String language, String catId) async {
+  Future<void> _fetchAndInsertIfNeeded(QuestionDbService dbService,
+      String apiAgeGroup, String language, String catId) async {
     // Check for Truth questions
     final truthQuestions = await dbService.getQuestions(
       type: 'truth',
@@ -251,8 +379,15 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   void initState() {
     super.initState();
-    _loadLastPlayedCategories();
-    _fetchCategories();
+    // On first frame, check DB. If empty, check internet and fetch from API (show dialog if no internet). If not empty, just load from DB.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print('[initState] CategorySelectionScreen loaded');
+      setState(() { _isLoading = true; });
+      await _loadLastPlayedCategories();
+      await _fetchCategories();
+      setState(() { _isLoading = false; });
+      print('[initState] Done loading categories.');
+    });
   }
 
   Future<void> _loadLastPlayedCategories() async {

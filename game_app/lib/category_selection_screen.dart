@@ -40,7 +40,7 @@ class CategorySelectionScreen extends StatefulWidget {
 }
 
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
-  Future<void> _showNoInternetDialogForQuestions() async {
+  Future<bool> _showNoInternetDialogForQuestions() async {
     final Size screenSize = MediaQuery.of(context).size;
     final double dialogPadding = screenSize.width * 0.05;
     final BoxDecoration dialogDecoration = BoxDecoration(
@@ -84,7 +84,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       fontSize: 16,
       color: Colors.white.withOpacity(0.9),
     );
-    await showDialog(
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.black54,
@@ -137,15 +137,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18),
                             ),
-                            onPressed: () async {
-                              Navigator.of(dialogContext).pop();
-                              // After dialog closes, re-check internet and try again
-                              bool hasConnection = await ConnectivityHelper.hasInternetConnection();
-                              if (hasConnection) {
-                                await _prefetchQuestionsForSelectedCategories();
-                              } else {
-                                await _showNoInternetDialogForQuestions();
-                              }
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(true);
                             },
                             child: const Text('Retry'),
                           ),
@@ -160,6 +153,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         );
       },
     );
+    return result == true;
   }
   // List of adult category keys that require consent
   static const Set<String> _consentRequiredAdultCategories = {
@@ -302,40 +296,45 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
   /// Prefetches truth and dare questions for selected categories if not already in DB, using parallel API calls.
   Future<void> _prefetchQuestionsForSelectedCategories() async {
-    // Check for internet connection before fetching questions
-    bool hasConnection = await ConnectivityHelper.hasInternetConnection();
-    if (!hasConnection) {
-      await _showNoInternetDialogForQuestions();
-      return;
-    }
-    final dbService = QuestionDbService();
-    final language = Localizations.localeOf(context).languageCode;
-    // Map AgeGroup enum to correct API string
-    String apiAgeGroup;
-    switch (widget.ageGroup) {
-      case AgeGroup.kids:
-        apiAgeGroup = 'Kids';
-        break;
-      case AgeGroup.teen:
-        apiAgeGroup = 'Teens';
-        break;
-      case AgeGroup.adult:
-        apiAgeGroup = 'Adults';
-        break;
-    }
+    while (true) {
+      // Check for internet connection before fetching questions
+      bool hasConnection = await ConnectivityHelper.hasInternetConnection();
+      if (!hasConnection) {
+        bool retry = await _showNoInternetDialogForQuestions();
+        if (!retry) return;
+        // If retry, loop and check again
+        continue;
+      }
+      final dbService = QuestionDbService();
+      final language = Localizations.localeOf(context).languageCode;
+      // Map AgeGroup enum to correct API string
+      String apiAgeGroup;
+      switch (widget.ageGroup) {
+        case AgeGroup.kids:
+          apiAgeGroup = 'Kids';
+          break;
+        case AgeGroup.teen:
+          apiAgeGroup = 'Teens';
+          break;
+        case AgeGroup.adult:
+          apiAgeGroup = 'Adults';
+          break;
+      }
 
-    List<Future<void>> futures = [];
-    for (final catId in _selectedCategoryIds) {
-      futures.add(
-          _fetchAndInsertIfNeeded(dbService, apiAgeGroup, language, catId));
-    }
-    if (futures.isNotEmpty) {
-      Fluttertoast.showToast(
-        msg: 'Syncing...',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-      );
-      await Future.wait(futures);
+      List<Future<void>> futures = [];
+      for (final catId in _selectedCategoryIds) {
+        futures.add(
+            _fetchAndInsertIfNeeded(dbService, apiAgeGroup, language, catId));
+      }
+      if (futures.isNotEmpty) {
+        Fluttertoast.showToast(
+          msg: 'Syncing...',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        await Future.wait(futures);
+      }
+      break;
     }
   }
 

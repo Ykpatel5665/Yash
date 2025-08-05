@@ -918,7 +918,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
     return WillPopScope(
       onWillPop: () async {
         final shouldQuit = await _showQuitConfirmation();
-        return shouldQuit;
+        if (shouldQuit) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage(setLocale: widget.setLocale)),
+            (Route<dynamic> route) => false,
+          );
+          return false;
+        }
+        return false;
       },
       child: Scaffold(
         appBar: AppHeader(

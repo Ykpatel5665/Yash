@@ -642,7 +642,15 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     return WillPopScope(
       onWillPop: () async {
         final shouldQuit = await _showQuitConfirmation();
-        return shouldQuit;
+        if (shouldQuit) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage(setLocale: (locale) {})),
+            (Route<dynamic> route) => false,
+          );
+        }
+        return false;
       },
       child: Scaffold(
         appBar: AppHeader(

@@ -263,71 +263,74 @@ class _MyHomePageState extends State<MyHomePage> {
       barrierDismissible: false,
       barrierColor: Colors.black54,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: Colors.transparent,
-          contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          content: Container(
-            padding: EdgeInsets.all(dialogPadding),
-            decoration: dialogDecoration,
-            child: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Center(
-                    child: Icon(Icons.wifi_off_rounded,
-                        color: Colors.white, size: 48),
-                  ),
-                  const SizedBox(height: 15),
-                  Center(
-                    child: Text(
-                      'No Internet Connection',
-                      style: titleStyle,
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            backgroundColor: Colors.transparent,
+            contentPadding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            content: Container(
+              padding: EdgeInsets.all(dialogPadding),
+              decoration: dialogDecoration,
+              child: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Center(
+                      child: Icon(Icons.wifi_off_rounded,
+                          color: Colors.white, size: 48),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Please check your internet connection and try again.',
-                    style: contentStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 22),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.18),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            textStyle: TextStyle(
-                                fontFamily: 'Baloo2',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
-                          onPressed: () async {
-                            Navigator.of(dialogContext).pop();
-                            // After dialog closes, re-check internet and fetch categories if online
-                            bool hasConnection = await ConnectivityHelper.hasInternetConnection();
-                            if (hasConnection) {
-                              List<CategoryModel> dbCats = await CategoryDbService.getCategoriesByAgeGroup('kids');
-                              if (dbCats.isEmpty) {
-                                await CategoryDbService.syncCategoriesFromApiIfNeeded();
-                              }
-                            } else {
-                              await _showNoInternetDialog();
-                            }
-                          },
-                          child: const Text('Retry'),
-                        ),
+                    const SizedBox(height: 15),
+                    Center(
+                      child: Text(
+                        'No Internet Connection',
+                        style: titleStyle,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Please check your internet connection and try again.',
+                      style: contentStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 22),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white.withOpacity(0.18),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              textStyle: TextStyle(
+                                  fontFamily: 'Baloo2',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
+                            ),
+                            onPressed: () async {
+                              Navigator.of(dialogContext).pop();
+                              // After dialog closes, re-check internet and fetch categories if online
+                              bool hasConnection = await ConnectivityHelper.hasInternetConnection();
+                              if (hasConnection) {
+                                List<CategoryModel> dbCats = await CategoryDbService.getCategoriesByAgeGroup('kids');
+                                if (dbCats.isEmpty) {
+                                  await CategoryDbService.syncCategoriesFromApiIfNeeded();
+                                }
+                              } else {
+                                await _showNoInternetDialog();
+                              }
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

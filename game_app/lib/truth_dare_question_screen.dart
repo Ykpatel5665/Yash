@@ -489,9 +489,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                   widget.isTruth ? Icons.lightbulb_rounded : Icons.whatshot_rounded,
                   color: widget.isTruth ? mainColor : secondaryColor,
                   size: iconSize,
-                  shadows: [
-                    Shadow(blurRadius: 8.0, color: Colors.black.withAlpha((0.4 * 255).round()), offset: Offset(1.0, 1.0)),
-                  ],
+                  // Removed drop shadow/blur
                 ),
               ),
               Expanded(

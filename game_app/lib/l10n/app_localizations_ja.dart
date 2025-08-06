@@ -211,11 +211,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String get haptics => 'ハプティクス';
 
   @override
-  String get consentTitle => '18歳以上の同意が必要です';
+  String get noInternetTitle => 'インターネット接続なし';
 
   @override
-  String get consentWarning => '選択したカテゴリの中には大人向けの内容が含まれています。18歳以上であることを確認し、プレイに同意してください。';
+  String get noInternetMessage => 'インターネット接続を確認して、もう一度お試しください。';
 
   @override
-  String get consentQuestion => '大人向けの内容でプレイすることに同意しますか？';
+  String get consentTitle => '18+ 同意';
+
+  @override
+  String get consentWarning => '選択されたカテゴリの中には成人向けコンテンツが含まれています。18歳以上であることを確認し、プレイに同意する必要があります。';
+
+  @override
+  String get consentQuestion => '成人向けコンテンツでプレイすることに同意しますか？';
+
+  @override
+  String get retry => '再試行';
 }

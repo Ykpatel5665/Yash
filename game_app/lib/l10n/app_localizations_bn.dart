@@ -211,11 +211,20 @@ class AppLocalizationsBn extends AppLocalizations {
   String get haptics => 'হ্যাপটিক্স';
 
   @override
-  String get consentTitle => '১৮+ সম্মতি প্রয়োজন';
+  String get noInternetTitle => 'ইন্টারনেট সংযোগ নেই';
 
   @override
-  String get consentWarning => 'কিছু নির্বাচিত বিভাগে প্রাপ্তবয়স্কদের বিষয়বস্তু রয়েছে। আপনাকে নিশ্চিত করতে হবে যে আপনি ১৮+ এবং খেলতে সম্মত।';
+  String get noInternetMessage => 'অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।';
+
+  @override
+  String get consentTitle => '১৮+ সম্মতি';
+
+  @override
+  String get consentWarning => 'কিছু নির্বাচিত বিভাগে প্রাপ্তবয়স্কদের বিষয়বস্তু রয়েছে। আপনাকে নিশ্চিত করতে হবে যে আপনি ১৮ বছরের বেশি এবং খেলতে সম্মত।';
 
   @override
   String get consentQuestion => 'আপনি কি প্রাপ্তবয়স্ক বিষয়বস্তু নিয়ে খেলতে সম্মত?';
+
+  @override
+  String get retry => 'পুনরায় চেষ্টা করুন';
 }

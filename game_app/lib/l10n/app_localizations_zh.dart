@@ -211,11 +211,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get haptics => '触觉反馈';
 
   @override
-  String get consentTitle => '需要18+同意';
+  String get noInternetTitle => '无网络连接';
 
   @override
-  String get consentWarning => '某些选定类别包含成人内容。您必须确认您已年满18岁并同意参与游戏。';
+  String get noInternetMessage => '请检查您的网络连接并重试。';
+
+  @override
+  String get consentTitle => '18+同意';
+
+  @override
+  String get consentWarning => '某些选定的类别包含成人内容。您必须确认您已年满18岁并同意参与游戏。';
 
   @override
   String get consentQuestion => '您同意参与包含成人内容的游戏吗？';
+
+  @override
+  String get retry => '重试';
 }

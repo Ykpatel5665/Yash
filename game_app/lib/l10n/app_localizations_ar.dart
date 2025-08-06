@@ -211,6 +211,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get haptics => 'اللمسات اللمسية';
 
   @override
+  String get noInternetTitle => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get noInternetMessage => 'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+
+  @override
   String get consentTitle => 'موافقة 18+';
 
   @override
@@ -218,4 +224,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get consentQuestion => 'هل توافق على اللعب بمحتوى للبالغين؟';
+
+  @override
+  String get retry => 'إعادة المحاولة';
 }

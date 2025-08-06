@@ -66,4 +66,10 @@
   "chooseRandomBtn": "ランダムに選ぶ",
   "itsStr": "さて、",
   "haptics": "ハプティクス",
+  "noInternetTitle": "インターネット接続なし",
+  "noInternetMessage": "インターネット接続を確認して、もう一度お試しください。",
+  "consentTitle": "18+ 同意",
+  "consentWarning": "選択されたカテゴリの中には成人向けコンテンツが含まれています。18歳以上であることを確認し、プレイに同意する必要があります。",
+  "consentQuestion": "成人向けコンテンツでプレイすることに同意しますか？",
+  "retry": "再試行"
 }

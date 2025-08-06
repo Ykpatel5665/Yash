@@ -511,20 +511,41 @@ abstract class AppLocalizations {
   /// **'Haptics'**
   String get haptics;
 
-  /// Title for 18+ consent dialog.
+  /// No description provided for @noInternetTitle.
+  ///
   /// In en, this message translates to:
-  /// **'18+ Consent Required'**
+  /// **'No Internet Connection'**
+  String get noInternetTitle;
+
+  /// No description provided for @noInternetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again.'**
+  String get noInternetMessage;
+
+  /// No description provided for @consentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'18+ Consent'**
   String get consentTitle;
 
-  /// Warning for 18+ consent dialog.
+  /// No description provided for @consentWarning.
+  ///
   /// In en, this message translates to:
-  /// **'Some selected categories contain mature content. You must confirm you are 18+ and consent to play.'**
+  /// **'Some selected categories contain adult content. You must confirm you are over 18 and agree to play.'**
   String get consentWarning;
 
-  /// Question for 18+ consent dialog.
+  /// No description provided for @consentQuestion.
+  ///
   /// In en, this message translates to:
-  /// **'Do you consent to play with mature content?'**
+  /// **'Do you agree to play with adult content?'**
   String get consentQuestion;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

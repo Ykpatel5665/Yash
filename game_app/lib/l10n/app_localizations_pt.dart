@@ -211,11 +211,20 @@ class AppLocalizationsPt extends AppLocalizations {
   String get haptics => 'Háptica';
 
   @override
-  String get consentTitle => 'Consentimento 18+ necessário';
+  String get noInternetTitle => 'Sem conexão com a Internet';
 
   @override
-  String get consentWarning => 'Algumas categorias selecionadas contêm conteúdo adulto. Você deve confirmar que tem mais de 18 anos e consentir em jogar.';
+  String get noInternetMessage => 'Por favor, verifique sua conexão com a Internet e tente novamente.';
 
   @override
-  String get consentQuestion => 'Você consente em jogar com conteúdo adulto?';
+  String get consentTitle => 'Consentimento 18+';
+
+  @override
+  String get consentWarning => 'Algumas categorias selecionadas contêm conteúdo adulto. Você deve confirmar que tem mais de 18 anos e concorda em jogar.';
+
+  @override
+  String get consentQuestion => 'Você concorda em jogar com conteúdo adulto?';
+
+  @override
+  String get retry => 'Tentar novamente';
 }

@@ -292,13 +292,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(height: 15),
                     Center(
                       child: Text(
-                        'No Internet Connection',
+                        AppLocalizations.of(dialogContext)!.noInternetTitle,
                         style: titleStyle,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Please check your internet connection and try again.',
+                      AppLocalizations.of(dialogContext)!.noInternetMessage,
                       style: contentStyle,
                       textAlign: TextAlign.center,
                     ),

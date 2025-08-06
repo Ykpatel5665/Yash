@@ -66,4 +66,10 @@
   "chooseRandomBtn": "무작위로 선택",
   "itsStr": "이것은 ",
   "haptics": "햅틱스",
+  "noInternetTitle": "인터넷 연결 없음",
+  "noInternetMessage": "인터넷 연결을 확인하고 다시 시도하세요.",
+  "consentTitle": "18+ 동의",
+  "consentWarning": "일부 선택된 카테고리에는 성인 콘텐츠가 포함되어 있습니다. 18세 이상임을 확인하고 플레이에 동의해야 합니다.",
+  "consentQuestion": "성인 콘텐츠로 플레이하는 데 동의하십니까?",
+  "retry": "다시 시도"
 }

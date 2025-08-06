@@ -211,11 +211,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get haptics => '햅틱스';
 
   @override
-  String get consentTitle => '18+ 동의 필요';
+  String get noInternetTitle => '인터넷 연결 없음';
 
   @override
-  String get consentWarning => '일부 선택한 카테고리에는 성인 콘텐츠가 포함되어 있습니다. 18세 이상임을 확인하고 플레이에 동의해야 합니다.';
+  String get noInternetMessage => '인터넷 연결을 확인하고 다시 시도하세요.';
+
+  @override
+  String get consentTitle => '18+ 동의';
+
+  @override
+  String get consentWarning => '일부 선택된 카테고리에는 성인 콘텐츠가 포함되어 있습니다. 18세 이상임을 확인하고 플레이에 동의해야 합니다.';
 
   @override
   String get consentQuestion => '성인 콘텐츠로 플레이하는 데 동의하십니까?';
+
+  @override
+  String get retry => '다시 시도';
 }

@@ -66,5 +66,10 @@
   "chooseRandomBtn": "Choose randomly",
   "itsStr": "It's ",
   "haptics": "Haptics",
-
+  "noInternetTitle": "No Internet Connection",
+  "noInternetMessage": "Please check your internet connection and try again.",
+  "consentTitle": "18+ Consent",
+  "consentWarning": "Some selected categories contain adult content. You must confirm you are over 18 and agree to play.",
+  "consentQuestion": "Do you agree to play with adult content?",
+  "retry": "Retry"
 }

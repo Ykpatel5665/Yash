@@ -66,4 +66,10 @@
   "chooseRandomBtn": "Elegir al azar",
   "itsStr": "Es ",
   "haptics": "Hápticos",
+  "noInternetTitle": "Sin conexión a Internet",
+  "noInternetMessage": "Por favor, comprueba tu conexión a Internet e inténtalo de nuevo.",
+  "consentTitle": "Consentimiento 18+",
+  "consentWarning": "Algunas categorías seleccionadas contienen contenido para adultos. Debes confirmar que tienes más de 18 años y aceptas jugar.",
+  "consentQuestion": "¿Aceptas jugar con contenido para adultos?",
+  "retry": "Reintentar"
 }

@@ -12,7 +12,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Verdad o Reto';
 
   @override
-  String get continueBtn => 'Continuar';
+  String get continueBtn => '¡Continuar';
 
   @override
   String get gameSetup => 'Configuración del juego';
@@ -211,11 +211,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get haptics => 'Hápticos';
 
   @override
-  String get consentTitle => 'Consentimiento 18+ requerido';
+  String get noInternetTitle => 'Sin conexión a Internet';
 
   @override
-  String get consentWarning => 'Algunas categorías seleccionadas contienen contenido para adultos. Debes confirmar que tienes más de 18 años y das tu consentimiento para jugar.';
+  String get noInternetMessage => 'Por favor, comprueba tu conexión a Internet e inténtalo de nuevo.';
 
   @override
-  String get consentQuestion => '¿Das tu consentimiento para jugar con contenido para adultos?';
+  String get consentTitle => 'Consentimiento 18+';
+
+  @override
+  String get consentWarning => 'Algunas categorías seleccionadas contienen contenido para adultos. Debes confirmar que tienes más de 18 años y aceptas jugar.';
+
+  @override
+  String get consentQuestion => '¿Aceptas jugar con contenido para adultos?';
+
+  @override
+  String get retry => 'Reintentar';
 }

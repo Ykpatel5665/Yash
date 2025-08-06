@@ -211,11 +211,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get haptics => 'Haptik';
 
   @override
-  String get consentTitle => '18+ Zustimmung erforderlich';
+  String get noInternetTitle => 'Keine Internetverbindung';
 
   @override
-  String get consentWarning => 'Einige ausgewählte Kategorien enthalten Inhalte für Erwachsene. Sie müssen bestätigen, dass Sie 18+ sind und zustimmen, zu spielen.';
+  String get noInternetMessage => 'Bitte überprüfe deine Internetverbindung und versuche es erneut.';
 
   @override
-  String get consentQuestion => 'Stimmen Sie zu, mit Inhalten für Erwachsene zu spielen?';
+  String get consentTitle => '18+ Zustimmung';
+
+  @override
+  String get consentWarning => 'Einige ausgewählte Kategorien enthalten Inhalte für Erwachsene. Du musst bestätigen, dass du über 18 bist und zustimmst zu spielen.';
+
+  @override
+  String get consentQuestion => 'Stimmst du zu, mit Inhalten für Erwachsene zu spielen?';
+
+  @override
+  String get retry => 'Wiederholen';
 }

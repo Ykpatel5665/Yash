@@ -65,4 +65,10 @@
   "chooseRandomBtn": "随机选择",
   "itsStr": "这是",
   "haptics": "触觉反馈",
+  "noInternetTitle": "无网络连接",
+  "noInternetMessage": "请检查您的网络连接并重试。",
+  "consentTitle": "18+同意",
+  "consentWarning": "某些选定的类别包含成人内容。您必须确认您已年满18岁并同意参与游戏。",
+  "consentQuestion": "您同意参与包含成人内容的游戏吗？",
+  "retry": "重试"
 }

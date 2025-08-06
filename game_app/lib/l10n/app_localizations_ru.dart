@@ -211,9 +211,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get haptics => 'Гаптика';
 
   @override
-  String get consentTitle => 'Требуется согласие 18+';
+  String get noInternetTitle => 'Нет подключения к интернету';
+
   @override
-  String get consentWarning => 'Некоторые выбранные категории содержат материалы для взрослых. Вы должны подтвердить, что вам 18+ и вы согласны играть.';
+  String get noInternetMessage => 'Пожалуйста, проверьте подключение к интернету и попробуйте снова.';
+
   @override
-  String get consentQuestion => 'Вы согласны играть с материалами для взрослых?';
+  String get consentTitle => 'Согласие 18+';
+
+  @override
+  String get consentWarning => 'Некоторые выбранные категории содержат контент для взрослых. Вы должны подтвердить, что вам больше 18 лет, и согласиться играть.';
+
+  @override
+  String get consentQuestion => 'Вы согласны играть с контентом для взрослых?';
+
+  @override
+  String get retry => 'Повторить';
 }

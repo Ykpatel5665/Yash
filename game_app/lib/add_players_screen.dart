@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'smart_banner_mobile.dart'; // Import SmartBanner
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'main.dart'; // Import main.dart to access GameMode and AgeGroup enums
 import 'spin_the_bottle_screen.dart'; // Import Spin the Bottle screen
@@ -393,6 +394,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
             ),
         ],
       ),
+      bottomNavigationBar: const SmartBanner(),
     );
   }
 }

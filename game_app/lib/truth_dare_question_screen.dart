@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/sound_manager.dart';
+import 'smart_banner_mobile.dart'; // Import SmartBanner
 
 class TruthDareQuestionScreen extends StatefulWidget {
   final String playerName;
@@ -425,187 +426,195 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
         await _handleForfeit(isTimeout: false);
         return false;
       },
-      child: Stack(
+      child: Column(
         children: [
-          Container(color: Colors.black),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [mainColor, secondaryColor], begin: Alignment.topLeft, end: Alignment.bottomRight),
-            ),
-          ),
-          Container(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-              child: Container(color: Colors.black.withOpacity(0.08)),
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          Expanded(
+            child: Stack(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: headerTopPadding,
-                    left: headerSidePadding,
-                    right: headerSidePadding,
-                    bottom: 0,
+                Container(color: Colors.black),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [mainColor, secondaryColor], begin: Alignment.topLeft, end: Alignment.bottomRight),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                ),
+                Container(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                    child: Container(color: Colors.black.withOpacity(0.08)),
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent, // Removed white background
-                          borderRadius: BorderRadius.circular(10),
-                          // Removed boxShadow for a flat look
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: headerTopPadding,
+                          left: headerSidePadding,
+                          right: headerSidePadding,
+                          bottom: 0,
                         ),
-                        child: IconButton(
-                          icon: Icon(Icons.close_rounded, color: Colors.white, size: buttonIconSize), // Changed to white
-                          onPressed: () => _handleForfeit(isTimeout: false),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.isTruth
-                              ? AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.truthBtn
-                              : AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.dareBtn,
-                          style: GoogleFonts.baloo2(
-                            fontSize: headerFontSize,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4,
-                                color: Colors.white.withOpacity(0.3),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.transparent, // Removed white background
+                                borderRadius: BorderRadius.circular(10),
+                                // Removed boxShadow for a flat look
                               ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(width: buttonIconSize + 20),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: betweenHeaderAndIcon, bottom: betweenIconAndQuestion * 0.18), // Add a little gap below icon
-                  child: Icon(
-                    widget.isTruth ? Icons.lightbulb_rounded : Icons.whatshot_rounded,
-                    color: widget.isTruth ? mainColor : secondaryColor,
-                    size: iconSize,
-                    // Removed drop shadow/blur
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    child: Stack(
-                      children: [
-                        // Center the question in the available space
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            widget.questionText,
-                            style: GoogleFonts.baloo2(
-                              fontSize: questionFontSize * 1.18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.none,
-                              height: 1.1,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black.withAlpha((0.5 * 255).round()),
-                                  offset: Offset(1.0, 1.0),
+                              child: IconButton(
+                                icon: Icon(Icons.close_rounded, color: Colors.white, size: buttonIconSize), // Changed to white
+                                onPressed: () => _handleForfeit(isTimeout: false),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                widget.isTruth
+                                    ? AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.truthBtn
+                                    : AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.dareBtn,
+                                style: GoogleFonts.baloo2(
+                                  fontSize: headerFontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  decoration: TextDecoration.none,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4,
+                                      color: Colors.white.withOpacity(0.3),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        // Keep the label near the top
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: betweenHeaderAndIcon * 0.22),
-                            child: Text(
-                              AppLocalizations.of(context)!.playerTask(widget.playerName),
-                              style: GoogleFonts.baloo2(
-                                fontSize: fontSize,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.none,
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 4.0,
-                                    color: Colors.black.withAlpha((0.5 * 255).round()),
-                                    offset: Offset(1.0, 1.0),
-                                  ),
-                                ],
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                          ),
+                            SizedBox(width: buttonIconSize + 20),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Timer Section
-                timerSection,
-                Padding(
-                  padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, rowBottomPadding),
-                  child: Row(
-                    children: [
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: betweenHeaderAndIcon, bottom: betweenIconAndQuestion * 0.18), // Add a little gap below icon
+                        child: Icon(
+                          widget.isTruth ? Icons.lightbulb_rounded : Icons.whatshot_rounded,
+                          color: widget.isTruth ? mainColor : secondaryColor,
+                          size: iconSize,
+                          // Removed drop shadow/blur
+                        ),
+                      ),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => _handleForfeit(isTimeout: false),
-                          style: forfeitButtonStyle.copyWith(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                              EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          child: Stack(
                             children: [
-                              Icon(Icons.flag_rounded, color: Colors.white, size: buttonIconSize),
-                              SizedBox(width: buttonSpacing / 2),
-                              Text(AppLocalizations.of(context)!.forfeit, style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
+                              // Center the question in the available space
+                              Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  widget.questionText,
+                                  style: GoogleFonts.baloo2(
+                                    fontSize: questionFontSize * 1.18,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.none,
+                                    height: 1.1,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black.withAlpha((0.5 * 255).round()),
+                                        offset: Offset(1.0, 1.0),
+                                      ),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              // Keep the label near the top
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: betweenHeaderAndIcon * 0.22),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.playerTask(widget.playerName),
+                                    style: GoogleFonts.baloo2(
+                                      fontSize: fontSize,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.none,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black.withAlpha((0.5 * 255).round()),
+                                          offset: Offset(1.0, 1.0),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(width: buttonSpacing),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async => await _handleDone(),
-                          style: forfeitButtonStyle.copyWith(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                              EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
+                      // Timer Section
+                      timerSection,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, rowBottomPadding),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () => _handleForfeit(isTimeout: false),
+                                style: forfeitButtonStyle.copyWith(
+                                  padding: MaterialStateProperty.all<EdgeInsets>(
+                                    EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.flag_rounded, color: Colors.white, size: buttonIconSize),
+                                    SizedBox(width: buttonSpacing / 2),
+                                    Text(AppLocalizations.of(context)!.forfeit, style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.check_circle_rounded, color: Colors.white, size: buttonIconSize),
-                              SizedBox(width: buttonSpacing / 2),
-                              Text(AppLocalizations.of(context)!.done, style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
-                            ],
-                          ),
+                            SizedBox(width: buttonSpacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async => await _handleDone(),
+                                style: forfeitButtonStyle.copyWith(
+                                  padding: MaterialStateProperty.all<EdgeInsets>(
+                                    EdgeInsets.symmetric(vertical: buttonVerticalPadding / 2),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.check_circle_rounded, color: Colors.white, size: buttonIconSize),
+                                    SizedBox(width: buttonSpacing / 2),
+                                    Text(AppLocalizations.of(context)!.done, style: forfeitButtonTextStyle.copyWith(fontSize: buttonFontSize)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      SizedBox(height: afterButtons),
                     ],
                   ),
                 ),
-                SizedBox(height: afterButtons),
               ],
             ),
           ),
+          // SmartBanner at the bottom
+          const SafeArea(child: SmartBanner()),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
+import 'smart_banner_mobile.dart'; // Import SmartBanner
 import 'main.dart';
 import 'dart:ui';
 import 'truth_dare_data.dart';
@@ -1178,6 +1179,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             },
           ),
         ),
+        bottomNavigationBar: const SmartBanner(),
       ),
     );
   }

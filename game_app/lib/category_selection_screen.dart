@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'add_players_screen.dart';
+import 'smart_banner_mobile.dart'; // Import SmartBanner
 import 'main.dart';
 import 'dart:ui';
 import 'widgets/buttons/toggle_button.dart';
@@ -292,6 +293,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   final Set<String> _selectedCategoryIds = {};
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
+  // ignore: unused_field
   bool _isLoading = false;
 
   /// Prefetches truth and dare questions for selected categories if not already in DB, using parallel API calls.
@@ -876,6 +878,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: const SmartBanner(),
     );
   }
 }

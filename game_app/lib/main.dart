@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
@@ -15,6 +17,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/headers/app_header.dart';
 import 'utils/sound_manager.dart';
 import 'package:provider/provider.dart';
+import 'smart_banner_mobile.dart';
 import 'providers/sound_provider.dart';
 
 // Define Enums for selections
@@ -82,9 +85,14 @@ extension AgeGroupExtension on AgeGroup {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize AdMob
+  await MobileAds.instance.initialize();
+  // Register this device as a test device for AdMob
+  MobileAds.instance.updateRequestConfiguration(
+    RequestConfiguration(testDeviceIds: ['F2B4C88351528DCEB47274F8023163F5']),
+  );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  await Future.delayed(
-      const Duration(seconds: 2)); // Ensures splash stays for 2s
+  await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
 
   print('[main] App starting, calling syncCategoriesFromApiIfNeeded...');
   await CategoryDbService.syncCategoriesFromApiIfNeeded();
@@ -1218,6 +1226,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       extendBodyBehindAppBar: true,
+      bottomNavigationBar: const SmartBanner(),
       body: Container(
         // ... (keep existing background gradient) ...
         decoration: const BoxDecoration(

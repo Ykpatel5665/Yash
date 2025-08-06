@@ -15,6 +15,8 @@ import 'dart:math' as math; // Import math for random selection
 import 'utils/sound_manager.dart'; // Import SoundManager
 import 'package:provider/provider.dart';
 import 'providers/sound_provider.dart';
+// Platform-safe import for SmartBanner
+import 'smart_banner_mobile.dart' if (dart.library.html) 'smart_banner_stub.dart';
 
 // Shared dialog constants and helpers (copied from random_turn_screen.dart)
 const double kMaxCardWidth = 420.0;
@@ -705,7 +707,10 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               children: [
                                 PlayerCircle(
                                   players: widget.players,
-                                  size: (screenWidth * 0.7).clamp(220.0, screenHeight * 0.55),
+                                  size: (screenWidth * 0.7).clamp(
+                                    math.min(220.0, screenHeight * 0.55),
+                                    math.max(220.0, screenHeight * 0.55),
+                                  ),
                                   highlightedIndex: _isAnimatingHighlight ? _pendingHighlightIndex : _currentIndex,
                                   animated: true,
                                   animationDuration: const Duration(milliseconds: 1800),
@@ -821,9 +826,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
             ),
           ),
         ),
+        bottomNavigationBar: const SmartBanner(),
       ),
     );
-
   }
 
   // Start button widget (EXACT copy from random_turn_screen.dart)

@@ -16,6 +16,7 @@ import 'utils/sound_manager.dart';
 import 'package:provider/provider.dart';
 import 'providers/sound_provider.dart';
 import 'widgets/cards/game_card.dart';
+import 'smart_banner_mobile.dart'; // Import SmartBanner
 
 // Define Game States
 enum GamePhase { readyToSpin, spinning, awaitingTruthDare }
@@ -1043,6 +1044,7 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             },
           ),
         ),
+        bottomNavigationBar: const SmartBanner(),
       ),
     );
   }

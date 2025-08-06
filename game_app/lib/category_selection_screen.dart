@@ -522,7 +522,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final double continueBtnHeight =
         (size.height * 0.08).clamp(48, 70); // Responsive
     final double bottomPadding =
-        (size.height * 0.09).clamp(48, 90); // replaces 69
+        (size.height * 0.035).clamp(16, 32); // further reduced for even closer button-to-banner distance
     final double continueFontSize = (size.width * 0.06).clamp(18, 28);
 
     // Removed _categoryKeyToArbKey: no longer needed after switching to API labels only

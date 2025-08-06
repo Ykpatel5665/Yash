@@ -147,7 +147,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     final double bottomButtonWidth = (screenWidth * 0.75).clamp(220, 420);
     final double bottomButtonMinHeight = (screenHeight * 0.08).clamp(48, 70); // replaces 62
     final double bottomButtonIconSize = (screenWidth * 0.13).clamp(36, 56); // replaces 50
-    final double bottomPadding = (screenHeight * 0.09).clamp(48, 90); // replaces 69
+    final double bottomPadding = (screenHeight * 0.035).clamp(16, 32); // further reduced for even closer button-to-banner distance
     final double infoTextFontSize = (screenWidth * 0.04).clamp(13, 18); // replaces 16
     final double beginTextFontSize = (screenWidth * 0.06).clamp(18, 28);
 

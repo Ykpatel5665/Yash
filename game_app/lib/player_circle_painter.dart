@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PlayerCirclePainter extends CustomPainter {
   final List<String> players;
@@ -126,7 +125,8 @@ Color(0xFFFF3D00), // Blaze Orange
       // Use only white text for all slices
       final Color textColor = Colors.white;
       final TextSpan span = TextSpan(
-        style: GoogleFonts.baloo2(
+        style: TextStyle(
+          fontFamily: 'Baloo2',
           color: textColor,
           fontSize: responsiveFontSize,
           fontWeight: FontWeight.bold,

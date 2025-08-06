@@ -1,7 +1,6 @@
 import 'services/question_db_service.dart';
 import 'services/question_api_service.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'add_players_screen.dart';
@@ -193,7 +192,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         ),
       ],
     );
-    final TextStyle titleStyle = GoogleFonts.baloo2(
+    final TextStyle titleStyle = TextStyle(
+      fontFamily: 'Baloo2',
       fontWeight: FontWeight.bold,
       fontSize: 22,
       color: Colors.white,
@@ -205,7 +205,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         ),
       ],
     );
-    final TextStyle contentStyle = GoogleFonts.baloo2(
+    final TextStyle contentStyle = TextStyle(
+      fontFamily: 'Baloo2',
       fontSize: 16,
       color: Colors.white.withOpacity(0.9),
     );
@@ -255,8 +256,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                         ),
                         child: Text(
                           localizations.cancel,
-                          style: GoogleFonts.baloo2(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontFamily: 'Baloo2', fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                         onPressed: () {
                           Navigator.of(confirmDialogContext).pop(false);
@@ -273,7 +274,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                         ),
                         child: Text(
                           localizations.continueStr,
-                          style: GoogleFonts.baloo2(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontFamily: 'Baloo2', fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {
                           Navigator.of(confirmDialogContext).pop(true);
@@ -488,7 +489,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             Expanded(
               child: AutoSizeText(
                 label,
-                style: GoogleFonts.baloo2(
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
                   fontSize: effectiveFontSize,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -622,7 +624,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               Flexible(
                                                 child: Text(label,
                                                     overflow: TextOverflow.visible,
-                                                    style: GoogleFonts.baloo2(
+                                                    style: TextStyle(
+                                                      fontFamily: 'Baloo2',
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
                                                       color: selected ? Colors.white : Colors.white.withOpacity(0.92),
@@ -778,7 +781,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                   elevation: 0,
                                                   shadowColor:
                                                       Colors.transparent,
-                                                  textStyle: GoogleFonts.baloo2(
+                                                  textStyle: TextStyle(
+                                                    fontFamily: 'Baloo2',
                                                     fontSize:
                                                         continueFontSize, // Responsive
                                                     fontWeight: FontWeight.bold,
@@ -839,7 +843,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                                 context)!
                                                             .continueBtn,
                                                         style:
-                                                            GoogleFonts.baloo2(
+                                                            TextStyle(
+                                                          fontFamily: 'Baloo2',
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize:

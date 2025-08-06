@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'truth_dare_data.dart';
 import 'truth_dare_question_screen.dart';
@@ -179,7 +178,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                     children: [
                       AutoSizeText(
                         localizations.scoreboard,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: (screenSize.width * 0.08).clamp(24, 36),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -224,7 +224,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                     children: [
                                       AutoSizeText(
                                         player,
-                                        style: GoogleFonts.baloo2(
+                                        style: TextStyle(
+                                          fontFamily: 'Baloo2',
                                           fontSize: fontSize,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
@@ -244,7 +245,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                         ),
                                         child: AutoSizeText(
                                           _playerScores[player]?.toString() ?? '0',
-                                          style: GoogleFonts.baloo2(
+                                          style: TextStyle(
+                                            fontFamily: 'Baloo2',
                                             fontSize: fontSize,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -307,7 +309,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                               vertical: (screenSize.height * 0.022).clamp(12, 28),
                               horizontal: (screenSize.width * 0.08).clamp(18, 40),
                             ),
-                            textStyle: GoogleFonts.baloo2(
+                            textStyle: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: buttonFontSize,
                               fontWeight: FontWeight.bold,
                             ),
@@ -315,7 +318,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           child: Center(
                             child: Text(
                               localizations.close,
-                              style: GoogleFonts.baloo2(
+                              style: TextStyle(
+                                fontFamily: 'Baloo2',
                                 fontWeight: FontWeight.bold,
                                 fontSize: buttonFontSize,
                                 color: Colors.white,
@@ -407,7 +411,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.quitGameTitle,
-                            style: GoogleFonts.baloo2(
+                            style: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: titleFontSize,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -437,7 +442,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                           SizedBox(height: sectionSpacing),
                           Text(
                             AppLocalizations.of(context)!.quitGameMessage,
-                            style: GoogleFonts.baloo2(
+                            style: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: messageFontSize,
                               color: Colors.white.withOpacity(0.92),
                               fontWeight: FontWeight.w500,
@@ -482,14 +488,16 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                       padding: EdgeInsets.symmetric(
                                           vertical: buttonVerticalPadding),
                                       minimumSize: const Size(0, 48),
-                                      textStyle: GoogleFonts.baloo2(
+                                      textStyle: TextStyle(
+                                        fontFamily: 'Baloo2',
                                         fontWeight: FontWeight.w800,
                                         fontSize: buttonFontSize,
                                       ),
                                     ),
                                     child: Text(
                                       AppLocalizations.of(context)!.no,
-                                      style: GoogleFonts.baloo2(
+                                      style: TextStyle(
+                                        fontFamily: 'Baloo2',
                                         color: Colors.white.withOpacity(0.7),
                                         fontWeight: FontWeight.w800,
                                         fontSize: buttonFontSize,
@@ -510,14 +518,16 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                     padding: EdgeInsets.symmetric(
                                         vertical: buttonVerticalPadding),
                                     minimumSize: const Size(0, 48),
-                                    textStyle: GoogleFonts.baloo2(
+                                    textStyle: TextStyle(
+                                      fontFamily: 'Baloo2',
                                       fontWeight: FontWeight.w600,
                                       fontSize: buttonFontSize,
                                     ),
                                   ),
                                   child: Text(
                                     AppLocalizations.of(context)!.yes,
-                                    style: GoogleFonts.baloo2(
+                                    style: TextStyle(
+                                      fontFamily: 'Baloo2',
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,
                                       fontSize: buttonFontSize,
@@ -887,7 +897,8 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.visible,
                   wrapWords: false,
-                  style: GoogleFonts.baloo2(
+                  style: TextStyle(
+                    fontFamily: 'Baloo2',
                     fontWeight: FontWeight.bold,
                     fontSize: (screenWidth * 0.045).clamp(16.0, 28.0),
                     color: Colors.white.withOpacity(0.92),
@@ -965,12 +976,14 @@ class _TruthDareDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.symmetric(vertical: 18),
-      textStyle: GoogleFonts.baloo2(
+      textStyle: TextStyle(
+        fontFamily: 'Baloo2',
         fontWeight: FontWeight.bold,
         fontSize: 22,
       ),
     );
-    TextStyle buttonTextStyle = GoogleFonts.baloo2(
+    TextStyle buttonTextStyle = TextStyle(
+      fontFamily: 'Baloo2',
       fontWeight: FontWeight.bold,
       fontSize: 22,
       color: Colors.white,
@@ -1012,7 +1025,8 @@ class _TruthDareDialog extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.whoopsieTitle,
-                    style: GoogleFonts.baloo2(
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -1040,7 +1054,8 @@ class _TruthDareDialog extends StatelessWidget {
                   SizedBox(height: 28),
                   Text(
                     AppLocalizations.of(context)!.itsTurn(playerName),
-                    style: GoogleFonts.baloo2(
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
                       fontSize: 24,
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
@@ -1100,7 +1115,8 @@ class _TruthDareDialog extends StatelessWidget {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.chooseRandomBtn,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: (screenSize.width * 0.038).clamp(12, 16),
                           color: Colors.white.withOpacity(0.7),
                           fontWeight: FontWeight.w500,

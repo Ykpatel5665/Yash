@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'smart_banner_mobile.dart'; // Import SmartBanner
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'main.dart'; // Import main.dart to access GameMode and AgeGroup enums
@@ -82,7 +82,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     if (_players.length >= 20) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: GoogleFonts.baloo2(color: Colors.white)),
+          content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: TextStyle(fontFamily: 'Baloo2', color: Colors.white)),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -99,7 +99,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
     } else if (name.isNotEmpty && _players.any((p) => p.name == name)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$name ${AppLocalizations.of(context)!.alreadyAdded}', style: GoogleFonts.baloo2(color: Colors.white)),
+          content: Text('$name ${AppLocalizations.of(context)!.alreadyAdded}', style: TextStyle(fontFamily: 'Baloo2', color: Colors.white)),
           backgroundColor: Colors.orangeAccent,
         ),
       );
@@ -223,7 +223,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                               if (_players.length >= 20) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: GoogleFonts.baloo2(color: Colors.white)),
+                                    content: Text(AppLocalizations.of(context)!.maxPlayersWarning, style: TextStyle(fontFamily: 'Baloo2', color: Colors.white)),
                                     backgroundColor: Colors.redAccent,
                                   ),
                                 );
@@ -299,7 +299,8 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                         ),
                         elevation: 0,
                         shadowColor: Colors.transparent,
-                        textStyle: GoogleFonts.baloo2(
+                        textStyle: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: beginTextFontSize, // Responsive
                           fontWeight: FontWeight.bold,
                         ),
@@ -387,7 +388,7 @@ class _AddPlayersScreenState extends State<AddPlayersScreen> {
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)!.minPlayersWarning,
-                    style: GoogleFonts.baloo2(fontSize: infoTextFontSize, color: Colors.white70), // Responsive
+                    style: TextStyle(fontFamily: 'Baloo2', fontSize: infoTextFontSize, color: Colors.white70), // Responsive
                   ),
                 ),
               ),

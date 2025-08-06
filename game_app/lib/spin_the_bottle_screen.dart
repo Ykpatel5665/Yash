@@ -4,7 +4,7 @@ import 'dart:math' as math; // Import math for rotation
 import 'main.dart'; // For AgeGroup enum
 import 'player_circle_painter.dart'; // Import the player circle widget
 import 'dart:ui';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'truth_dare_data.dart'; // Import for question logic
 import 'truth_dare_question_screen.dart';
 import 'services/question_db_service.dart';
@@ -465,7 +465,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                     children: [
                       AutoSizeText(
                         localizations.scoreboard,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: (screenSize.width * 0.08).clamp(24, 36),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -511,7 +512,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                     children: [
                                       AutoSizeText(
                                         player,
-                                        style: GoogleFonts.baloo2(
+                                        style: TextStyle(
+                                          fontFamily: 'Baloo2',
                                           fontSize: fontSize,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
@@ -531,7 +533,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                         ),
                                         child: AutoSizeText(
                                           _playerScores[player]?.toString() ?? '0',
-                                          style: GoogleFonts.baloo2(
+                                          style: TextStyle(
+                                            fontFamily: 'Baloo2',
                                             fontSize: fontSize,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -598,7 +601,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                               vertical: (screenSize.height * 0.022).clamp(12, 28),
                               horizontal: (screenSize.width * 0.08).clamp(18, 40),
                             ),
-                            textStyle: GoogleFonts.baloo2(
+                            textStyle: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: buttonFontSize,
                               fontWeight: FontWeight.bold,
                             ),
@@ -606,7 +610,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                           child: Center(
                             child: Text(
                               localizations.close,
-                              style: GoogleFonts.baloo2(
+                              style: TextStyle(
+                                fontFamily: 'Baloo2',
                                 fontWeight: FontWeight.bold,
                                 fontSize: buttonFontSize,
                                 color: Colors.white,
@@ -710,7 +715,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                     children: [
                       Text(
                         AppLocalizations.of(context)!.quitGameTitle,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -739,7 +745,8 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                       SizedBox(height: sectionSpacing),
                       Text(
                         AppLocalizations.of(context)!.quitGameMessage,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: messageFontSize,
                           color: Colors.white.withOpacity(0.92),
                           fontWeight: FontWeight.w500,
@@ -780,14 +787,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                   ),
                                   padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
                                   minimumSize: const Size(0, 48),
-                                  textStyle: GoogleFonts.baloo2(
+                                  textStyle: TextStyle(
+                                    fontFamily: 'Baloo2',
                                     fontWeight: FontWeight.w800,
                                     fontSize: buttonFontSize,
                                   ),
                                 ),
                                 child: Text(
                                   AppLocalizations.of(context)!.no,
-                                  style: GoogleFonts.baloo2(
+                                  style: TextStyle(
+                                    fontFamily: 'Baloo2',
                                     color: Colors.white.withOpacity(0.7),
                                     fontWeight: FontWeight.w800,
                                     fontSize: buttonFontSize,
@@ -807,14 +816,16 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
                                 foregroundColor: Colors.white,
                                 padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
                                 minimumSize: const Size(0, 48),
-                                textStyle: GoogleFonts.baloo2(
+                                textStyle: TextStyle(
+                                  fontFamily: 'Baloo2',
                                   fontWeight: FontWeight.w600,
                                   fontSize: buttonFontSize,
                                 ),
                               ),
                               child: Text(
                                 AppLocalizations.of(context)!.yes,
-                                style: GoogleFonts.baloo2(
+                                style: TextStyle(
+                                  fontFamily: 'Baloo2',
                                   color: Colors.white,
                                   fontWeight: FontWeight.w400,
                                   fontSize: buttonFontSize,
@@ -1112,13 +1123,15 @@ class _TruthDareDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.symmetric(vertical: 18),
-      textStyle: GoogleFonts.baloo2(
+      textStyle: TextStyle(
+        fontFamily: 'Baloo2',
         fontWeight: FontWeight.bold,
         fontSize: 22,
       ),
     );
 
-    TextStyle buttonTextStyle = GoogleFonts.baloo2(
+    TextStyle buttonTextStyle = TextStyle(
+      fontFamily: 'Baloo2',
       fontWeight: FontWeight.bold,
       fontSize: 22,
       color: Colors.white,
@@ -1161,7 +1174,8 @@ class _TruthDareDialog extends StatelessWidget {
                 children: [
                   Text(
                     localizations.whoopsieTitle,
-                    style: GoogleFonts.baloo2(
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -1189,7 +1203,8 @@ class _TruthDareDialog extends StatelessWidget {
                   SizedBox(height: 28),
                   Text(
                     localizations.itsTurn(playerName),
-                    style: GoogleFonts.baloo2(
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
                       fontSize: 24,
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
@@ -1249,7 +1264,8 @@ class _TruthDareDialog extends StatelessWidget {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.chooseRandomBtn,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: (screenSize.width * 0.038).clamp(12, 16),
                           color: Colors.white.withOpacity(0.7),
                           fontWeight: FontWeight.w500,

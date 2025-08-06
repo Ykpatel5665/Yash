@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import 'smart_banner_mobile.dart'; // Import SmartBanner
 import 'main.dart';
 import 'dart:ui';
@@ -71,12 +70,14 @@ class _TruthDareDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.symmetric(vertical: 18),
-      textStyle: GoogleFonts.baloo2(
+      textStyle: TextStyle(
+        fontFamily: 'Baloo2',
         fontWeight: FontWeight.bold,
         fontSize: 22,
       ),
     );
-    TextStyle buttonTextStyle = GoogleFonts.baloo2(
+    TextStyle buttonTextStyle = TextStyle(
+      fontFamily: 'Baloo2',
       fontWeight: FontWeight.bold,
       fontSize: 22,
       color: Colors.white,
@@ -118,7 +119,8 @@ class _TruthDareDialog extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     localizations.whoopsieTitle,
-                    style: GoogleFonts.baloo2(
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -149,7 +151,8 @@ class _TruthDareDialog extends StatelessWidget {
                   SizedBox(height: 28),
                   AutoSizeText(
                     localizations.itsTurn(playerName),
-                    style: GoogleFonts.baloo2(
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
                       fontSize: 24,
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
@@ -218,7 +221,8 @@ class _TruthDareDialog extends StatelessWidget {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.chooseRandomBtn,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: (screenSize.width * 0.038).clamp(12, 16),
                           color: Colors.white.withOpacity(0.7),
                           fontWeight: FontWeight.w500,
@@ -484,7 +488,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     children: [
                       AutoSizeText(
                         AppLocalizations.of(context)!.scoreboard,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: (screenSize.width * 0.08).clamp(24, 36),
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -538,7 +543,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                             children: [
                                               AutoSizeText(
                                                 player,
-                                                style: GoogleFonts.baloo2(
+                                                style: TextStyle(
+                                                  fontFamily: 'Baloo2',
                                                   fontSize: fontSize,
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w600,
@@ -568,7 +574,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                                   _playerScores[player]
                                                           ?.toString() ??
                                                       '0',
-                                                  style: GoogleFonts.baloo2(
+                                                  style: TextStyle(
+                                                    fontFamily: 'Baloo2',
                                                     fontSize: fontSize,
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
@@ -640,7 +647,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               horizontal:
                                   (screenSize.width * 0.08).clamp(18, 40),
                             ),
-                            textStyle: GoogleFonts.baloo2(
+                            textStyle: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: buttonFontSize,
                               fontWeight: FontWeight.bold,
                             ),
@@ -648,7 +656,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           child: Center(
                             child: Text(
                               AppLocalizations.of(context)!.close,
-                              style: GoogleFonts.baloo2(
+                              style: TextStyle(
+                                fontFamily: 'Baloo2',
                                 fontWeight: FontWeight.bold,
                                 fontSize: buttonFontSize,
                                 color: Colors.white,
@@ -754,7 +763,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.quitGameTitle,
-                            style: GoogleFonts.baloo2(
+                            style: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: titleFontSize, // Responsive
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -784,7 +794,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                           SizedBox(height: sectionSpacing), // Responsive
                           Text(
                             AppLocalizations.of(context)!.quitGameMessage,
-                            style: GoogleFonts.baloo2(
+                            style: TextStyle(
+                              fontFamily: 'Baloo2',
                               fontSize: messageFontSize, // Responsive
                               color: Colors.white.withOpacity(0.92),
                               fontWeight: FontWeight.w500,
@@ -830,14 +841,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                       padding: EdgeInsets.symmetric(
                                           vertical: buttonVerticalPadding),
                                       minimumSize: const Size(0, 48),
-                                      textStyle: GoogleFonts.baloo2(
+                                      textStyle: TextStyle(
+                                        fontFamily: 'Baloo2',
                                         fontWeight: FontWeight.w600,
                                         fontSize: buttonFontSize,
                                       ),
                                     ),
                                     child: Text(
                                       AppLocalizations.of(context)!.no,
-                                      style: GoogleFonts.baloo2(
+                                      style: TextStyle(
+                                        fontFamily: 'Baloo2',
                                         color: Colors.white.withOpacity(0.7),
                                         fontWeight: FontWeight.w800,
                                         fontSize: buttonFontSize,
@@ -859,14 +872,16 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                     padding: EdgeInsets.symmetric(
                                         vertical: buttonVerticalPadding),
                                     minimumSize: const Size(0, 48),
-                                    textStyle: GoogleFonts.baloo2(
+                                    textStyle: TextStyle(
+                                      fontFamily: 'Baloo2',
                                       fontWeight: FontWeight.w600,
                                       fontSize: buttonFontSize,
                                     ),
                                   ),
                                   child: Text(
                                     AppLocalizations.of(context)!.yes,
-                                    style: GoogleFonts.baloo2(
+                                    style: TextStyle(
+                                      fontFamily: 'Baloo2',
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,
                                       fontSize: buttonFontSize,
@@ -1044,7 +1059,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                               maxLines: 1,
                                               overflow: TextOverflow.visible,
                                               wrapWords: false,
-                                              style: GoogleFonts.baloo2(
+                                              style: TextStyle(
+                                                fontFamily: 'Baloo2',
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: (screenWidth * 0.045)
                                                     .clamp(16.0, 28.0),
@@ -1139,7 +1155,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                 horizontal: (screenWidth * 0.18).clamp(32, 60),
                                 vertical: (screenHeight * 0.025).clamp(14, 28),
                               ),
-                              textStyle: GoogleFonts.baloo2(
+                              textStyle: TextStyle(
+                                fontFamily: 'Baloo2',
                                 fontSize: (screenWidth * 0.045).clamp(15, 22),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1154,7 +1171,8 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                               maxLines: 1,
                               overflow: TextOverflow.visible,
                               wrapWords: false,
-                              style: GoogleFonts.baloo2(
+                              style: TextStyle(
+                                fontFamily: 'Baloo2',
                                 fontWeight: FontWeight.bold,
                                 fontSize: (screenWidth * 0.045).clamp(15, 22),
                                 color: Colors.white,

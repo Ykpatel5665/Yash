@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
@@ -128,16 +127,16 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Truth or Dare',
       theme: ThemeData(
-        fontFamily: GoogleFonts.baloo2().fontFamily, // Set Baloo 2 as default
+        fontFamily: 'Baloo2', // Set Baloo 2 as default
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepOrange,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
         appBarTheme: AppBarTheme(
-          titleTextStyle: GoogleFonts.baloo2(
+          titleTextStyle: TextStyle(
+            fontFamily: 'Baloo2',
             fontWeight: FontWeight.bold,
-            // Use Baloo 2 for AppBar
             fontSize: 40, // Slightly larger AppBar title
             color: Colors.white,
             shadows: [
@@ -517,7 +516,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         );
 
-            final TextStyle titleStyle = GoogleFonts.baloo2(
+            final TextStyle titleStyle = TextStyle(
+              fontFamily: 'Baloo2',
               fontWeight: FontWeight.bold,
               fontSize: 22,
               color: Colors.white, // White title
@@ -530,7 +530,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             );
 
-            final TextStyle contentStyle = GoogleFonts.baloo2(
+            final TextStyle contentStyle = TextStyle(
+              fontFamily: 'Baloo2',
               fontSize: 16,
               color: Colors.white
                   .withOpacity(0.9), // Slightly transparent white content
@@ -575,8 +576,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.cancel,
-                              style: GoogleFonts.baloo2(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  fontFamily: 'Baloo2', fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             onPressed: () {
                               Navigator.of(confirmDialogContext).pop(false);
@@ -593,7 +594,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.continueStr,
-                              style: GoogleFonts.baloo2(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontFamily: 'Baloo2', fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
                               Navigator.of(confirmDialogContext).pop(true);
@@ -699,7 +700,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fit: BoxFit.scaleDown,
                                   child: Text(
                                     label,
-                                    style: GoogleFonts.baloo2(
+                                    style: TextStyle(
+                                      fontFamily: 'Baloo2',
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: txtSz,
@@ -771,7 +773,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.gameSetup,
-                                style: GoogleFonts.baloo2(
+                                style: TextStyle(
+                                  fontFamily: 'Baloo2',
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -788,7 +791,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   AppLocalizations.of(context)!.gameMode,
-                                  style: GoogleFonts.baloo2(
+                                  style: TextStyle(
+                                    fontFamily: 'Baloo2',
                                     color: Colors.white.withOpacity(0.92),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 24,
@@ -839,7 +843,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   AppLocalizations.of(context)!.ageGroup,
-                                  style: GoogleFonts.baloo2(
+                                  style: TextStyle(
+                                    fontFamily: 'Baloo2',
                                     color: Colors.white.withOpacity(0.92),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 24,
@@ -934,7 +939,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Expanded(
                                       child: Text(
                                         AppLocalizations.of(context)!.useTimer,
-                                        style: GoogleFonts.baloo2(
+                                        style: TextStyle(
+                                          fontFamily: 'Baloo2',
                                           color: Colors.white.withOpacity(0.92),
                                           fontWeight: FontWeight.w700,
                                           fontSize: 20,
@@ -973,7 +979,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                       Expanded(
                                         child: Text(
                                           AppLocalizations.of(context)!.haptics, // Localized label
-                                          style: GoogleFonts.baloo2(
+                                          style: TextStyle(
+                                            fontFamily: 'Baloo2',
                                             color: Colors.white.withOpacity(0.92),
                                             fontWeight: FontWeight.w700,
                                             fontSize: 20,
@@ -1010,7 +1017,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Expanded(
                                       child: Text(
                                         AppLocalizations.of(context)!.dontShowAgain,
-                                        style: GoogleFonts.baloo2(
+                                        style: TextStyle(
+                                          fontFamily: 'Baloo2',
                                           color: Colors.white.withOpacity(0.92),
                                           fontWeight: FontWeight.w700,
                                           fontSize: 20,
@@ -1038,14 +1046,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         padding: const EdgeInsets.symmetric(vertical: 16),
                                         minimumSize: const Size(0, 48),
-                                        textStyle: GoogleFonts.baloo2(
+                                        textStyle: TextStyle(
+                                          fontFamily: 'Baloo2',
                                           fontSize: 18,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       child: Text(
                                         AppLocalizations.of(context)!.cancel,
-                                        style: GoogleFonts.baloo2(
+                                        style: TextStyle(
+                                          fontFamily: 'Baloo2',
                                           color: Colors.white.withOpacity(0.7),
                                           fontWeight: FontWeight.w600,
                                           fontSize: 18,
@@ -1094,14 +1104,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                           padding: const EdgeInsets.symmetric(vertical: 16),
                                           minimumSize: const Size(0, 48),
-                                          textStyle: GoogleFonts.baloo2(
+                                          textStyle: TextStyle(
+                                            fontFamily: 'Baloo2',
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
                                         child: Text(
                                           AppLocalizations.of(context)!.save,
-                                          style: GoogleFonts.baloo2(
+                                          style: TextStyle(
+                                            fontFamily: 'Baloo2',
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 18,
@@ -1438,7 +1450,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 text,
                 textAlign: TextAlign.center, // Keep the text centered
-                style: GoogleFonts.baloo2(
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   color: fgColor,

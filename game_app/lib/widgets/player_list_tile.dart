@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import '../l10n/app_localizations.dart';
 import '../../models/player.dart';
@@ -37,7 +36,8 @@ class PlayerListTile extends StatelessWidget {
         // Remove the leading color box
         title: AutoSizeText(
           player.name,
-          style: GoogleFonts.baloo2(
+          style: TextStyle(
+            fontFamily: 'Baloo2',
             color: Colors.white,
             fontSize: fontSize,
             fontWeight: FontWeight.bold,

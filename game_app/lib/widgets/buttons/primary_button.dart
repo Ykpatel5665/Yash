@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import '../../utils/sound_manager.dart';
 
@@ -62,7 +61,8 @@ class PrimaryButton extends StatelessWidget {
         ],
         AutoSizeText(
           label,
-          style: GoogleFonts.baloo2(
+          style: TextStyle(
+            fontFamily: 'Baloo2',
             fontWeight: FontWeight.bold,
             fontSize: responsiveFontSize,
             color: effectiveFg,
@@ -91,7 +91,7 @@ class PrimaryButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(responsiveRadius)),
         elevation: gradient == null ? effectiveElevation : 0,
         shadowColor: Colors.transparent,
-        textStyle: GoogleFonts.baloo2(fontWeight: FontWeight.bold, fontSize: responsiveFontSize),
+        textStyle: TextStyle(fontFamily: 'Baloo2', fontWeight: FontWeight.bold, fontSize: responsiveFontSize),
       ),
       child: buttonChild,
     );

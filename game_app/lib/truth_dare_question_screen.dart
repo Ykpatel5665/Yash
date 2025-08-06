@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/sound_manager.dart';
 import 'smart_banner_mobile.dart'; // Import SmartBanner
@@ -164,7 +164,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                       SizedBox(height: 18),
                       Text(
                         title,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -177,7 +178,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                       SizedBox(height: 12),
                       Text(
                         message,
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontSize: messageFontSize,
                           color: Colors.white.withOpacity(0.92),
                           fontWeight: FontWeight.w500,
@@ -216,12 +218,13 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
-                              textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                              textStyle: TextStyle(fontFamily: 'Baloo2', fontSize: buttonFontSize, fontWeight: FontWeight.bold),
                             ),
                             child: Center(
                               child: Text(
                                 AppLocalizations.of(context)!.continueStr,
-                                style: GoogleFonts.baloo2(
+                                style: TextStyle(
+                                  fontFamily: 'Baloo2',
                                   fontWeight: FontWeight.bold,
                                   fontSize: buttonFontSize,
                                   color: Colors.white,
@@ -322,10 +325,11 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
       foregroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       padding: const EdgeInsets.symmetric(vertical: 26),
-      textStyle: GoogleFonts.baloo2(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+      textStyle: TextStyle(fontFamily: 'Baloo2', fontSize: buttonFontSize, fontWeight: FontWeight.bold),
     );
 
-    final TextStyle forfeitButtonTextStyle = GoogleFonts.baloo2(
+    final TextStyle forfeitButtonTextStyle = TextStyle(
+      fontFamily: 'Baloo2',
       fontWeight: FontWeight.bold,
       fontSize: buttonFontSize,
       color: Colors.white,
@@ -390,7 +394,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                       ),
                       Text(
                         '$_secondsLeft',
-                        style: GoogleFonts.baloo2(
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
                           fontWeight: FontWeight.bold,
                           fontSize: timerFontSize,
                           color: Colors.white,
@@ -473,7 +478,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                                 widget.isTruth
                                     ? AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.truthBtn
                                     : AppLocalizations.of(context)!.itsStr + AppLocalizations.of(context)!.dareBtn,
-                                style: GoogleFonts.baloo2(
+                                style: TextStyle(
+                                  fontFamily: 'Baloo2',
                                   fontSize: headerFontSize,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -511,7 +517,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                                 alignment: Alignment.center,
                                 child: Text(
                                   widget.questionText,
-                                  style: GoogleFonts.baloo2(
+                                  style: TextStyle(
+                                    fontFamily: 'Baloo2',
                                     fontSize: questionFontSize * 1.18,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -537,7 +544,8 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                                   padding: EdgeInsets.only(bottom: betweenHeaderAndIcon * 0.22),
                                   child: Text(
                                     AppLocalizations.of(context)!.playerTask(widget.playerName),
-                                    style: GoogleFonts.baloo2(
+                                    style: TextStyle(
+                                      fontFamily: 'Baloo2',
                                       fontSize: fontSize,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,

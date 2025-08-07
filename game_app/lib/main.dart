@@ -1358,14 +1358,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       // ... (keep existing bottom bar) ...
                       Padding(
                         padding: EdgeInsets.only(
-                            bottom: screenHeight *
-                                0.03), // Add padding below the buttons
+                            bottom: screenHeight * 0.03),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            _buildBottomBarButton(Icons.star, () {
-                              // TODO: Ratings pressed
-                            }, tooltip: AppLocalizations.of(context)!.ratings),
+                            Consumer<SoundProvider>(
+                              builder: (context, soundProvider, child) {
+                                final bool isSoundOn = soundProvider.isSoundOn;
+                                return _buildBottomBarButton(
+                                  isSoundOn ? Icons.volume_up : Icons.volume_off,
+                                  () {
+                                    soundProvider.setSound(!isSoundOn);
+                                  },
+                                  tooltip: isSoundOn
+                                      ? AppLocalizations.of(context)!.haptics // Or 'Sound On'
+                                      : AppLocalizations.of(context)!.haptics, // Or 'Sound Off'
+                                );
+                              },
+                            ),
                             _buildBottomBarButton(Icons.share, () {
                               // TODO: Share pressed
                             }, tooltip: AppLocalizations.of(context)!.share),

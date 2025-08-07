@@ -602,36 +602,63 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                         return const SizedBox(height: 32);
                                       }
                                       final cat = _categories[idx];
-                                      final bool selected = _selectedCategoryIds
-                                          .contains(cat.key);
+                                      final bool selected = _selectedCategoryIds.contains(cat.key);
                                       // Use only API's labels and emoji for multilingual support
                                       final localeCode = Localizations.localeOf(context).languageCode;
                                       final label = cat.labels[localeCode] ?? cat.labels['en'] ?? cat.key;
+                                      final bool needsConsent = _consentRequiredAdultCategories.contains(cat.key);
                                       return Padding(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: (MediaQuery.of(context)
-                                                            .size
-                                                            .height *
-                                                        0.012)
-                                                    .clamp(4, 16) /
-                                                2),
+                                            vertical: (MediaQuery.of(context).size.height * 0.012).clamp(4, 16) / 2),
                                         child: ToggleButton(
-                                          label: Row(
-                                            mainAxisSize: MainAxisSize.min,
+                                          label: Stack(
                                             children: [
-                                              Text(cat.emoji, style: TextStyle(fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26))),
-                                              const SizedBox(width: 10),
-                                              Flexible(
-                                                child: Text(label,
-                                                    overflow: TextOverflow.visible,
-                                                    style: TextStyle(
-                                                      fontFamily: 'Baloo2',
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
-                                                      color: selected ? Colors.white : Colors.white.withOpacity(0.92),
-                                                      letterSpacing: 0.5,
-                                                    )),
+                                              Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(cat.emoji, style: TextStyle(fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26))),
+                                                  const SizedBox(width: 10),
+                                                  Expanded(
+                                                    child: Text(
+                                                      label,
+                                                      maxLines: 2,
+                                                      overflow: TextOverflow.visible,
+                                                      style: TextStyle(
+                                                        fontFamily: 'Baloo2',
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
+                                                        color: selected ? Colors.white : Colors.white.withOpacity(0.92),
+                                                        letterSpacing: 0.5,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 36), // Reserve space for the label
+                                                ],
                                               ),
+                                              if (needsConsent)
+                                                Positioned(
+                                                  right: 0,
+                                                  top: 0,
+                                                  bottom: 0,
+                                                  child: Center(
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                                      decoration: BoxDecoration(
+                                                        color: Color(0xFFD32F2F),
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                      child: const Text(
+                                                        '18+',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 13,
+                                                          letterSpacing: 0.5,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                             ],
                                           ),
                                           selected: selected,
@@ -646,11 +673,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                           },
                                           icon: null,
                                           iconSize: 0,
-                                          fontSize: (MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.06)
-                                              .clamp(16, 26),
+                                          fontSize: (MediaQuery.of(context).size.width * 0.06).clamp(16, 26),
                                         ),
                                       );
 // ...existing code...

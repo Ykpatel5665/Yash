@@ -434,22 +434,23 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             Navigator.of(context).pop();
             setState(() {
               _remainingIndices.remove(_currentIndex); // Remove current player
-              bool lastPlayer = _remainingIndices.isEmpty;
-              _roundsSinceLastAd++;
-              void continueGame() {
-                setState(() {
-                  if (lastPlayer) {
-                    _lastPlayerFinished = true;
-                  } else {
-                    _gameStarted = false; // Show Start button for next turn
-                  }
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
+              if (_roundsSinceLastAd == 0) {
+                _showInterstitialAdIfReady(() {
+                  setState(() {
+                    if (_remainingIndices.isEmpty) {
+                      _lastPlayerFinished = true;
+                    } else {
+                      _gameStarted = false; // Show Start button for next turn
+                    }
+                  });
                 });
-              }
-              if (_roundsSinceLastAd >= 3) {
-                _roundsSinceLastAd = 0;
-                _showInterstitialAdIfReady(continueGame);
               } else {
-                continueGame();
+                if (_remainingIndices.isEmpty) {
+                  _lastPlayerFinished = true;
+                } else {
+                  _gameStarted = false; // Show Start button for next turn
+                }
               }
             });
           },
@@ -457,22 +458,23 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             Navigator.of(context).pop();
             setState(() {
               _remainingIndices.remove(_currentIndex); // Remove current player
-              bool lastPlayer = _remainingIndices.isEmpty;
-              _roundsSinceLastAd++;
-              void continueGame() {
-                setState(() {
-                  if (lastPlayer) {
-                    _lastPlayerFinished = true;
-                  } else {
-                    _gameStarted = false; // Show Start button for next turn
-                  }
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
+              if (_roundsSinceLastAd == 0) {
+                _showInterstitialAdIfReady(() {
+                  setState(() {
+                    if (_remainingIndices.isEmpty) {
+                      _lastPlayerFinished = true;
+                    } else {
+                      _gameStarted = false; // Show Start button for next turn
+                    }
+                  });
                 });
-              }
-              if (_roundsSinceLastAd >= 3) {
-                _roundsSinceLastAd = 0;
-                _showInterstitialAdIfReady(continueGame);
               } else {
-                continueGame();
+                if (_remainingIndices.isEmpty) {
+                  _lastPlayerFinished = true;
+                } else {
+                  _gameStarted = false; // Show Start button for next turn
+                }
               }
             });
           },
@@ -1209,8 +1211,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                     Positioned(
                       left: horizontalPadding,
                       right: horizontalPadding,
-                      bottom: bottomPadding +
-                          70, // Place above the bottom buttons row
+                      bottom: bottomPadding + 16, // Lower, just above the smart banner
                       child: Column(
                         children: [
                           ElevatedButton(

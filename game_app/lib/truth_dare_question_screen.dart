@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:math';
 import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/sound_manager.dart';
 import 'smart_banner_mobile.dart'; // Import SmartBanner
@@ -314,10 +313,10 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
     final double buttonSpacing = (width * 0.045).clamp(10, 28);
     final double headerTopPadding = (height * 0.02).clamp(10, 32);
     final double headerSidePadding = (width * 0.02).clamp(6, 18);
-    final double rowBottomPadding = (height * 0.08).clamp(32, 90);
+    final double rowBottomPadding = (height * 0.035).clamp(16, 32); // match other screens for button-to-banner spacing
     final double betweenHeaderAndIcon = (height * 0.02).clamp(8, 28);
     final double betweenIconAndQuestion = (height * 0.01).clamp(4, 18);
-    final double afterButtons = (height * 0.01).clamp(8, 24);
+    final double afterButtons = (height * 0.0035).clamp(4, 12); // reduced for closer button-to-banner distance
 
     final ButtonStyle forfeitButtonStyle = ElevatedButton.styleFrom(
       elevation: 0,

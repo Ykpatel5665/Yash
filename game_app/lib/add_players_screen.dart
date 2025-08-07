@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
 import 'smart_banner_mobile.dart'; // Import SmartBanner
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'main.dart'; // Import main.dart to access GameMode and AgeGroup enums

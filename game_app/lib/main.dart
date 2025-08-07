@@ -13,6 +13,7 @@ import 'utils/connectivity_helper.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:share_plus/share_plus.dart';
 import 'widgets/headers/app_header.dart';
 import 'utils/sound_manager.dart';
 import 'package:provider/provider.dart';
@@ -1377,7 +1378,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               },
                             ),
                             _buildBottomBarButton(Icons.share, () {
-                              // TODO: Share pressed
+                              // Share app link using share_plus
+                              Share.share(
+                                'Check out this awesome Truth or Dare app!\n\nDownload for Android: https://play.google.com/store/apps/details?id=com.therisingtechie.truthordare\nDownload for iOS: https://apps.apple.com/us/app/truth-or-dare-game/id1293241145',
+                                subject: 'Truth or Dare Game',
+                              );
                             }, tooltip: AppLocalizations.of(context)!.share),
                             _buildBottomBarButton(Icons.settings, () {
                               SoundManager.playButtonSound(context: context);

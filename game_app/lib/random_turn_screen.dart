@@ -1,3 +1,4 @@
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'smart_banner_mobile.dart'; // Import SmartBanner
@@ -266,6 +267,59 @@ class RandomTurnScreen extends StatefulWidget {
 }
 
 class _RandomTurnScreenState extends State<RandomTurnScreen> {
+  // Interstitial Ad logic
+  InterstitialAd? _interstitialAd;
+  int _roundsSinceLastAd = 0;
+  bool _isInterstitialLoading = false;
+  static const String _interstitialAdUnitId = 'ca-app-pub-9458331875641856/3827341528';
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
+
+  void _loadInterstitialAd() {
+    if (_isInterstitialLoading) return;
+    _isInterstitialLoading = true;
+    InterstitialAd.load(
+      adUnitId: _interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _isInterstitialLoading = false;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialAd = null;
+          _isInterstitialLoading = false;
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAdIfReady(VoidCallback onContinue) {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _interstitialAd = null;
+          _loadInterstitialAd();
+          onContinue();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _interstitialAd = null;
+          _loadInterstitialAd();
+          onContinue();
+        },
+      );
+      _interstitialAd!.show();
+    } else {
+      _loadInterstitialAd();
+      onContinue();
+    }
+  }
   late List<int> _remainingIndices;
   int? _currentIndex;
   final Random _random = Random();
@@ -367,26 +421,35 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
   Future<void> _showTruthOrDareScreen(bool isTruth) async {
     if (_currentIndex == null) return;
     final playerName = widget.players[_currentIndex!];
-    final question =
-        await _getRandomQuestionFromJson(type: isTruth ? 'truth' : 'dare');
+    final question = await _getRandomQuestionFromJson(type: isTruth ? 'truth' : 'dare');
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TruthDareQuestionScreen(
           playerName: playerName,
-          questionText: question?.text ??
-              (isTruth ? 'No truth found.' : 'No dare found.'),
+          questionText: question?.text ?? (isTruth ? 'No truth found.' : 'No dare found.'),
           isTruth: isTruth,
           onDone: () {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
             Navigator.of(context).pop();
             setState(() {
               _remainingIndices.remove(_currentIndex); // Remove current player
-              if (_remainingIndices.isEmpty) {
-                _lastPlayerFinished = true;
+              bool lastPlayer = _remainingIndices.isEmpty;
+              _roundsSinceLastAd++;
+              void continueGame() {
+                setState(() {
+                  if (lastPlayer) {
+                    _lastPlayerFinished = true;
+                  } else {
+                    _gameStarted = false; // Show Start button for next turn
+                  }
+                });
+              }
+              if (_roundsSinceLastAd >= 3) {
+                _roundsSinceLastAd = 0;
+                _showInterstitialAdIfReady(continueGame);
               } else {
-                _gameStarted =
-                    false; // Wait for user to press Start for next turn
+                continueGame();
               }
             });
           },
@@ -394,11 +457,22 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
             Navigator.of(context).pop();
             setState(() {
               _remainingIndices.remove(_currentIndex); // Remove current player
-              if (_remainingIndices.isEmpty) {
-                _lastPlayerFinished = true;
+              bool lastPlayer = _remainingIndices.isEmpty;
+              _roundsSinceLastAd++;
+              void continueGame() {
+                setState(() {
+                  if (lastPlayer) {
+                    _lastPlayerFinished = true;
+                  } else {
+                    _gameStarted = false; // Show Start button for next turn
+                  }
+                });
+              }
+              if (_roundsSinceLastAd >= 3) {
+                _roundsSinceLastAd = 0;
+                _showInterstitialAdIfReady(continueGame);
               } else {
-                _gameStarted =
-                    false; // Wait for user to press Start for next turn
+                continueGame();
               }
             });
           },
@@ -993,8 +1067,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                             children: [
                               PlayerCircle(
                                 players: widget.players,
-                                size: (screenWidth * 0.7)
-                                    .clamp(220.0, screenHeight * 0.55),
+                                size: min(max(screenWidth * 0.7, 220.0), screenHeight * 0.55),
                                 highlightedIndex: _isSpinning
                                     ? _highlightedIndex
                                     : _currentIndex,

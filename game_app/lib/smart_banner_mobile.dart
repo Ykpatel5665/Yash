@@ -25,7 +25,7 @@ class _SmartBannerState extends State<SmartBanner> {
   void _loadBanner({required AdSize adSize}) {
     debugPrint('[SmartBanner] _loadBanner called with adSize: $adSize, _triedFallback: $_triedFallback');
     _bannerAd?.dispose();
-    const adUnitId = 'ca-app-pub-3940256099942544/6300978111';
+    const adUnitId = 'ca-app-pub-9458331875641856/4822531524'; // Real AdMob banner ID
     debugPrint('[SmartBanner] Initializing BannerAd with adUnitId: $adUnitId, size: $adSize');
     _bannerAd = BannerAd(
       adUnitId: adUnitId,

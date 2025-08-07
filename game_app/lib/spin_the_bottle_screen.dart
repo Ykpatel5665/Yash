@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:math' as math; // Import math for rotation
 import 'main.dart'; // For AgeGroup enum
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'player_circle_painter.dart'; // Import the player circle widget
 import 'dart:ui';
 // import 'package:google_fonts/google_fonts.dart';
@@ -47,7 +48,13 @@ class SpinTheBottleScreen extends StatefulWidget {
 }
 
 class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
-    with SingleTickerProviderStateMixin {
+with SingleTickerProviderStateMixin {
+  // Interstitial Ad logic
+  InterstitialAd? _interstitialAd;
+  int _roundsSinceLastAd = 0;
+  bool _isInterstitialLoading = false;
+  static const String _interstitialAdUnitId = 'ca-app-pub-9458331875641856/3827341528';
+
   double _currentAngle = 0.0;
   late final Ticker _spinTicker;
   double _angularVelocity = 0.0; // radians per tick
@@ -65,7 +72,6 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
   DateTime? _dragStartTime; // For velocity calculation
   DateTime? _dragPrevTime;
 
-  // Flags for dialog and game state management
   bool _scoreboardOpen = false;
   bool _quitDialogOpen = false;
   bool _pendingShowTruthDare = false;
@@ -85,13 +91,59 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
     }
     // --- ADDED: Shuffle the color palette at the start of the game ---
     _playerColors = PlayerCirclePainter.shuffleColors();
+    _loadInterstitialAd();
   }
 
   @override
   void dispose() {
     _spinTicker.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
+
+  void _loadInterstitialAd() {
+    if (_isInterstitialLoading) return;
+    _isInterstitialLoading = true;
+    InterstitialAd.load(
+      adUnitId: _interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _isInterstitialLoading = false;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialAd = null;
+          _isInterstitialLoading = false;
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAdIfReady(VoidCallback onContinue) {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _interstitialAd = null;
+          _loadInterstitialAd();
+          onContinue();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _interstitialAd = null;
+          _loadInterstitialAd();
+          onContinue();
+        },
+      );
+      _interstitialAd!.show();
+    } else {
+      _loadInterstitialAd();
+      onContinue();
+    }
+  }
+
+  @override
 
   // --- Called when spin animation finishes ---
   void _onSpinComplete() {
@@ -335,18 +387,44 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
             Navigator.of(context).pop();
             setState(() {
-              _gamePhase = GamePhase.readyToSpin;
-              _selectedPlayerIndex = null;
-              _stopSpin();
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
             });
+            if (_roundsSinceLastAd == 0) {
+              _showInterstitialAdIfReady(() {
+                setState(() {
+                  _gamePhase = GamePhase.readyToSpin;
+                  _selectedPlayerIndex = null;
+                  _stopSpin();
+                });
+              });
+            } else {
+              setState(() {
+                _gamePhase = GamePhase.readyToSpin;
+                _selectedPlayerIndex = null;
+                _stopSpin();
+              });
+            }
           },
           onForfeit: () {
             Navigator.of(context).pop();
             setState(() {
-              _gamePhase = GamePhase.readyToSpin;
-              _selectedPlayerIndex = null;
-              _stopSpin();
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
             });
+            if (_roundsSinceLastAd == 0) {
+              _showInterstitialAdIfReady(() {
+                setState(() {
+                  _gamePhase = GamePhase.readyToSpin;
+                  _selectedPlayerIndex = null;
+                  _stopSpin();
+                });
+              });
+            } else {
+              setState(() {
+                _gamePhase = GamePhase.readyToSpin;
+                _selectedPlayerIndex = null;
+                _stopSpin();
+              });
+            }
           },
           useTimer: widget.useTimer,
         ),
@@ -370,18 +448,44 @@ class _SpinTheBottleScreenState extends State<SpinTheBottleScreen>
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
             Navigator.of(context).pop();
             setState(() {
-              _gamePhase = GamePhase.readyToSpin;
-              _selectedPlayerIndex = null;
-              _stopSpin();
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
             });
+            if (_roundsSinceLastAd == 0) {
+              _showInterstitialAdIfReady(() {
+                setState(() {
+                  _gamePhase = GamePhase.readyToSpin;
+                  _selectedPlayerIndex = null;
+                  _stopSpin();
+                });
+              });
+            } else {
+              setState(() {
+                _gamePhase = GamePhase.readyToSpin;
+                _selectedPlayerIndex = null;
+                _stopSpin();
+              });
+            }
           },
           onForfeit: () {
             Navigator.of(context).pop();
             setState(() {
-              _gamePhase = GamePhase.readyToSpin;
-              _selectedPlayerIndex = null;
-              _stopSpin();
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
             });
+            if (_roundsSinceLastAd == 0) {
+              _showInterstitialAdIfReady(() {
+                setState(() {
+                  _gamePhase = GamePhase.readyToSpin;
+                  _selectedPlayerIndex = null;
+                  _stopSpin();
+                });
+              });
+            } else {
+              setState(() {
+                _gamePhase = GamePhase.readyToSpin;
+                _selectedPlayerIndex = null;
+                _stopSpin();
+              });
+            }
           },
           useTimer: widget.useTimer,
         ),

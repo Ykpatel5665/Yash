@@ -1,3 +1,4 @@
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -46,6 +47,11 @@ class AutoNextTurnScreen extends StatefulWidget {
 }
 
 class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
+  // Interstitial Ad logic
+  InterstitialAd? _interstitialAd;
+  int _roundsSinceLastAd = 0;
+  bool _isInterstitialLoading = false;
+  static const String _interstitialAdUnitId = 'ca-app-pub-9458331875641856/3827341528';
   int _currentIndex = 0;
   bool _lastPlayerFinished = false; // Track if last player finished
   Map<String, int> _playerScores = {};
@@ -67,6 +73,55 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     }
     _playerColors = PlayerCirclePainter.shuffleColors();
     _gameStarted = false;
+    _loadInterstitialAd();
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
+
+  void _loadInterstitialAd() {
+    if (_isInterstitialLoading) return;
+    _isInterstitialLoading = true;
+    InterstitialAd.load(
+      adUnitId: _interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _isInterstitialLoading = false;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialAd = null;
+          _isInterstitialLoading = false;
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAdIfReady(VoidCallback onContinue) {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _interstitialAd = null;
+          _loadInterstitialAd();
+          onContinue();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _interstitialAd = null;
+          _loadInterstitialAd();
+          onContinue();
+        },
+      );
+      _interstitialAd!.show();
+    } else {
+      _loadInterstitialAd();
+      onContinue();
+    }
   }
 
   void _nextTurn() {
@@ -128,16 +183,40 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
             _playerScores[playerName] = (_playerScores[playerName] ?? 0) + 1;
             Navigator.of(context).pop();
             setState(() {
-              _nextTurn();
-              _gameStarted = false; // Show start button for next player
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
             });
+            if (_roundsSinceLastAd == 0) {
+              _showInterstitialAdIfReady(() {
+                setState(() {
+                  _nextTurn();
+                  _gameStarted = false;
+                });
+              });
+            } else {
+              setState(() {
+                _nextTurn();
+                _gameStarted = false;
+              });
+            }
           },
           onForfeit: () {
             Navigator.of(context).pop();
             setState(() {
-              _nextTurn();
-              _gameStarted = false; // Show start button for next player
+              _roundsSinceLastAd = (_roundsSinceLastAd + 1) % 3;
             });
+            if (_roundsSinceLastAd == 0) {
+              _showInterstitialAdIfReady(() {
+                setState(() {
+                  _nextTurn();
+                  _gameStarted = false;
+                });
+              });
+            } else {
+              setState(() {
+                _nextTurn();
+                _gameStarted = false;
+              });
+            }
           },
           useTimer: widget.useTimer,
         ),

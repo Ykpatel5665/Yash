@@ -94,9 +94,9 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
 
-  print('[main] App starting, calling syncCategoriesFromApiIfNeeded...');
+  // print('[main] App starting, calling syncCategoriesFromApiIfNeeded...');
   await CategoryDbService.syncCategoriesFromApiIfNeeded();
-  print('[main] Finished syncCategoriesFromApiIfNeeded, launching app...');
+  // print('[main] Finished syncCategoriesFromApiIfNeeded, launching app...');
 
   runApp(
     ChangeNotifierProvider(

@@ -7,21 +7,21 @@ import 'category_api_service.dart';
 class CategoryDbService {
   /// Fetches categories from API and populates DB if DB is empty (for any age group)
   static Future<void> syncCategoriesFromApiIfNeeded() async {
-    print('[CategoryDbService] syncCategoriesFromApiIfNeeded called');
+  // print('[CategoryDbService] syncCategoriesFromApiIfNeeded called');
     try {
       final existing = await getCategoriesByAgeGroup('kids');
-      print('[CategoryDbService] Existing DB count for kids: \'${existing.length}\'');
+  // print('[CategoryDbService] Existing DB count for kids: \'${existing.length}\'');
       if (existing.isEmpty) {
-        print('[CategoryDbService] DB empty, fetching from API...');
+  // print('[CategoryDbService] DB empty, fetching from API...');
         final apiCats = await CategoryApiService.fetchCategories();
-        print('[CategoryDbService] API returned count: \'${apiCats.length}\'');
+  // print('[CategoryDbService] API returned count: \'${apiCats.length}\'');
         await insertCategories(apiCats);
-        print('[CategoryDbService] Categories inserted into DB');
+  // print('[CategoryDbService] Categories inserted into DB');
       } else {
-        print('[CategoryDbService] DB already populated, skipping API fetch');
+  // print('[CategoryDbService] DB already populated, skipping API fetch');
       }
     } catch (e) {
-      print('[CategoryDbService] Error in syncCategoriesFromApiIfNeeded: $e');
+  // print('[CategoryDbService] Error in syncCategoriesFromApiIfNeeded: $e');
       // Ignore errors, app will fallback to API fetch on category screen if needed
     }
   }

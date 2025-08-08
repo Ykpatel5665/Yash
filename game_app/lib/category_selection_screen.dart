@@ -386,12 +386,12 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     super.initState();
     // On first frame, check DB. If empty, check internet and fetch from API (show dialog if no internet). If not empty, just load from DB.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      print('[initState] CategorySelectionScreen loaded');
+  // print('[initState] CategorySelectionScreen loaded');
       setState(() { _isLoading = true; });
       await _loadLastPlayedCategories();
       await _fetchCategories();
       setState(() { _isLoading = false; });
-      print('[initState] Done loading categories.');
+  // print('[initState] Done loading categories.');
     });
   }
 

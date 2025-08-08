@@ -42,6 +42,6 @@ Future<List<Question>> loadQuestions({
     ageGroup: ageGroup,
     language: language,
   );
-  print('[DEBUG] Questions from DB: ${dbQuestions.length}');
+  // print('[DEBUG] Questions from DB: ${dbQuestions.length}');
   return dbQuestions;
 }

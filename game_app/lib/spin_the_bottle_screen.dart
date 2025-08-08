@@ -143,7 +143,6 @@ with SingleTickerProviderStateMixin {
     }
   }
 
-  @override
 
   // --- Called when spin animation finishes ---
   void _onSpinComplete() {

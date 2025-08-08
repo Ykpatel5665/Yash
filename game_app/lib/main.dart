@@ -88,9 +88,9 @@ void main() async {
   // Initialize AdMob
   await MobileAds.instance.initialize();
   // Register this device as a test device for AdMob
-  MobileAds.instance.updateRequestConfiguration(
-    RequestConfiguration(testDeviceIds: ['F2B4C88351528DCEB47274F8023163F5']),
-  );
+  // MobileAds.instance.updateRequestConfiguration(
+  //   RequestConfiguration(testDeviceIds: ['F2B4C88351528DCEB47274F8023163F5']),
+  // );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await Future.delayed(const Duration(seconds: 2)); // Ensures splash stays for 2s
 

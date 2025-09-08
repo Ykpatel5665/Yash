@@ -17,6 +17,7 @@ import 'models/category_model.dart';
 import 'services/category_db_service.dart';
 import 'utils/connectivity_helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/foundation.dart';
 
 // Static Category lists hatai didha, have dynamic fetch thase
 
@@ -292,6 +293,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   }
 
   final Set<String> _selectedCategoryIds = {};
+  bool _hasSynced = false;
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
   // ignore: unused_field
@@ -299,6 +301,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
   /// Prefetches truth and dare questions for selected categories if not already in DB, using parallel API calls.
   Future<void> _prefetchQuestionsForSelectedCategories() async {
+    if (_hasSynced) return;
     while (true) {
       // Check for internet connection before fetching questions
       bool hasConnection = await ConnectivityHelper.hasInternetConnection();
@@ -324,19 +327,41 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           break;
       }
 
+      // Check if any category needs syncing
+      bool needsSyncing = false;
+      for (final catId in _selectedCategoryIds) {
+        final truthQuestions = await dbService.getQuestions(
+          type: 'truth',
+          selectedCategories: [catId],
+          ageGroup: apiAgeGroup,
+          language: language,
+        );
+        final dareQuestions = await dbService.getQuestions(
+          type: 'dare',
+          selectedCategories: [catId],
+          ageGroup: apiAgeGroup,
+          language: language,
+        );
+        if (truthQuestions.isEmpty || dareQuestions.isEmpty) {
+          needsSyncing = true;
+          break;
+        }
+      }
+
       List<Future<void>> futures = [];
       for (final catId in _selectedCategoryIds) {
         futures.add(
             _fetchAndInsertIfNeeded(dbService, apiAgeGroup, language, catId));
       }
-      if (futures.isNotEmpty) {
+      if (needsSyncing) {
         Fluttertoast.showToast(
           msg: 'Syncing...',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
         );
-        await Future.wait(futures);
       }
+      await Future.wait(futures);
+      _hasSynced = true;
       break;
     }
   }
@@ -669,6 +694,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                               } else {
                                                 _selectedCategoryIds.add(cat.key);
                                               }
+                                              _hasSynced = false;
                                             });
                                           },
                                           icon: null,

@@ -1165,10 +1165,12 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(
       context: context,
       builder: (context) {
+        final double dialogHeight = MediaQuery.of(context).size.height * 0.5;
         return AlertDialog(
           title: Text('Select Language'),
           content: SizedBox(
             width: 300,
+            height: dialogHeight,
             child: ListView(
               shrinkWrap: true,
               children: [

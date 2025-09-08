@@ -919,7 +919,7 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                       minimumSize: const Size(0, 48),
                                       textStyle: TextStyle(
                                         fontFamily: 'Baloo2',
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w800,
                                         fontSize: buttonFontSize,
                                       ),
                                     ),
@@ -936,35 +936,39 @@ class _RandomTurnScreenState extends State<RandomTurnScreen> {
                                 ),
                               ),
                               SizedBox(width: buttonSpacing), // Responsive
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () {
-                                    SoundManager.playButtonSound(
-                                        context: context);
-                                    Navigator.of(dialogContext).pop(true);
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: buttonVerticalPadding),
-                                    minimumSize: const Size(0, 48),
-                                    textStyle: TextStyle(
-                                      fontFamily: 'Baloo2',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: buttonFontSize,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.yes,
-                                    style: TextStyle(
-                                      fontFamily: 'Baloo2',
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: buttonFontSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // Only the new ElevatedButton for 'Yes' remains
+                               Expanded(
+                                 child: ElevatedButton(
+                                   onPressed: () {
+                                     SoundManager.playButtonSound(context: context);
+                                     Navigator.of(dialogContext).pop(true);
+                                   },
+                                   style: ElevatedButton.styleFrom(
+                                     elevation: 0,
+                                     backgroundColor: Colors.transparent, 
+                                     shadowColor: Colors.transparent,
+                                     shape: RoundedRectangleBorder(
+                                       borderRadius: BorderRadius.circular(16),
+                                     ),
+                                     padding: EdgeInsets.symmetric(vertical: buttonVerticalPadding),
+                                     minimumSize: const Size(0, 40), // Reduced height
+                                     textStyle: TextStyle(
+                                       fontFamily: 'Baloo2',
+                                       fontWeight: FontWeight.w600,
+                                       fontSize: buttonFontSize,
+                                     ),
+                                   ),
+                                   child: Text(
+                                     AppLocalizations.of(context)!.yes,
+                                     style: TextStyle(
+                                       fontFamily: 'Baloo2',
+                                       color: Colors.white.withOpacity(0.7),
+                                       fontWeight: FontWeight.w600,
+                                       fontSize: buttonFontSize,
+                                     ),
+                                   ),
+                                 ),
+                               ),
                             ], // End of Row children
                           ), // End of Row
                         ], // End of Column children

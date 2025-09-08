@@ -168,6 +168,7 @@ class _TruthDareQuestionScreenState extends State<TruthDareQuestionScreen>
                           fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
+                          height: 1.0, // Reduce line spacing
                           shadows: [
                             Shadow(blurRadius: 4, color: Colors.white.withOpacity(0.3)),
                           ],

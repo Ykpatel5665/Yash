@@ -63,7 +63,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
   int _pendingHighlightIndex = -1; // For transition animation
   bool _isAnimatingHighlight = false;
   late List<Color> _playerColors;
-  bool _gameStarted = false; // Show start button before each turn
+  bool _gameStarted = false; // Used for animation/transition only
+  bool _autoTurnTimerActive = false; // Track if auto timer is running
+  bool _pendingAutoTurn = false; // Track if auto turn is pending due to interruption
 
   @override
   void initState() {
@@ -74,6 +76,45 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     _playerColors = PlayerCirclePainter.shuffleColors();
     _gameStarted = false;
     _loadInterstitialAd();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _triggerAutoNextTurn();
+    });
+  }
+
+  void _triggerAutoNextTurn() {
+    if (_lastPlayerFinished || _autoTurnTimerActive) return;
+    if (_scoreboardOpen || _quitDialogOpen || _hasQuit) {
+      _pendingAutoTurn = true;
+      return;
+    }
+    setState(() {
+      _gameStarted = false;
+      _autoTurnTimerActive = true;
+    });
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted || _lastPlayerFinished) {
+        setState(() {
+          _autoTurnTimerActive = false;
+        });
+        return;
+      }
+      if (_scoreboardOpen || _quitDialogOpen || _hasQuit) {
+        _pendingAutoTurn = true;
+        setState(() {
+          _autoTurnTimerActive = false;
+        });
+        return;
+      }
+      setState(() {
+        _gameStarted = true;
+        _autoTurnTimerActive = false;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_lastPlayerFinished && !_scoreboardOpen && !_quitDialogOpen && !_hasQuit) {
+          _showTruthOrDareDialog();
+        }
+      });
+    });
   }
 
   @override
@@ -140,7 +181,11 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         setState(() {
           _currentIndex = _pendingHighlightIndex;
           _isAnimatingHighlight = false;
-          _gameStarted = false; // Show start button for next player
+          _gameStarted = false;
+        });
+        // After transition, trigger auto next turn for next player
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _triggerAutoNextTurn();
         });
       });
     }
@@ -189,13 +234,11 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               _showInterstitialAdIfReady(() {
                 setState(() {
                   _nextTurn();
-                  _gameStarted = false;
                 });
               });
             } else {
               setState(() {
                 _nextTurn();
-                _gameStarted = false;
               });
             }
           },
@@ -208,13 +251,11 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
               _showInterstitialAdIfReady(() {
                 setState(() {
                   _nextTurn();
-                  _gameStarted = false;
                 });
               });
             } else {
               setState(() {
                 _nextTurn();
-                _gameStarted = false;
               });
             }
           },
@@ -222,6 +263,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
         ),
       ),
     );
+  // After question screen, auto next turn will be triggered by _nextTurn logic
   }
 
   void _showScoreboardDialog() async {
@@ -426,6 +468,15 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     setState(() {
       _scoreboardOpen = false;
     });
+    // Resume auto turn if pending
+    if (mounted && _pendingAutoTurn && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+      _pendingAutoTurn = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+          _triggerAutoNextTurn();
+        }
+      });
+    }
   }
 
   Future<bool> _showQuitConfirmation() async {
@@ -642,7 +693,16 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
     if (result) {
       _hasQuit = true;
     }
-    return result;
+    // Resume auto turn if pending
+    if (mounted && _pendingAutoTurn && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+      _pendingAutoTurn = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_scoreboardOpen && !_quitDialogOpen && !_lastPlayerFinished) {
+          _triggerAutoNextTurn();
+        }
+      });
+    }
+    return result ?? false;
   }
 
   Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
@@ -806,8 +866,7 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                   previousIndex: _isAnimatingHighlight ? _currentIndex : null,
                                   colors: _playerColors,
                                 ),
-                                if (!_gameStarted && !_lastPlayerFinished)
-                                  _buildStartButton(screenWidth, screenHeight),
+                                // Start button removed for auto next turn
                               ],
                             ),
                           ),
@@ -826,6 +885,9 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
                                       _playerColors = PlayerCirclePainter.shuffleColors();
                                       _hasQuit = false; // Reset quit flag on restart
                                       _gameStarted = false;
+                                    });
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      _triggerAutoNextTurn();
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -916,91 +978,6 @@ class _AutoNextTurnScreenState extends State<AutoNextTurnScreen> {
           ),
         ),
         bottomNavigationBar: const SmartBanner(),
-      ),
-    );
-  }
-
-  // Start button widget (EXACT copy from random_turn_screen.dart)
-  Widget _buildStartButton(double screenWidth, double screenHeight) {
-    // This is a direct copy of the circular, dark, semi-transparent button from random_turn_screen.dart
-    // Make the button more responsive for tablets and large screens
-    return ClipOval(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-        child: Container(
-          width: (screenWidth * 0.16).clamp(48.0, 120.0),
-          height: (screenWidth * 0.16).clamp(48.0, 120.0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                Colors.black.withOpacity(0.22),
-                Colors.black.withOpacity(0.10),
-                Colors.transparent
-              ],
-              center: Alignment.topLeft,
-              radius: 0.95,
-            ),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.22),
-              width: 1.6,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.22),
-                blurRadius: 12,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () {
-                SoundManager.playButtonSound(context: context);
-                setState(() {
-                  _gameStarted = true;
-                });
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted && !_lastPlayerFinished && !_scoreboardOpen && !_quitDialogOpen && !_hasQuit) {
-                    _showTruthOrDareDialog();
-                  }
-                });
-              },
-              child: Center(
-                child: AutoSizeText(
-                  AppLocalizations.of(context)!.start,
-                  minFontSize: 12,
-                  maxLines: 1,
-                  overflow: TextOverflow.visible,
-                  wrapWords: false,
-                  style: TextStyle(
-                    fontFamily: 'Baloo2',
-                    fontWeight: FontWeight.bold,
-                    fontSize: (screenWidth * 0.045).clamp(16.0, 28.0),
-                    color: Colors.white.withOpacity(0.92),
-                    letterSpacing: 0.5,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 8,
-                        color: Colors.black.withOpacity(0.32),
-                        offset: Offset(0, 2),
-                      ),
-                      Shadow(
-                        blurRadius: 2,
-                        color: Colors.black.withOpacity(0.18),
-                        offset: Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

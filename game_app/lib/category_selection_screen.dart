@@ -293,6 +293,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   }
 
   final Set<String> _selectedCategoryIds = {};
+  bool _isContinueButtonDisabled = false;
   bool _hasSynced = false;
   Set<String> _lastPlayedCategoryIds = {};
   List<CategoryModel> _categories = [];
@@ -840,11 +841,20 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                 onPressed: _selectedCategoryIds.isEmpty
                                                     ? null
                                                     : () async {
+                                                        if (_isContinueButtonDisabled) return;
+                                                        setState(() {
+                                                          _isContinueButtonDisabled = true;
+                                                        });
                                                         // Check if any selected category requires consent
                                                         final needsConsent = _selectedCategoryIds.any((id) => _consentRequiredAdultCategories.contains(id));
                                                         if (needsConsent && !_consentGiven) {
                                                           final consent = await _showConsentDialog();
-                                                          if (!consent) return;
+                                                          if (!consent) {
+                                                            setState(() {
+                                                              _isContinueButtonDisabled = false;
+                                                            });
+                                                            return;
+                                                          }
                                                           setState(() {
                                                             _consentGiven = true;
                                                           });
@@ -852,7 +862,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                         SoundManager.playButtonSound(context: context);
                                                         await _saveLastPlayedCategories();
                                                         await _prefetchQuestionsForSelectedCategories();
-                                                        Navigator.push(
+                                                        await Navigator.push(
                                                           context,
                                                           PageRouteBuilder(
                                                             pageBuilder: (context,
@@ -880,6 +890,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                             transitionDuration: const Duration(milliseconds: 400),
                                                           ),
                                                         );
+                                                        setState(() {
+                                                          _isContinueButtonDisabled = false;
+                                                        });
                                                       },
                                                 child: Stack(
                                                   alignment: Alignment.center,
